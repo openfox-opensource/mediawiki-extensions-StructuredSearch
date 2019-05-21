@@ -1,0 +1,17 @@
+{
+	"@metadata": {
+		"authors": [
+			"Alangi Derick",
+			"Brad Jorsch",
+			"Siebrand Mazeland",
+			"Timo Tijhof",
+			"Umherirrender"
+		]
+	},
+	"fennecadvancedsearch-desc": "{{desc}}",
+	"fennecadvancedsearch-welcome-title-user": "Title of the Welcome interface for logged-in users. $1 is the username. $2 is the weekday.",
+	"fennecadvancedsearch-welcome-title-loggedout": "Title of the Welcome interface logged-out users. $1 is the weekday.",
+	"fennecadvancedsearch-helloworld": "Title of Special:HelloWorld.",
+	"fennecadvancedsearch-helloworld-intro": "Intro paragraph shown on Special:HelloWorld.",
+	"contentaction-myact": "This is a message that is saying my action."
+}

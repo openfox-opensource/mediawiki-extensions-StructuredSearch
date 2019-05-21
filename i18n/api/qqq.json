@@ -1,0 +1,15 @@
+{
+	"@metadata": {
+		"authors": [
+			"Alangi Derick",
+			"Amir E. Aharoni",
+			"Brad Jorsch",
+			"Siebrand Mazeland",
+			"Umherirrender"
+		]
+	},
+	"apihelp-query+fennecadvancedsearch-summary": "{{doc-apihelp-summary|query+fennecadvancedsearch}}",
+	"apihelp-query+fennecadvancedsearch-param-key": "{{doc-apihelp-param|query+fennecadvancedsearch|key}}",
+	"apihelp-query+fennecadvancedsearch-fennecadvancedsearch-1": "{{doc-apihelp-fennecadvancedsearch|query+fennecadvancedsearch}}",
+	"apihelp-query+fennecadvancedsearch-fennecadvancedsearch-2": "{{doc-apihelp-fennecadvancedsearch|query+fennecadvancedsearch}}"
+}

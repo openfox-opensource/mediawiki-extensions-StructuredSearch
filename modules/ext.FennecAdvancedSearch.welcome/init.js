@@ -1,0 +1,1 @@
+mw.FennecAdvancedSearchWelcome.init();

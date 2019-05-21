@@ -1,0 +1,129 @@
+{
+	"name": "fennecadvancedsearchs",
+	"author": [
+		"Timo Tijhof",
+		"Kaldari",
+		"Ævar Arnfjörð Bjarmason",
+		"Daniel Kinzler",
+		"Derick Alangi"
+	],
+	"url": "https://www.mediawiki.org/wiki/Extension:FennecAdvancedSearch",
+	"descriptionmsg": "fennecadvancedsearch-desc",
+	"license-name": "GPL-2.0-or-later",
+	"type": "other",
+	"requires": {
+		"MediaWiki": ">= 1.32.0"
+	},
+	"config": {
+		"FennecAdvancedSearchEnableWelcome": {
+			"description": "Enable the Welcome features",
+			"value": true
+		},
+		"FennecAdvancedSearchWelcomeColorDays": {
+			"description": "Color for the Welcome message bar by week day",
+			"value": {
+				"monday": "orange",
+				"tuesday": "blue",
+				"wednesday": "green",
+				"thursday": "red",
+				"friday": "yellow"
+			}
+		},
+		"FennecAdvancedSearchWelcomeColorDefault": {
+			"description": "Default color for the Welcome message",
+			"value": "#eee"
+		},
+		"FennecAdvancedSearchMyWord": {
+			"description": "Value for the {{MYWORD}} magic word in wikitext.",
+			"value": "Awesome"
+		}
+	},
+	"MessagesDirs": {
+		"FennecAdvancedSearch": [
+			"i18n",
+			"i18n/api"
+		]
+	},
+	"ExtensionMessagesFiles": {
+		"FennecAdvancedSearchAlias" : "FennecAdvancedSearch.i18n.alias.php",
+		"FennecAdvancedSearchMagic" : "FennecAdvancedSearch.i18n.magic.php"
+	},
+	"AutoloadNamespaces": {
+		"MediaWiki\\Extension\\FennecAdvancedSearch\\": "includes/"
+	},
+	"APIListModules": {
+		"fennecadvancedsearch": "MediaWiki\\Extension\\FennecAdvancedSearch\\ApiQueryFennecAdvancedSearch"
+	},
+	"SpecialPages": {
+		"HelloWorld": "MediaWiki\\Extension\\FennecAdvancedSearch\\SpecialHelloWorld",
+		"Includable": "MediaWiki\\Extension\\FennecAdvancedSearch\\SpecialIncludable"
+	},
+
+	"Actions": {
+		"myact": "MediaWiki\\Extension\\FennecAdvancedSearch\\MyActAction"
+	},
+
+	"ContentHandlers": {
+		"xmldata": "MediaWiki\\Extension\\FennecAdvancedSearch\\XmlContentHandler"
+	},
+	"namespaces": [
+		{
+			"id": 234,
+			"constant": "NS_XML",
+			"name": "XML",
+			"subpages": false,
+			"content": false,
+			"defaultcontentmodel": "xmldata"
+		},
+		{
+			"id": 235,
+			"constant": "NS_XML_TALK",
+			"name": "XML_Talk",
+			"subpages": true,
+			"content": false,
+			"defaultcontentmodel": "wikitext"
+		}
+	],
+
+	"Hooks": {
+		"BeforePageDisplay": "MediaWiki\\Extension\\FennecAdvancedSearch\\Hooks::onBeforePageDisplay",
+		"ParserFirstCallInit": "MediaWiki\\Extension\\FennecAdvancedSearch\\Hooks::onParserFirstCallInit",
+		"MagicWordwgVariableIDs": "MediaWiki\\Extension\\FennecAdvancedSearch\\Hooks::onMagicWordwgVariableIDs",
+		"ParserGetVariableValueSwitch": "MediaWiki\\Extension\\FennecAdvancedSearch\\Hooks::onParserGetVariableValueSwitch",
+		"LoadExtensionSchemaUpdates": "MediaWiki\\Extension\\FennecAdvancedSearch\\Hooks::onLoadExtensionSchemaUpdates",
+		"ResourceLoaderTestModules": "MediaWiki\\Extension\\FennecAdvancedSearch\\Hooks::onResourceLoaderTestModules",
+		"SkinTemplateNavigation": "MediaWiki\\Extension\\FennecAdvancedSearch\\Hooks::onSkinTemplateNavigation"
+	},
+	"ResourceFileModulePaths": {
+		"localBasePath": "modules/"
+	},
+	"ResourceModules": {
+		"ext.FennecAdvancedSearch.welcome": {
+			"class": "MediaWiki\\Extension\\FennecAdvancedSearch\\WelcomeModule",
+			"dependencies": [
+				"mediawiki.util",
+				"mediawiki.user",
+				"mediawiki.Title"
+			],
+			"messages": [
+				"monday",
+				"tuesday",
+				"wednesday",
+				"thursday",
+				"friday",
+				"saturday",
+				"sunday",
+				"fennecadvancedsearch-welcome-title-loggedout",
+				"fennecadvancedsearch-welcome-title-user"
+			],
+			"styles": [
+				"ext.FennecAdvancedSearch.welcome/styles.css"
+			],
+			"scripts": [
+				"ext.FennecAdvancedSearch.welcome/index.js",
+				"ext.FennecAdvancedSearch.welcome/init.js"
+			]
+		}
+	},
+	"manifest_version": 2
+}
