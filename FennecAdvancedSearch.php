@@ -1,4 +1,4 @@
 <?php
 
 // Load via extension.json
-wfLoadExtension( 'fennecadvancedsearchs' );
+wfLoadExtension( 'FennecAdvancedSearch' );
