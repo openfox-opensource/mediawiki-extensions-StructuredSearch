@@ -34,11 +34,19 @@ class FennecAdvancedSearchHooks{
 		
 		$result = $api->getResult()->getResultData();
 		//die("resa" . print_r([100]));
+		$params['search'] = [
+			'label' => 'חיפוש',
+        	'field' => 'search',
+	        'widget' => [
+	            'type' => 'text',
+	            'position' => 'topbar',
+	        ],
+		];
 		$params['namespace'] = [
 			'label' => 'סוג דף',
         	'field' => 'namespace',
 	        'widget' => [
-	            'type' => 'radios',
+	            'type' => 'autocomplete',
 	            'position' => 'sidebar',
 	            'options' => self::extractNamespaces($result['query']['namespaces']),
 	        ],

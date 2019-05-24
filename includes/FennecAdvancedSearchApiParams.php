@@ -19,25 +19,34 @@
 
 namespace MediaWiki\Extension\FennecAdvancedSearch;
 
-class ApiQueryFennecAdvancedSearch extends \ApiBase {
+class FennecAdvancedSearchApiParams extends \ApiBase {
 		public function __construct( $query, $moduleName ) {
 		parent::__construct( $query, $moduleName );
+
 	}
 
 	public function execute() {
-		header("Access-Control-Allow-Origin: *");
-		
+		if('127.0.0.1' == $_SERVER["REMOTE_ADDR"]){
+			header("Access-Control-Allow-Origin: *");
+		}
 		$params = $this->extractRequestParams();
 		$result = $this->getResult();
 		
-		$result->addValue( NULL, 'FennecAdvancedSearch', self::getSearchParams() );
+		$result->addValue( NULL, 'params', self::getSearchParams() );
+		$result->addValue( NULL, 'templates', self::getResultsTemplates() );
 	}
 
 	public static function getSearchParams() {
 		$conf = \MediaWiki\MediaWikiServices::getInstance()->getMainConfig();
 		$params = $conf->get('FennecAdvancedSearchParams');
 		\Hooks::run( 'FennecAdvancedSearchParams', [ &$params ] );
+		//die(print_r($params,1));
 		return $params;
+	}
+	public static function getResultsTemplates() {
+		$conf = \MediaWiki\MediaWikiServices::getInstance()->getMainConfig();
+		$templates = $conf->get('FennecAdvancedSearchResultsTemplates');
+		return $templates;
 	}	
 	protected function getAllowedParams() {
 		return array(
@@ -50,12 +59,12 @@ class ApiQueryFennecAdvancedSearch extends \ApiBase {
 	}
 
 	protected function getDescription() {
-		return 'Get fennece advanced search settings';
+		return 'Get fennec advanced search settings';
 	}
 
 	protected function getExamples() {
 		return array(
-			'action=fennecadvancedsearch'
+			'action=fennecadvancedsearchparams'
 		);
 	}
 

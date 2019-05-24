@@ -7,10 +7,6 @@
 			"Timo Tijhof"
 		]
 	},
-	"fennecadvancedsearch-desc": "This is an fennecadvancedsearch extension using the BoilerPlate.",
-	"fennecadvancedsearch-welcome-title-user": "Howdy $1, today is a fine $2!",
-	"fennecadvancedsearch-welcome-title-loggedout": "Hi there, today is a fine $2!",
-	"fennecadvancedsearch-helloworld": "Bar",
-	"fennecadvancedsearch-helloworld-intro": "This is the HelloWorld special page, as provided by the FennecAdvancedSearch extension.",
-	"contentaction-myact": "My action"
+	"fennecadvancedsearch": "Advanced search",
+	"fennecadvancedsearch-desc": "This is an advanced search extension"
 }

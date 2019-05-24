@@ -1,0 +1,24 @@
+#top-bar {
+    padding: 25px;
+    border-bottom: 1px solid;
+    margin-bottom: 10px;
+}
+.results, 
+.side-bar {
+   float: left;
+}
+.side-bar{
+  width: 30%;
+  border-left: 1px solid;
+  margin-left: 10px;
+}
+.results{
+  width: 68%;
+}
+.label-wrp{
+  display: inline-block;
+}
+.result{
+  border: 1px solid;
+  padding: 3px 10px;
+}

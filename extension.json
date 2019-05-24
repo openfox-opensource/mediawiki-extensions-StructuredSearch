@@ -16,11 +16,11 @@
 	},
 	"config": {
 		"FennecAdvancedSearchParams": {
-			"description": "Enable the Welcome features",
+			"description": "Search and dispaly params",
 			"value": []
 		},
-		"FennecAdvancedSearchApi": {
-			"description": "Enable the Welcome features",
+		"FennecAdvancedSearchResultsTemplates": {
+			"description": "Template by NS ids. Default is fallback",
 			"value": []
 		}
 	},
@@ -40,44 +40,35 @@
 		"FennecAdvancedSearchMagic" : "FennecAdvancedSearch.i18n.magic.php"
 	},
 	"AutoloadClasses": {
-		"MediaWiki\\Extension\\FennecAdvancedSearch\\ApiQueryFennecAdvancedSearch": "includes/FennecAdvancedSearchApi.php",
+		"MediaWiki\\Extension\\FennecAdvancedSearch\\FennecAdvancedSearchApiParams": "includes/FennecAdvancedSearchApiParams.php",
+		"MediaWiki\\Extension\\FennecAdvancedSearch\\FennecAdvancedSearchApiSearch": "includes/FennecAdvancedSearchApiSearch.php",
+		"MediaWiki\\Extension\\FennecAdvancedSearch\\SpecialFennecAdvancedSearch": "includes/SpecialFennecAdvancedSearch.php",
 		"MediaWiki\\Extension\\FennecAdvancedSearch\\FennecAdvancedSearchHooks": "includes/FennecAdvancedSearchHooks.php"
 	},
 	"AutoloadNamespaces": {
 		"MediaWiki\\Extension\\FennecAdvancedSearch\\": "includes/"
 	},
 	"APIModules": {
-		"fennecadvancedsearch": "MediaWiki\\Extension\\FennecAdvancedSearch\\ApiQueryFennecAdvancedSearch"
+		"fennecadvancedsearchparams": "MediaWiki\\Extension\\FennecAdvancedSearch\\FennecAdvancedSearchApiParams",
+		"fennecadvancedsearchsearch": "MediaWiki\\Extension\\FennecAdvancedSearch\\FennecAdvancedSearchApiSearch"
 	},
 	"ContentHandlers": {
 		"xmldata": "MediaWiki\\Extension\\FennecAdvancedSearch\\XmlContentHandler"
 	},
-
-	
+	"SpecialPages": {
+		"FennecAdvancedSearch": "MediaWiki\\Extension\\FennecAdvancedSearch\\SpecialFennecAdvancedSearch"
+	},
 	"ResourceFileModulePaths": {
 		"localBasePath": "modules/"
 	},
 	"ResourceModules": {
-		"ext.FennecAdvancedSearch.welcome": {
+		"ext.FennecAdvancedSearch": {
 			
-			"messages": [
-				"monday",
-				"tuesday",
-				"wednesday",
-				"thursday",
-				"friday",
-				"saturday",
-				"sunday",
-				"fennecadvancedsearch-welcome-title-loggedout",
-				"fennecadvancedsearch-welcome-title-user"
-			],
+			
 			"styles": [
-				"ext.FennecAdvancedSearch.welcome/styles.css"
-			],
-			"scripts": [
-				"ext.FennecAdvancedSearch.welcome/index.js",
-				"ext.FennecAdvancedSearch.welcome/init.js"
+				"ext.FennecAdvancedSearch/styles.css"
 			]
+			
 		}
 	},
 	"manifest_version": 2
