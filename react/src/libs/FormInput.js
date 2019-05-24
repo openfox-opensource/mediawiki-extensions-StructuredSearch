@@ -51,9 +51,9 @@ class FormInput extends Component {
 		});
 
 	}
-	autocompleteSelected( fieldName, value){
-		FormMain.addValue( fieldName, value );
-		//console.log(fieldName, value,"fieldName, value")
+	autocompleteSelected( fieldName, itemLabel, autocompleteItem){
+		FormMain.addValue( fieldName, autocompleteItem );
+		//console.log(fieldName, itemLabel,autocompleteItem,"fieldName, value fffffffffffffffff")
 	}
 	selectChanged( fieldName, value){
 		this.setState({selected : value});
@@ -80,7 +80,7 @@ class FormInput extends Component {
 				case 'checkboxes':
 				case 'autocomplete':
 				case 'radios':
-					console.log(inputData,'inputData');
+					//console.log(inputData,'inputData');
 					html = this[inputData.widget.type + 'Build']( this.state.inputData );
 					break;
 			}
@@ -126,6 +126,7 @@ class FormInput extends Component {
 					onChange={this.inputChanges.bind(this, inputData.field)} />;
 	}
 	autocompleteBuild (inputData){
+			//console.log(inputData, 'inputData');
 			let value = '';
 			return   <Autocomplete
 						  getItemValue={(item) => item.label}

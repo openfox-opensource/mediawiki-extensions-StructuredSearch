@@ -51,7 +51,8 @@ class TopBar extends Component {
     return Object.keys(params).map(key => key + '=' + params[key]).join('&');
   }
   submitClicked(){
-    let params = FormMain.getAllValues();
+    let params = FormMain.getAllValuesProcessed();
+    console.log(params,'params');
     params.action = 'fennecadvancedsearchsearch';
     let urlSuffix = this.toQueryStr( params);
     ajaxCall.get(urlSuffix).then(data=>{

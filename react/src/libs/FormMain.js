@@ -19,7 +19,7 @@ class FormMain{
 		FormMain.fireChangeEvent();
 	}
 	static fireChangeEvent(){
-		EventEmitter.emit("FormDataChanged", FormMain.getAllValues());
+		EventEmitter.emit("FormDataChanged", FormMain.getAllValuesRaw());
 	}
 	static standardizeValue( value ){
 		return 'string' === typeof value ? {
@@ -27,8 +27,17 @@ class FormMain{
 			value: value
 		} : value;
 	}
-	static getAllValues(){
+	static getAllValuesRaw(){
 		return FormMain.allData;
+	}
+	static getAllValuesProcessed(){
+		let copyOfData = Object.assign({}, FormMain.allData);
+		for( let dataKey of Object.keys(copyOfData)){
+			if('object' === typeof copyOfData[dataKey] && 'undefined' !== typeof copyOfData[dataKey].length){
+				copyOfData[dataKey] = copyOfData[dataKey].map(val => {console.log(val);return val.value});
+			}
+		}
+		return copyOfData;
 	}
 
 }
