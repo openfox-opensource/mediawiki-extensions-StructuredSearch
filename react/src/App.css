@@ -1,0 +1,41 @@
+body {
+  direction: rtl;
+  text-align: right;
+}
+.select {
+    min-width: 250px;
+    color: #000;
+    text-align: right;
+}
+#top-bar {
+    padding: 25px;
+    border-bottom: 1px solid;
+    margin-bottom: 10px;
+}
+.results, 
+.side-bar {
+   float: right;
+}
+.side-bar{
+  width: 30%;
+  border-left: 1px solid;
+  margin-left: 10px;
+}
+.results{
+  width: 68%;
+}
+.label-wrp{
+  display: inline-block;
+}
+.result{
+  border: 1px solid;
+  padding: 3px 10px;
+}
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
