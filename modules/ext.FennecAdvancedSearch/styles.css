@@ -9,8 +9,8 @@
 }
 .side-bar{
   width: 30%;
-  border-left: 1px solid;
-  margin-left: 10px;
+  border-right: 1px solid;
+  margin-right: 10px;
 }
 .results{
   width: 68%;
