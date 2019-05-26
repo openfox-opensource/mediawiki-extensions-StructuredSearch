@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import FormMain from './FormMain'
+import ajaxCall from './ajaxCall'
 import Select from 'react-select';
 import Autocomplete from 'react-autocomplete';
 
@@ -9,8 +10,8 @@ class FormInput extends Component {
 		//console.log("props",props);
 		this.state = { 
 			inputData : props.inputData,
-			filteredOptions : props.inputData.widget.options,
-			options : props.inputData.widget.options,
+			filteredOptions : props.inputData.widget.options|| [],
+			options : props.inputData.widget.options || [],
 			typed:'' };
 	}
 	componentDidMount() {
@@ -45,10 +46,30 @@ class FormInput extends Component {
 	}
 	autocompleteChanged(  event , typed){
 		//console.log(event.target,typed,"valuesss")
-		this.setState({
-			typed:typed,
-			filteredOptions : this.state.options.filter( item => !typed || item.label.indexOf(typed) > -1)
-		});
+		if(this.state.options.length){
+			this.setState({
+				typed:typed,
+				filteredOptions : this.state.options.filter( item => !typed || item.label.indexOf(typed) > -1)
+			});
+		}
+		else{
+			ajaxCall.get(`action=fennecadvancedsearchautocomplete&field=${this.state.inputData.field}&search=${typed}`).then(data => {
+				if(data.data.values){
+					let valuesAsArray = [];
+					for(let valKey of Object.keys(data.data.values) ){
+
+						valuesAsArray.push({
+							label:data.data.values[valKey],
+							value:valKey
+						});
+					}
+					this.setState({
+						typed:typed,
+						filteredOptions : valuesAsArray
+					});
+				}
+			});
+		}
 
 	}
 	autocompleteSelected( fieldName, itemLabel, autocompleteItem){
