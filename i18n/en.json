@@ -8,5 +8,9 @@
 		]
 	},
 	"fennecadvancedsearch": "Advanced search",
-	"fennecadvancedsearch-desc": "This is an advanced search extension"
+	"fennecadvancedsearch-desc": "This is an advanced search extension",
+	"fennecadvancedsearch-main-namesapce": "Main",
+	"fennecadvancedsearch-search-label": "Search",
+	"fennecadvancedsearch-category-label": "Categories",
+	"fennecadvancedsearch-namespace-label": "Page's namespace"
 }

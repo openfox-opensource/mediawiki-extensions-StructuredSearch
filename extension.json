@@ -16,13 +16,38 @@
 	},
 	"config": {
 		"FennecAdvancedSearchParams": {
-			"description": "Search and dispaly params",
+			"description": "Search and view params",
 			"value": []
 		},
 		"FennecAdvancedSearchResultsTemplates": {
 			"description": "Template by NS ids. Default is fallback",
 			"value": []
+		},
+		"FennecAdvancedSearchDefaultParams": {
+			"description": "Default are namesapces and category inputs",
+			"value": []
+		},
+		"FennecAdvancedSearchCategoryInclude": {
+			"description": "White list of categories to filter with",
+			"value": []
+		},
+		"FennecAdvancedSearchCategoryExclude": {
+			"description": "Black list of categories to filter with. ignored if FennecAdvancedSearchCategoryInclude set",
+			"value": []
+		},
+		"FennecAdvancedSearchNSInclude": {
+			"description": "White list of namespaces to filter with",
+			"value": []
+		},
+		"FennecAdvancedSearchNSExclude": {
+			"description": "Black list of namespaces to filter with. ignored if FennecAdvancedSearchNSInclude set",
+			"value": []
+		},
+		"FennecAdvancedSearchNSIncludeTalkPages": {
+			"description": "Are talk pages includes in filters",
+			"value": false
 		}
+		
 	},
 	"MessagesDirs": {
 		"FennecAdvancedSearch": [
@@ -43,6 +68,7 @@
 		"MediaWiki\\Extension\\FennecAdvancedSearch\\FennecAdvancedSearchApiParams": "includes/FennecAdvancedSearchApiParams.php",
 		"MediaWiki\\Extension\\FennecAdvancedSearch\\FennecAdvancedSearchApiSearch": "includes/FennecAdvancedSearchApiSearch.php",
 		"MediaWiki\\Extension\\FennecAdvancedSearch\\SpecialFennecAdvancedSearch": "includes/SpecialFennecAdvancedSearch.php",
+		"MediaWiki\\Extension\\FennecAdvancedSearch\\FennecAdvancedSearchApiAutocomplete": "includes/FennecAdvancedSearchApiAutocomplete.php",
 		"MediaWiki\\Extension\\FennecAdvancedSearch\\FennecAdvancedSearchHooks": "includes/FennecAdvancedSearchHooks.php"
 	},
 	"AutoloadNamespaces": {
@@ -50,6 +76,7 @@
 	},
 	"APIModules": {
 		"fennecadvancedsearchparams": "MediaWiki\\Extension\\FennecAdvancedSearch\\FennecAdvancedSearchApiParams",
+		"fennecadvancedsearchautocomplete": "MediaWiki\\Extension\\FennecAdvancedSearch\\FennecAdvancedSearchApiAutocomplete",
 		"fennecadvancedsearchsearch": "MediaWiki\\Extension\\FennecAdvancedSearch\\FennecAdvancedSearchApiSearch"
 	},
 	"ContentHandlers": {

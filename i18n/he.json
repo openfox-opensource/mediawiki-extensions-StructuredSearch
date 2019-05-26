@@ -1,0 +1,16 @@
+{
+	"@metadata": {
+		"authors": [
+			"Alangi Derick",
+			"Brad Jorsch",
+			"Siebrand Mazeland",
+			"Timo Tijhof"
+		]
+	},
+	"fennecadvancedsearch": "חיפוש מיוחד",
+	"fennecadvancedsearch-desc": "הרחבה המספקת חיפוש מתקדם",
+	"fennecadvancedsearch-main-namesapce": "ראשי",
+	"fennecadvancedsearch-search-label": "חיפוש",
+	"fennecadvancedsearch-category-label": "קטגוריות",
+	"fennecadvancedsearch-namespace-label": "סוג דף"
+}

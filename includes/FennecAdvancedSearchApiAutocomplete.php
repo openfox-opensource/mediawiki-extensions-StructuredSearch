@@ -19,7 +19,7 @@
 
 namespace MediaWiki\Extension\FennecAdvancedSearch;
 
-class FennecAdvancedSearchApiParams extends \ApiBase {
+class FennecAdvancedSearchApiAutocomplete extends \ApiBase {
 		public function __construct( $query, $moduleName ) {
 		parent::__construct( $query, $moduleName );
 
@@ -32,54 +32,47 @@ class FennecAdvancedSearchApiParams extends \ApiBase {
 		$params = $this->extractRequestParams();
 		$result = $this->getResult();
 		
-		$result->addValue( NULL, 'params', self::getSearchParams() );
-		$result->addValue( NULL, 'templates', self::getSearchParamsFiltered() );
+		$result->addValue( NULL, 'values', $this->getAutocompleteSearch() );
+		
 	}
 
-	public static function getSearchParamsFiltered() {
-		$params = self::getSearchParams();
-		foreach ($params as &$param) {
-			if( isset($param['widget']['autocomplete_callback'])){
-				unset($param['widget']['autocomplete_callback']);
-			}
+	public function getAutocompleteSearch() {
+		$search = [];
+		
+		$searchParams = FennecAdvancedSearchApiParams::getSearchParams();
+		$params = $this->extractRequestParams();
+		$searchField = $params['field'];
+		if(isset( $searchParams[ $searchField ] ) && isset( $searchParams[ $searchField ]['widget']['autocomplete_callback'] ) ){
+			//die("Ffff" . $searchParams[ $searchField ]['widget']['autocomplete_callback']);
+			$search = call_user_func( $searchParams[ $searchField ]['widget']['autocomplete_callback'],$params['search']);
 		}
-				//die(print_r($params));
-		return $params;
+		else{
+			die(print_r($searchParams));
+		}
+		return $search;
 	}
-	public static function getSearchParams() {
-		$conf = \MediaWiki\MediaWikiServices::getInstance()->getMainConfig();
-		$params = $conf->get('FennecAdvancedSearchParams');
-		\Hooks::run( 'FennecAdvancedSearchParams', [ &$params ] );
-		//die(print_r($params,1));
-		return $params;
-	}
-	public static function getResultsTemplates() {
-		$conf = \MediaWiki\MediaWikiServices::getInstance()->getMainConfig();
-		$templates = $conf->get('FennecAdvancedSearchResultsTemplates');
-		return $templates;
-	}	
 	protected function getAllowedParams() {
 		return array(
+			'search' => null,
+			'field' => null,
 		);
 	}
 
 	protected function getParamDescription() {
 		return array(
+			'search' => 'search term',
+			'field' => 'Field key as defined in FennecAdvancedSearchParams',
 		);
 	}
 
 	protected function getDescription() {
-		return 'Get fennec advanced search settings';
+		return 'Get autocomplete results for term and field name';
 	}
 
 	protected function getExamples() {
 		return array(
-			'action=fennecadvancedsearchparams'
+			'action=fennecadvancedsearchautocomplete&field=category&search=a',
 		);
-	}
-
-	public function getVersion() {
-		return __CLASS__ . ': $Id$';
 	}
 
 
