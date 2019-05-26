@@ -14,12 +14,11 @@ class FennecAdvancedSearchHooks{
 	        ],
 	    ];
 	}
-	static public function namespacesExtract( &$params ){
+	static public function tryGetIncluded( ){
 		global $wgContLang;
 		$conf = \MediaWiki\MediaWikiServices::getInstance()->getMainConfig();
 		$includeNamespaces = $conf->get('FennecAdvancedSearchNSInclude');
-		//print_r($includeNamespaces);
-		//die();
+
 		$fullNsData = [];
 		if($includeNamespaces && count($includeNamespaces)){
 			$namespaceIds = $wgContLang->getNamespaceIds();
@@ -35,20 +34,28 @@ class FennecAdvancedSearchHooks{
 			}
 
 		}
+		return $fullNsData;
+	}
+	static public function getDefinedNamespaces( ){
+		$included = self::tryGetIncluded();
+		return count($included) ? $included : self::getNamspacesFromApi();
+	}
+	static public function namespacesExtract( &$params ){
+		
 		$params['namespace'] = [
 			'label' => wfMessage('fennecadvancedsearch-namespace-label'),
         	'field' => 'namespace',
 	        'widget' => [
 	            'type' => 'checkboxes',
 	            'position' => 'sidebar',
-	            'options' => count( $fullNsData ) ? $fullNsData : self::getAllNamspaces(),
+	            'options' => self::getDefinedNamespaces(),
 	        ],
 	    ];
 		
 		//die("resa" . print_r([100]));
 		
 	}
-	static public function getAllNamspaces( ){
+	static public function getNamspacesFromApi( ){
 		global $wgRequest;
 		$callApiParams = new \DerivativeRequest(
 		    $wgRequest,
@@ -77,7 +84,7 @@ class FennecAdvancedSearchHooks{
 				continue;
 			} 
 			//filter even - no talks, expet if includeTalkPages true (default false)
-			if	( !$includeTalkPages && is_numeric($key) && ( (integer) $key % 2) ){
+			if	( ( !$includeTalkPages && ( (integer) $key % 2) ) || ! is_numeric($key) ){
 				continue;
 			}
 			$returnedNamespaces[] = [

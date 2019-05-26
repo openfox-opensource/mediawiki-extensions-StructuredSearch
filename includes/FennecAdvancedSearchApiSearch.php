@@ -42,8 +42,7 @@ class FennecAdvancedSearchApiSearch extends \ApiBase {
 		$params = $this->extractRequestParams();
 		$params['action'] = 'opensearch';
 		if(!isset($params['namespace']) || !$params['namespace']){
-			$namespaces = array_values($this->namespaceIds);
-			$namespaces = array_filter($namespaces, function($val){return !($val%2) && $val >= 0;});
+			$namespaces = self::getDefinedNamespaces();
 			$params['namespace'] = implode('|',$namespaces);
 		}
 		//die(print_r($params,1));
