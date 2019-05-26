@@ -31,5 +31,8 @@
 	"eslintIgnore": [
 		"coverage",
 		"vendor"
-	]
+	],
+	"dependencies": {
+		"fs-extra": "^8.0.1"
+	}
 }
