@@ -37,10 +37,10 @@ class FormInput extends Component {
 	}
 	checkboxChanges( fieldName, value, event){
 		if(event.target.checked){
-			FormMain.addValue( fieldName, value.value );
+			FormMain.addValue( fieldName, value );
 		}
 		else{
-			FormMain.removeValue( fieldName, value.value )
+			FormMain.removeValue( fieldName, value )
 		}
 		//console.log(fieldName, value, event.target.checked,"fieldName, value, event");
 	}
@@ -84,7 +84,7 @@ class FormInput extends Component {
 		this.valueChanged( fieldName, event.target.value);
 	}
 	radioChanges( fieldName, value, event){
-		this.valueChanged( fieldName, value.value);
+		this.valueChanged( fieldName, value);
 	}
 	getInputHtml(){
 		if(!this.state.inputData || !Object.keys( this.state.inputData ).length){
