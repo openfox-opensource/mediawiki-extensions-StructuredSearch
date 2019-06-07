@@ -58,6 +58,12 @@
 	"Hooks": {
 		"FennecAdvancedSearchParams": [
         	"MediaWiki\\Extension\\FennecAdvancedSearch\\FennecAdvancedSearchHooks::onFennecAdvancedSearchParams"
+    	],
+    	"SearchIndexFields": [
+        	"MediaWiki\\Extension\\FennecAdvancedSearch\\FennecAdvancedSearchHooks::onSearchIndexFields"
+    	],
+    	"SearchDataForIndex": [
+        	"MediaWiki\\Extension\\FennecAdvancedSearch\\FennecAdvancedSearchHooks::onSearchDataForIndex"
     	]
 	},
 	"ExtensionMessagesFiles": {

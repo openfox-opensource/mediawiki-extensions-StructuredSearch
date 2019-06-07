@@ -2,6 +2,9 @@
 
 namespace MediaWiki\Extension\FennecAdvancedSearch; 
 
+use CirrusSearch\Search\ShortTextIndexField;
+use FennecAdvancedSearchApiSearch;
+
 class FennecAdvancedSearchHooks{
 	static public function categoryExtract( &$params ){
 		$params['category'] = [
@@ -94,6 +97,49 @@ class FennecAdvancedSearchHooks{
 		}
 		return $returnedNamespaces;
 	}
+	/**
+	 * Search index fields hook handler
+	 * Adds our stuff to CirrusSearch/Elasticsearch schema
+	 *
+	 * @param array $fields
+	 * @param SearchEngine $engine
+	 */
+	public static function onSearchIndexFields( array &$fields, SearchEngine $engine ) {
+		
+		if ( $engine instanceof \CirrusSearch ) {
+			/**
+			 * @var \CirrusSearch $engine
+			 */
+
+			$fields['tryToText'] = ShortTextIndexField( 'tryToText', 'tryToText',$engine->getConfig());
+			//$fields['tryToText'] = CoordinatesIndexField::build( 'coordinates', $engine->getConfig(), $engine );
+		} 
+	}
+
+	/**
+	 * SearchDataForIndex hook handler
+	 *
+	 * @param array[] $fields
+	 * @param ContentHandler $contentHandler
+	 * @param WikiPage $page
+	 * @param ParserOutput $parserOutput
+	 * @param SearchEngine $searchEngine
+	 */
+	public static function onSearchDataForIndex(
+		array &$fields,
+		ContentHandler $contentHandler,
+		WikiPage $page,
+		ParserOutput $parserOutput,
+		SearchEngine $searchEngine
+	) {
+		
+			$vals = FennecAdvancedSearchApiSearch::getResultsAdditionalFieldsFromTitles( [$page->getTitle()->getPrefixedDBkey()]);
+			$fields['tryToText'] = $vals
+		}
+	}
+	public static function onCirrusSearchMappingConfig( array &$config, MappingConfigBuilder $builder ) { 
+		
+	 }
 	static public function onFennecAdvancedSearchParams( &$params ){
 		$params['search'] = [
 			'label' => wfMessage('fennecadvancedsearch-search-label'),

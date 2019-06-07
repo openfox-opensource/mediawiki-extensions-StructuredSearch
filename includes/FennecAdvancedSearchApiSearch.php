@@ -70,12 +70,15 @@ class FennecAdvancedSearchApiSearch extends \ApiBase {
 
 
 	protected function getResultsAdditionalFields( $results) {
+		return self::getResultsAdditionalFieldsFromTitles( $results[1]);
+	}
+	public static function getResultsAdditionalFieldsFromTitles( $titles ) {
 		//die(print_r($namespaceIds));
 		$conf = \MediaWiki\MediaWikiServices::getInstance()->getMainConfig();
 		$wgArticlePath = $conf->get('ArticlePath');
 		$resultsTitlesForCheck = [];
 		$resultsTitlesAliases = [];
-		foreach ($results[1] as $key => $val) {
+		foreach ($titles as $key => $val) {
 			$valSplitted = explode(':', $val);
 			if( count($valSplitted) > 1 ){
 				$namespace = array_shift($valSplitted);
