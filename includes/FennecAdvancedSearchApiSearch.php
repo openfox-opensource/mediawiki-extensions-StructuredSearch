@@ -28,8 +28,7 @@ class FennecAdvancedSearchApiSearch extends \ApiBase {
 	}
 
 	public function execute() {
-		global $wgContLang;
-		$this->namespaceIds = $wgContLang->getNamespaceIds();
+		
 		if('127.0.0.1' == $_SERVER["REMOTE_ADDR"]){
 			header("Access-Control-Allow-Origin: *");
 		}
@@ -37,13 +36,17 @@ class FennecAdvancedSearchApiSearch extends \ApiBase {
 		
 		$result->addValue( NULL, 'FennecAdvancedSearchSearch', $this->getSearchParams() );
 	}
-
+	public static function getNamespaces(){
+		global $wgContLang;
+		return $wgContLang->getNamespaceIds();
+	}
 	public function getSearchParams() {
 		$params = $this->extractRequestParams();
 		$params['action'] = 'opensearch';
 		if(!isset($params['namespace']) || !$params['namespace']){
-			$namespaces = self::getDefinedNamespaces();
-			$params['namespace'] = implode('|',$namespaces);
+			$namespaces = FennecAdvancedSearchHooks::getDefinedNamespaces();
+		//print_r([$namespaces, $params]);
+			$params['namespace'] = implode('|', array_column($namespaces, 'value'));
 		}
 		//die(print_r($params,1));
 		$callApiParams = new \DerivativeRequest(
@@ -73,17 +76,18 @@ class FennecAdvancedSearchApiSearch extends \ApiBase {
 		return self::getResultsAdditionalFieldsFromTitles( $results[1]);
 	}
 	public static function getResultsAdditionalFieldsFromTitles( $titles ) {
-		//die(print_r($namespaceIds));
 		$conf = \MediaWiki\MediaWikiServices::getInstance()->getMainConfig();
 		$wgArticlePath = $conf->get('ArticlePath');
 		$resultsTitlesForCheck = [];
 		$resultsTitlesAliases = [];
+		$namespaceIds = self::getNamespaces();
+		//die(print_r($namespaceIds));
 		foreach ($titles as $key => $val) {
 			$valSplitted = explode(':', $val);
 			if( count($valSplitted) > 1 ){
 				$namespace = array_shift($valSplitted);
 				$namespace = preg_replace('/\s/','_',$namespace);
-				array_unshift($valSplitted, $this->namespaceIds[$namespace]);
+				array_unshift($valSplitted, $namespaceIds[$namespace]);
 			} 
 			else{
 				//for main
@@ -95,11 +99,12 @@ class FennecAdvancedSearchApiSearch extends \ApiBase {
 					'title_dash'=> preg_replace('/\s/','_',$val), 
 					'page_link'=> preg_replace('/\$1/',preg_replace('/\s/','_',$val),$wgArticlePath), 
 					'namespace' => $namespace,
-					'namespaceId' => $this->namespaceIds[$namespace],
+					'namespaceId' => $namespaceIds[$namespace],
 					'title_key' => $titleKey,
 			];
 			$resultsTitlesAliases[$val] = &$resultsTitlesForCheck[$titleKey]; 
 		}
+		//die(print_r($resultsTitlesAliases));
 
 		// $results_with_data = array_map(function( $val ){
 		// 	return [$val=>[
@@ -121,15 +126,18 @@ class FennecAdvancedSearchApiSearch extends \ApiBase {
 				'page' => array( 'INNER JOIN', array( 'page_id=pp_page' ) )
 			)
 		);
-		//print_r('page_title IN (' . $dbr->makeList( $resultsTitlesForCheck ) . ')');
+		//die(print_r('page_title IN (' . $dbr->makeList( array_keys($resultsTitlesForCheck )) . ')'));
 		while ( $row = $dbr->fetchObject( $res ) ) {
 			//print_r($row);
 			$resultsTitlesForCheck[$row->page_title]['image'] =$row->pp_value ;
 		}
+		//die(print_r($resultsTitlesForCheck));
 		$dbrCargo = \CargoUtils::getDB();
 		$allFieldsByTables = self::getFieldsByTable( );
 		//no normal way to find 
 		foreach ($allFieldsByTables as $tableName => $fields) {
+			$allSubtablesOfFields = self::getSubtablesOfFields( $tableName );
+			//die(print_r($allSubtablesOfFields));
 			$fieldsDeclared = self::getFieldsNames($dbrCargo, $tableName);
 			//die(in_array('jhkjhj', [0], TRUE));
 			$fields = array_map(function($val) use ($fieldsDeclared){
@@ -143,17 +151,27 @@ class FennecAdvancedSearchApiSearch extends \ApiBase {
 				}
 				return $val;
 			}, $fields);
-			//die($tableName. print_r($fields).print_r($fieldsDeclared) . '_pageName IN (' . $dbr->makeList( array_column( $resultsTitlesForCheck,'title' )) . ')' );
+			//die($tableName. print_r($fields,1). '_pageName IN (' . $dbr->makeList( array_column( $resultsTitlesForCheck,'title' )) . ')' );
 			$fields[] = '_pageName';
+			$fields[] = '_ID';
 			$res = $dbrCargo->select( $tableName, $fields, [
 				'_pageName IN (' . $dbr->makeList( array_column( $resultsTitlesForCheck,'title' )) . ')' 
 			]);
 			while ( $row = $dbrCargo->fetchObject( $res ) ) {
+				//print_r($row);
 				$addToArr = &$resultsTitlesAliases[$row->_pageName];
 				foreach ($row as $key => $value) {
 					//echo "$key $value<br/>";
 					$keySplitted = explode('__', $key);
-					$addToArr[$keySplitted[0]] = $value;
+					if(isset( $keySplitted[1] ) && $keySplitted[1] == 'full'){
+						$subTableName = $tableName . '__' . $keySplitted[0];
+						if(in_array($subTableName, $allSubtablesOfFields)){
+							$addToArr[$keySplitted[0]] = self::getFieldFromSubtable( $subTableName, $row);
+						}
+					}
+					if(!isset($addToArr[$keySplitted[0]])){
+						$addToArr[$keySplitted[0]] = $value;
+					}
 				}
 				//print_r([$row]);
 				//unset( $row['_pageName']);
@@ -162,6 +180,35 @@ class FennecAdvancedSearchApiSearch extends \ApiBase {
 		}
 		//die(print_r($resultsTitlesForCheck));
 		return $resultsTitlesForCheck;
+	}
+	public static function getFieldFromSubtable( $subtableName, $row ) {
+		$results = [];
+		$dbrCargo = \CargoUtils::getDB();
+		$res = $dbrCargo->select($subtableName, ['*'],[
+			'_rowID' => $row->_ID
+		]);
+		while ( $row = $dbrCargo->fetchObject( $res ) ) {
+			$results[] = $row->_value;
+		}
+		return $results;
+	}
+	public static function getSubtablesOfFields( $tableName ) {
+		$conf = \MediaWiki\MediaWikiServices::getInstance()->getMainConfig();
+		$dbr = wfGetDB( DB_REPLICA );
+		$dbrCargo = \CargoUtils::getDB();
+		$res = $dbr->select( 'cargo_tables', array( 'field_tables' ),
+			array( 'main_table' => $tableName ) );
+		$row = $dbrCargo->fetchRow( $res );
+		$tables = unserialize($row[0]);
+		$allDefinedTables = $dbrCargo->query( 'show tables' );
+		$tablesFromShow = [];
+		$cargoPrefix = $conf->get('DBprefix') . 'cargo__';
+		while ( $table = $dbr->fetchObject( $allDefinedTables ) ) {
+			$tableAsArr = ( array) $table;
+			$tablesFromShow[] = preg_replace('/' . $cargoPrefix .'/','',array_pop($tableAsArr));
+		}
+		return array_intersect($tables, $tablesFromShow);
+//		return $tables;
 	}
 	protected function getParamDescription() {
 		$searchParams = FennecAdvancedSearchApiParams::getSearchParams();

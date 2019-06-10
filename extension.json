@@ -75,7 +75,8 @@
 		"MediaWiki\\Extension\\FennecAdvancedSearch\\FennecAdvancedSearchApiSearch": "includes/FennecAdvancedSearchApiSearch.php",
 		"MediaWiki\\Extension\\FennecAdvancedSearch\\SpecialFennecAdvancedSearch": "includes/SpecialFennecAdvancedSearch.php",
 		"MediaWiki\\Extension\\FennecAdvancedSearch\\FennecAdvancedSearchApiAutocomplete": "includes/FennecAdvancedSearchApiAutocomplete.php",
-		"MediaWiki\\Extension\\FennecAdvancedSearch\\FennecAdvancedSearchHooks": "includes/FennecAdvancedSearchHooks.php"
+		"MediaWiki\\Extension\\FennecAdvancedSearch\\FennecAdvancedSearchHooks": "includes/FennecAdvancedSearchHooks.php",
+		"MediaWiki\\Extension\\FennecAdvancedSearch\\InCargoFeature": "includes/InCargoFeature.php"
 	},
 	"AutoloadNamespaces": {
 		"MediaWiki\\Extension\\FennecAdvancedSearch\\": "includes/"
@@ -85,7 +86,7 @@
 		"fennecadvancedsearchautocomplete": "MediaWiki\\Extension\\FennecAdvancedSearch\\FennecAdvancedSearchApiAutocomplete",
 		"fennecadvancedsearchsearch": "MediaWiki\\Extension\\FennecAdvancedSearch\\FennecAdvancedSearchApiSearch"
 	},
-	"ContentHandlers": {
+	"_ContentHandlers": {
 		"xmldata": "MediaWiki\\Extension\\FennecAdvancedSearch\\XmlContentHandler"
 	},
 	"SpecialPages": {

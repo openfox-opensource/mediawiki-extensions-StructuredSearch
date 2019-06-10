@@ -3,7 +3,11 @@
 namespace MediaWiki\Extension\FennecAdvancedSearch; 
 
 use CirrusSearch\Search\ShortTextIndexField;
-use FennecAdvancedSearchApiSearch;
+use CirrusSearch\Search\CirrusSearchIndexFieldFactory;
+use SearchEngine;
+use ParserOutput;
+use WikiPage;
+use ContentHandler;
 
 class FennecAdvancedSearchHooks{
 	static public function categoryExtract( &$params ){
@@ -97,7 +101,7 @@ class FennecAdvancedSearchHooks{
 		}
 		return $returnedNamespaces;
 	}
-	/**
+/**
 	 * Search index fields hook handler
 	 * Adds our stuff to CirrusSearch/Elasticsearch schema
 	 *
@@ -110,8 +114,13 @@ class FennecAdvancedSearchHooks{
 			/**
 			 * @var \CirrusSearch $engine
 			 */
-
-			$fields['tryToText'] = ShortTextIndexField( 'tryToText', 'tryToText',$engine->getConfig());
+			$params = FennecAdvancedSearchApiParams::getSearchParams();
+			foreach ($params as $param) {
+				if(strpos($param['field'], ':')){
+					$keyForCirrus = preg_replace('/:/', '__', $param['field']);
+					$fields[$keyForCirrus] = ShortTextIndexField( $keyForCirrus, $keyForCirrus,$engine->getConfig());
+				}
+			}
 			//$fields['tryToText'] = CoordinatesIndexField::build( 'coordinates', $engine->getConfig(), $engine );
 		} 
 	}
@@ -133,9 +142,20 @@ class FennecAdvancedSearchHooks{
 		SearchEngine $searchEngine
 	) {
 		
-			$vals = FennecAdvancedSearchApiSearch::getResultsAdditionalFieldsFromTitles( [$page->getTitle()->getPrefixedDBkey()]);
-			$fields['tryToText'] = $vals
+		$params = FennecAdvancedSearchApiParams::getSearchParams();
+		$vals = FennecAdvancedSearchApiSearch::getResultsAdditionalFieldsFromTitles( [$page->getTitle()->getPrefixedDBkey()]);
+		$vals = array_pop( $vals );
+		//print_r($vals);
+		
+		foreach ($params as $param) {
+			if(strpos($param['field'], ':')){
+				$keyForCirrus = preg_replace('/:/', '__', $param['field']);
+				$fieldName = explode(':',$param['field']);
+				//print_r($param['field']);
+				$fields[ $keyForCirrus ] = $vals[ $fieldName[1] ];
+			}
 		}
+
 	}
 	public static function onCirrusSearchMappingConfig( array &$config, MappingConfigBuilder $builder ) { 
 		
