@@ -31,10 +31,7 @@ body {
   border: 1px solid;
   padding: 3px 10px;
 }
-.range-input{
-  display: inline-block;
-  width: 45px;
-}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);

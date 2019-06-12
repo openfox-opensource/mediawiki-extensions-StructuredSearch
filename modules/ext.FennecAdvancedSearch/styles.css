@@ -23,3 +23,7 @@
   border: 1px solid;
   padding: 3px 10px;
 }
+.range-input{
+  display: inline-block;
+  width: 45px;
+}
