@@ -4,6 +4,7 @@ namespace MediaWiki\Extension\FennecAdvancedSearch;
 
 use CirrusSearch\Search\ShortTextIndexField;
 use CirrusSearch\Search\CirrusSearchIndexFieldFactory;
+use CirrusSearch\SearchConfig;
 use SearchEngine;
 use ParserOutput;
 use WikiPage;
@@ -12,7 +13,7 @@ use ContentHandler;
 class FennecAdvancedSearchHooks{
 	static public function categoryExtract( &$params ){
 		$params['category'] = [
-			'label' => wfMessage('fennecadvancedsearch-category-label'),
+			'label' => wfMessage('fennecadvancedsearch-category-label')->text(),
         	'field' => 'category',
 	        'widget' => [
 	            'type' => 'autocomplete',
@@ -50,7 +51,7 @@ class FennecAdvancedSearchHooks{
 	static public function namespacesExtract( &$params ){
 		
 		$params['namespace'] = [
-			'label' => wfMessage('fennecadvancedsearch-namespace-label'),
+			'label' => wfMessage('fennecadvancedsearch-namespace-label')->text(),
         	'field' => 'namespace',
 	        'widget' => [
 	            'type' => 'checkboxes',
@@ -95,7 +96,7 @@ class FennecAdvancedSearchHooks{
 				continue;
 			}
 			$returnedNamespaces[] = [
-				'label' => $key ? $namespace['name'] : wfMessage('fennecadvancedsearch-main-namesapce'),
+				'label' => $key ? $namespace['name'] : wfMessage('fennecadvancedsearch-main-namesapce')->text(),
 				'value' => $key
 			];
 		}
@@ -118,7 +119,7 @@ class FennecAdvancedSearchHooks{
 			foreach ($params as $param) {
 				if(strpos($param['field'], ':')){
 					$keyForCirrus = preg_replace('/:/', '__', $param['field']);
-					$fields[$keyForCirrus] = ShortTextIndexField( $keyForCirrus, $keyForCirrus,$engine->getConfig());
+					$fields[$keyForCirrus] = new ShortTextIndexField( $keyForCirrus, $keyForCirrus,$engine->getConfig());
 				}
 			}
 			//$fields['tryToText'] = CoordinatesIndexField::build( 'coordinates', $engine->getConfig(), $engine );
@@ -143,26 +144,34 @@ class FennecAdvancedSearchHooks{
 	) {
 		
 		$params = FennecAdvancedSearchApiParams::getSearchParams();
-		$vals = FennecAdvancedSearchApiSearch::getResultsAdditionalFieldsFromTitles( [$page->getTitle()->getPrefixedDBkey()]);
+		$vals = FennecAdvancedSearchApiSearch::getResultsAdditionalFieldsFromTitles( [$page->getTitle()->getPrefixedText()]);
 		$vals = array_pop( $vals );
-		//print_r($vals);
+				print_r($vals);
 		
 		foreach ($params as $param) {
 			if(strpos($param['field'], ':')){
 				$keyForCirrus = preg_replace('/:/', '__', $param['field']);
 				$fieldName = explode(':',$param['field']);
-				//print_r($param['field']);
-				$fields[ $keyForCirrus ] = $vals[ $fieldName[1] ];
+				$fields[ $keyForCirrus ] = isset($vals[ $fieldName[1] ]) ? $vals[ $fieldName[1] ] : '';
 			}
 		}
+		print_r($fields);
 
 	}
 	public static function onCirrusSearchMappingConfig( array &$config, MappingConfigBuilder $builder ) { 
 		
-	 }
+	}
+	/**
+	 * Add cargo search config
+	 * @param SearchConfig $config
+	 * @param array $features
+	 */
+	public static function onCirrusSearchAddQueryFeatures( SearchConfig $config, array &$features ) {
+		$features[] = new InCargoFeature();
+	}
 	static public function onFennecAdvancedSearchParams( &$params ){
 		$params['search'] = [
-			'label' => wfMessage('fennecadvancedsearch-search-label'),
+			'label' => wfMessage('fennecadvancedsearch-search-label')->text(),
         	'field' => 'search',
 	        'widget' => [
 	            'type' => 'text',
@@ -203,6 +212,12 @@ class FennecAdvancedSearchHooks{
 				}
 			}
 		return $newCats;	
+	}
+	static public function onBeforePageDisplay(\OutputPage $out, \Skin $skin ){
+		$title = $out->getTitle();
+		//FennecAdvancedSearchApiSearch::getResultsAdditionalFieldsFromTitles([$title]);
+		// $b = new InCargoFeature();
+		// print_r($b->_getKeywords());
 	}
 	static public function getCategiresFromDb( $term ){
 		$dbr = wfGetDB( DB_REPLICA );

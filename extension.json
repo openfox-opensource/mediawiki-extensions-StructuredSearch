@@ -62,6 +62,12 @@
     	"SearchIndexFields": [
         	"MediaWiki\\Extension\\FennecAdvancedSearch\\FennecAdvancedSearchHooks::onSearchIndexFields"
     	],
+    	"BeforePageDisplay": [
+            "MediaWiki\\Extension\\FennecAdvancedSearch\\FennecAdvancedSearchHooks::onBeforePageDisplay"
+        ],
+        "CirrusSearchAddQueryFeatures": [
+            "MediaWiki\\Extension\\FennecAdvancedSearch\\FennecAdvancedSearchHooks::onCirrusSearchAddQueryFeatures"
+        ],
     	"SearchDataForIndex": [
         	"MediaWiki\\Extension\\FennecAdvancedSearch\\FennecAdvancedSearchHooks::onSearchDataForIndex"
     	]

@@ -98,7 +98,7 @@ class FennecAdvancedSearchApiSearch extends \ApiBase {
 					'title'=>$val, 
 					'title_dash'=> preg_replace('/\s/','_',$val), 
 					'page_link'=> preg_replace('/\$1/',preg_replace('/\s/','_',$val),$wgArticlePath), 
-					'namespace' => $namespace,
+					'namespace' => isset($namespace) ? $namespace : '', 
 					'namespaceId' => $namespaceIds[$namespace],
 					'title_key' => $titleKey,
 			];
@@ -151,14 +151,14 @@ class FennecAdvancedSearchApiSearch extends \ApiBase {
 				}
 				return $val;
 			}, $fields);
-			//die($tableName. print_r($fields,1). '_pageName IN (' . $dbr->makeList( array_column( $resultsTitlesForCheck,'title' )) . ')' );
 			$fields[] = '_pageName';
 			$fields[] = '_ID';
-			$res = $dbrCargo->select( $tableName, $fields, [
-				'_pageName IN (' . $dbr->makeList( array_column( $resultsTitlesForCheck,'title' )) . ')' 
-			]);
+			$conditions = [];
+			$conditions[] = '_pageName IN (' . $dbr->makeList( array_column( $resultsTitlesForCheck,'title' )) . ')';
+			$res = $dbrCargo->select( $tableName, $fields, $conditions);
+			//print_r($conditions);
 			while ( $row = $dbrCargo->fetchObject( $res ) ) {
-				//print_r($row);
+				print_r([$row,'d']);
 				$addToArr = &$resultsTitlesAliases[$row->_pageName];
 				foreach ($row as $key => $value) {
 					//echo "$key $value<br/>";
@@ -178,7 +178,8 @@ class FennecAdvancedSearchApiSearch extends \ApiBase {
 				//$addToArr = array_merge($addToArr, (array)$row);
 			}
 		}
-		//die(print_r($resultsTitlesForCheck));
+		//die($tableName . '  >>  ' . print_r($conditions));
+		//die(print_r([$resultsTitlesForCheck,"ss"]));
 		return $resultsTitlesForCheck;
 	}
 	public static function getFieldFromSubtable( $subtableName, $row ) {

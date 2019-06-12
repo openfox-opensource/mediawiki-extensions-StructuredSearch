@@ -5,7 +5,8 @@ namespace MediaWiki\Extension\FennecAdvancedSearch;
 use Config;
 use CirrusSearch\Search\SearchContext;
 use Title;
-
+use CirrusSearch\Query\SimpleKeywordFeature;
+use CirrusSearch\Query\QueryHelper;
 /**
 
  */
@@ -18,20 +19,23 @@ class InCargoFeature extends SimpleKeywordFeature {
 	/**
 	 * @param Config $config
 	 */
-	public function __construct( Config $config ) {
-		$this->maxConditions = $config->get( 'CirrusSearchMaxIncategoryOptions' );
+	public function __construct(  ) {
 	}
+	// public function _getKeywords() {
+	// 	return $this->getKeywords();
+	// }
 
 	/**
 	 * @return string[]
 	 */
 	protected function getKeywords() {
-		$params = $config->get( 'FennecAdvancedSearchParams' );
+		$config = \MediaWiki\MediaWikiServices::getInstance()->getMainConfig();
+		$params = FennecAdvancedSearchApiParams::getSearchParams();//$config->get( 'FennecAdvancedSearchParams' );
 		$keywords = [];
 		foreach ($params as $param) {
 			$fieldName = $param['field'];
-			if($fieldName, strpos(':') ){
-				$keywords[] = preg_replace('/:/', '---', $fieldName);
+			if( strpos($fieldName,':') ){
+				$keywords[] = 'in_' . preg_replace('/:/', '__', $fieldName);
 			}
 		}
 		return $keywords;
@@ -49,10 +53,11 @@ class InCargoFeature extends SimpleKeywordFeature {
 	 *  string.
 	 */
 	protected function doApply( SearchContext $context, $key, $value, $quotedValue, $negated ) {
-		$cargoParts = explode( ':', $value );
-		$tableDef = $cargoParts[0];
+		//die($key . $value);
+		//$cargoParts = explode( '__', $key );
+		$tableDef = preg_replace('/in_/', '', $key); //cargoParts[0];
 		//list( $tableName, $fieldName)
-		$values = explode( '|',$cargoParts[1]);
+		$values = explode( '|',$value);
 		//die(print_r($categories));
 		$filter = $this->matchCargoQuery($tableDef, $values );
 		if ( $filter === null ) {
@@ -77,7 +82,7 @@ class InCargoFeature extends SimpleKeywordFeature {
 		$filter = new \Elastica\Query\BoolQuery();
 		
 		
-		foreach ( $value as $values ) {
+		foreach ( $values as $value ) {
 			$filter->addShould( QueryHelper::matchPage( $tableDef . '.lowercase_keyword', $value ) );
 		}
 
