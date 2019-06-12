@@ -41,14 +41,27 @@ class FennecAdvancedSearchApiSearch extends \ApiBase {
 		return $wgContLang->getNamespaceIds();
 	}
 	public function getSearchParams() {
+			
 		$params = $this->extractRequestParams();
-		$params['action'] = 'opensearch';
 		if(!isset($params['namespace']) || !$params['namespace']){
 			$namespaces = FennecAdvancedSearchHooks::getDefinedNamespaces();
 		//print_r([$namespaces, $params]);
 			$params['namespace'] = implode('|', array_column($namespaces, 'value'));
 		}
-		//die(print_r($params,1));
+		$params = self::extractSearchStringFromFields($params);
+		$srParams = [];
+		
+
+		foreach ($params as $pKey => $pValue) {
+			if( !in_array($pKey, ['action','list'])){
+				$srParams['sr' . $pKey ] = $pValue;
+			}
+		}
+		$params = $srParams;
+		$params['action'] = 'query';
+		$params['list'] = 'search';
+		
+		//die(http_build_query($params));
 		$callApiParams = new \DerivativeRequest(
 		    $this->getRequest(),
 			    $params
@@ -59,9 +72,38 @@ class FennecAdvancedSearchApiSearch extends \ApiBase {
 
 		
 		$results = $api->getResult()->getResultData();
+		//die(print_r($results));
 		//$results = $this->filterResults($results);
 		return $this->getResultsAdditionalFields($results);
 	}	
+	public static function extractSearchStringFromFields( $params ) {
+		$searchParamsKeys = array_column( FennecAdvancedSearchApiParams::getSearchParams(), 'field');
+		//print_r($searchParamsKeys);
+		foreach ($params as $pKey => $pValue) {
+			//print_r([in_array($pKey, $searchParamsKeys), self::isSearchableField( $pKey )]);
+			if( in_array($pKey, $searchParamsKeys) && self::isSearchableField( $pKey ) && $pValue){
+				$queryValue = is_array($pValue) ? implode("|", $pValue) : $pValue;
+				$queryValue = '"' . $queryValue .  '"';
+				$params['search'] .= ' ' . self::getFeatureKey( $pKey) . ':' . $queryValue;
+				unset($params[$pKey]);
+			}
+			else if( !$pValue ){
+				unset($params[$pKey]);
+
+			}
+		}
+		//die();
+		return $params;
+	}
+	public static function isSearchableField( $key ) {
+		return 'category' == $key || self::isCargoField( $key );
+	}
+	public static function isCargoField( $key ) {
+		return strpos($key, ':');
+	}
+	public static function getFeatureKey( $key ) {
+		return 'in' . (self::isCargoField($key) ? '_' : '')  . preg_replace('/:/', '__', $key);
+	}
 	protected function getAllowedParams() {
 		$searchParams = FennecAdvancedSearchApiParams::getSearchParams();
 		$newParams = $this->buildCommonApiParams();
@@ -73,7 +115,9 @@ class FennecAdvancedSearchApiSearch extends \ApiBase {
 
 
 	protected function getResultsAdditionalFields( $results) {
-		return self::getResultsAdditionalFieldsFromTitles( $results[1]);
+		$titles = array_column($results['query']['search'], 'title');
+		//die(print_r($titles));
+		return self::getResultsAdditionalFieldsFromTitles( $titles);
 	}
 	public static function getResultsAdditionalFieldsFromTitles( $titles ) {
 		if(!count($titles)){

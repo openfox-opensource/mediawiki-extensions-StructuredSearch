@@ -86,7 +86,9 @@ class FennecAdvancedSearchHooks{
 		$NSExclude = $conf->get('FennecAdvancedSearchNSExclude');
 		$returnedNamespaces = [];
 		foreach ($namespaces as $key => $namespace) {
-
+			if( $key < 0 ){
+				continue;
+			}
 			//filter excluded
 			if( in_array($key, $NSExclude)){
 				continue;
