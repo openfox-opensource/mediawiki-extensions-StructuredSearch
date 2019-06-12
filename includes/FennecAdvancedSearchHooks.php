@@ -121,7 +121,9 @@ class Hooks{
 			foreach ($params as $param) {
 				if( Utils::isCargoField($param['field']) ){
 					$keyForCirrus = Utils::replaceCargoFieldToElasticField( $param['field']);
-					$fields[$keyForCirrus] = new ShortTextIndexField( $keyForCirrus, $keyForCirrus,$engine->getConfig());
+					$builder = new CirrusSearchIndexFieldFactory($engine->getConfig());
+
+					$fields[$keyForCirrus] = 'range' == $param['widget']['type'] ? $builder->newLongField($keyForCirrus) : $builder->newStringField($keyForCirrus);
 				}
 			}
 			//$fields['tryToText'] = CoordinatesIndexField::build( 'coordinates', $engine->getConfig(), $engine );
@@ -146,7 +148,7 @@ class Hooks{
 	) {
 		
 		$params = Utils::getSearchParams();
-		$vals = FennecAdvancedSearchApiSearch::getResultsAdditionalFieldsFromTitles( [$page->getTitle()->getPrefixedText()]);
+		$vals = ApiSearch::getResultsAdditionalFieldsFromTitles( [$page->getTitle()->getPrefixedText()]);
 		$vals = array_pop( $vals );
 				print_r($vals);
 		

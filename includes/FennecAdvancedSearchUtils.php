@@ -92,6 +92,9 @@ class Utils{
 	public static function replaceCargoFieldToElasticField( $field ) {
 		return preg_replace('/:/', '__',$field);
 	}
+	public static function replaceElasticFieldToCargoField( $field ) {
+		return preg_replace('/__/', ':',$field);
+	}
 	public static function isSearchableField( $key ) {
 		return 'category' == $key || self::isCargoField( $key );
 	}

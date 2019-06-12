@@ -30,7 +30,8 @@ class InCargoFeature extends SimpleKeywordFeature {
 	 */
 	protected function getKeywords() {
 		$config = \MediaWiki\MediaWikiServices::getInstance()->getMainConfig();
-		$params = Utils::getSearchParams();//$config->get( 'FennecAdvancedSearchParams' );
+		$params = Utils::getSearchParams();
+
 		$keywords = [];
 		foreach ($params as $param) {
 			$fieldName = $param['field'];
@@ -60,7 +61,21 @@ class InCargoFeature extends SimpleKeywordFeature {
 		//list( $tableName, $fieldName)
 		$values = explode( '|',$value);
 		//die(print_r($categories));
-		$filter = $this->matchCargoQuery($tableDef, $values );
+		$params = Utils::getSearchParams();
+		$paramKey = Utils::replaceElasticFieldToCargoField( $tableDef );
+		$param = isset( $params[ $paramKey ]) ? $params[ $paramKey ]: null;
+		$paramQueryType = $param && isset( $param['widget']['type'] ) ? $param['widget']['type'] : '';
+		//die($paramQueryType . 'fff'. $paramKey. print_r($params));
+		switch ( $paramQueryType ) {
+			case 'range':
+				$filter = $this->matchCargoRange($tableDef, $values );
+				break;
+			
+			default:
+				$filter = $this->matchCargoQuery($tableDef, $values );
+				break;
+		}
+		
 		if ( $filter === null ) {
 			$context->setResultsPossible( false );
 			$context->addWarning(
@@ -92,6 +107,21 @@ class InCargoFeature extends SimpleKeywordFeature {
 			$filter->addShould( $match );
 		}
 
+		return $filter;
+	}
+	private function matchCargoRange(string $tableDef, array $rangeArgs ) {
+		// $rangeArgs = array_map(function( $val ){
+		// 	return (integer) $val;
+		// },$rangeArgs);
+		$rangeArgs = [
+			'gte' =>(integer) $rangeArgs[0],
+			'lte' => (integer)$rangeArgs[1],
+		];
+		// var_dump([$rangeArgs,$tableDef]);
+		// die();
+		$filter = new \Elastica\Query\BoolQuery();
+		$range = new \Elastica\Query\Range($tableDef, $rangeArgs);
+		$filter->addShould( $range );
 		return $filter;
 	}
 }
