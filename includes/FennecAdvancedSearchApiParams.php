@@ -34,6 +34,7 @@ class ApiParams extends \ApiBase {
 		
 		$result->addValue( NULL, 'params', Utils::getSearchParams() );
 		$result->addValue( NULL, 'templates', self::getResultsTemplates() );
+		$result->addValue( NULL, 'translations', self::getTranslates() );
 	}
 
 	
@@ -42,6 +43,17 @@ class ApiParams extends \ApiBase {
 		$templates = $conf->get('FennecAdvancedSearchResultsTemplates');
 		return $templates;
 	}	
+	public static function getTranslates() {
+		$translateStrs = [
+			"fennecadvancedsearch-from-label",
+			"fennecadvancedsearch-to-label",
+		];
+		$translations = [];
+		foreach ($translateStrs as $tStr) {
+			$translations[$tStr] = wfMessage($tStr)->text();
+		}
+		return $translations;
+	}
 	protected function getAllowedParams() {
 		return array(
 		);

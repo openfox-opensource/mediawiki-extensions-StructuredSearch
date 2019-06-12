@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import FormMain from './FormMain'
 import ajaxCall from './ajaxCall'
+import translate from './translations'
 import Select from 'react-select';
 import Autocomplete from 'react-autocomplete';
 
@@ -13,9 +14,17 @@ class FormInput extends Component {
 			filteredOptions : props.inputData.widget.options|| [],
 			options : props.inputData.widget.options || [],
 			typed:'' };
+		
 	}
 	componentDidMount() {
-	  
+		for(let key of ['fennecadvancedsearch-to-label','fennecadvancedsearch-from-label']){
+			translate(key).then( val => {
+				let stateToChange = {};
+				stateToChange[key] = val;
+				this.setState(stateToChange);
+
+			});
+		}
 	}
 	extractOptions( options){
 		let optionsStructured = [];
@@ -152,16 +161,16 @@ class FormInput extends Component {
 	      />
 	}
 	rangeBuild (inputData){
-		let fromText = window.mw.message('fennecadvancedsearch-from-label'),
-			toText = window.mw.message('fennecadvancedsearch-to-label');
+		let fennecadvancedsearch_from_label = this.state['fennecadvancedsearch-from-label'],
+			fennecadvancedsearch_to_label = this.state['fennecadvancedsearch-to-label'];
 		return   <span>
-					<span>{fromText}</span>
+					<span>{fennecadvancedsearch_from_label}</span>
 					<input 
 						type="text" 
 						className="range-input range-input-from"
 						name={inputData.field} 
 						onChange={this.rangeChanges.bind(this, inputData.field,0)} />
-					<span>{toText}</span>
+					<span>{fennecadvancedsearch_to_label}</span>
 					<input 
 						type="text" 
 						className="range-input range-input-to"
