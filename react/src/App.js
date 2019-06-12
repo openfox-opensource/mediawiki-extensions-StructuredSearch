@@ -51,7 +51,7 @@ class App extends Component {
       for(let resultKey of Object.keys(this.state.results)){
         let result = this.state.results[resultKey];
         results.push(this.getResultJsx( result ) )
-        //console.log("result",result);
+        console.log("result",result);
       }
       //  console.log("results",results);
     }

@@ -33,7 +33,7 @@ class ApiParams extends \ApiBase {
 		$result = $this->getResult();
 		
 		$result->addValue( NULL, 'params', Utils::getSearchParams() );
-		$result->addValue( NULL, 'templates', Utils::getSearchParamsFiltered() );
+		$result->addValue( NULL, 'templates', self::getResultsTemplates() );
 	}
 
 	
