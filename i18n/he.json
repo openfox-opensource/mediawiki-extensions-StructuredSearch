@@ -12,5 +12,7 @@
 	"fennecadvancedsearch-main-namesapce": "ראשי",
 	"fennecadvancedsearch-search-label": "חיפוש",
 	"fennecadvancedsearch-category-label": "קטגוריות",
-	"fennecadvancedsearch-namespace-label": "סוג דף"
+	"fennecadvancedsearch-namespace-label": "סוג דף",
+	"fennecadvancedsearch-from-label": "מ",
+	"fennecadvancedsearch-to-label": "עד"
 }

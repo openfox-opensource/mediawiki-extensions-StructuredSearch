@@ -13,7 +13,7 @@ class TopBar extends Component {
     this.state = { labels: [] };
     EventEmitter.on("FormDataChanged", allData => {
       let newLabels = [];
-      console.log(this.state.inputs)
+      //console.log(this.state.inputs)
       for(let fieldKey of Object.keys(allData)){
         ;
         if(allData[fieldKey] && this.state.inputs[fieldKey] && ('autocomplete' === this.state.inputs[fieldKey].widget.type || this.state.inputs[fieldKey].withLabels) ){
@@ -50,7 +50,7 @@ class TopBar extends Component {
   }
   submitClicked(){
     let params = FormMain.getAllValuesProcessed();
-    console.log(params,'params');
+    //console.log(params,'params');
     params.action = 'fennecadvancedsearchsearch';
     let urlSuffix = this.toQueryStr( params);
     ajaxCall.get(urlSuffix).then(data=>{

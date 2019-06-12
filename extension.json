@@ -104,10 +104,12 @@
 	},
 	"ResourceModules": {
 		"ext.FennecAdvancedSearch": {
-			
-			
 			"styles": [
 				"ext.FennecAdvancedSearch/styles.css"
+			],
+			"messages" : [
+				"fennecadvancedsearch-from-label",
+				"fennecadvancedsearch-to-label"
 			]
 			
 		}

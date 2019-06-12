@@ -83,6 +83,9 @@ class FormInput extends Component {
 		this.setState({selected : value});
 		this.valueChanged( fieldName, value.value);
 	}
+	rangeChanges(  fieldName, key, event){
+		FormMain.ChangeValueByKey( fieldName, key, event.target.value );
+	}
 	inputChanges( fieldName, event){
 		this.valueChanged( fieldName, event.target.value);
 	}
@@ -104,6 +107,7 @@ class FormInput extends Component {
 				case 'checkboxes':
 				case 'autocomplete':
 				case 'radios':
+				case 'range':
 					//console.log(inputData,'inputData');
 					html = this[inputData.widget.type + 'Build']( this.state.inputData );
 					break;
@@ -146,6 +150,24 @@ class FormInput extends Component {
 	        onChange={this.selectChanged.bind(this, inputData.field)}
 	        options={options}
 	      />
+	}
+	rangeBuild (inputData){
+		let fromText = window.mw.message('fennecadvancedsearch-from-label'),
+			toText = window.mw.message('fennecadvancedsearch-to-label');
+		return   <span>
+					<span>{fromText}</span>
+					<input 
+						type="text" 
+						className="range-input range-input-from"
+						name={inputData.field} 
+						onChange={this.rangeChanges.bind(this, inputData.field,0)} />
+					<span>{toText}</span>
+					<input 
+						type="text" 
+						className="range-input range-input-to"
+						name={inputData.field} 
+						onChange={this.rangeChanges.bind(this, inputData.field,1)} />
+					</span>;
 	}
 	textBuild (inputData){
 			return   <input 

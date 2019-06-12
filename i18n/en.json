@@ -12,5 +12,7 @@
 	"fennecadvancedsearch-main-namesapce": "Main",
 	"fennecadvancedsearch-search-label": "Search",
 	"fennecadvancedsearch-category-label": "Categories",
-	"fennecadvancedsearch-namespace-label": "Page's namespace"
+	"fennecadvancedsearch-namespace-label": "Page's namespace",
+	"fennecadvancedsearch-from-label": "From",
+	"fennecadvancedsearch-to-label": "To"
 }

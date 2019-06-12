@@ -5,6 +5,13 @@ import EventEmitter from './libs/EventEmitter';
 import ReactMustache from 'react-mustache'
 import './App.css';
 
+if(!window.mw){
+  window.mw = {
+    message : function(val){
+      return val;
+    }
+  }
+}
 
 class App extends Component {
   constructor() {
@@ -15,7 +22,7 @@ class App extends Component {
   }
   componentDidMount() {
       settingsGetter.get().then(data => {
-        console.log(data.templates, data);
+        //console.log(data.templates, data);
         if( data ){
 
           this.setState({ 
@@ -32,7 +39,7 @@ class App extends Component {
   }
   getResultJsx( result ){
     let template = this.getTempalteByResult( result ); 
-    console.log(template,'template',result);
+    //console.log(template,'template',result);
     return <ReactMustache template={template} data={result} />;
   }
 
@@ -51,7 +58,7 @@ class App extends Component {
       for(let resultKey of Object.keys(this.state.results)){
         let result = this.state.results[resultKey];
         results.push(this.getResultJsx( result ) )
-        console.log("result",result);
+        //console.log("result",result);
       }
       //  console.log("results",results);
     }

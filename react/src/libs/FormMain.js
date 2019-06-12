@@ -14,6 +14,10 @@ class FormMain{
 		}
 		FormMain.fireChangeEvent();
 	}
+	static ChangeValueByKey(name, key, value){
+		FormMain.allData[ name ] = FormMain.allData[ name ] || Array(key).fill(null);
+		FormMain.allData[ name ][ key ] = value;
+	}
 	static setValue(name, value){
 		FormMain.allData[ name ] = value;
 		FormMain.fireChangeEvent();
@@ -35,7 +39,7 @@ class FormMain{
 
 		for( let dataKey of Object.keys(copyOfData)){
 			if('object' === typeof copyOfData[dataKey] && 'undefined' !== typeof copyOfData[dataKey].length){
-				copyOfData[dataKey] = copyOfData[dataKey].map(val => {return val.value});
+				copyOfData[dataKey] = copyOfData[dataKey].map(val => {return val.value || val});
 			}
 			if( 'string' != typeof copyOfData[dataKey] && copyOfData[dataKey].length){
 				copyOfData[dataKey] = copyOfData[dataKey].join('|');
