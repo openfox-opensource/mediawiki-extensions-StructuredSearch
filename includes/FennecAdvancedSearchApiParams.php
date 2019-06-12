@@ -19,7 +19,7 @@
 
 namespace MediaWiki\Extension\FennecAdvancedSearch;
 
-class FennecAdvancedSearchApiParams extends \ApiBase {
+class ApiParams extends \ApiBase {
 		public function __construct( $query, $moduleName ) {
 		parent::__construct( $query, $moduleName );
 
@@ -32,27 +32,11 @@ class FennecAdvancedSearchApiParams extends \ApiBase {
 		$params = $this->extractRequestParams();
 		$result = $this->getResult();
 		
-		$result->addValue( NULL, 'params', self::getSearchParams() );
-		$result->addValue( NULL, 'templates', self::getSearchParamsFiltered() );
+		$result->addValue( NULL, 'params', Utils::getSearchParams() );
+		$result->addValue( NULL, 'templates', Utils::getSearchParamsFiltered() );
 	}
 
-	public static function getSearchParamsFiltered() {
-		$params = self::getSearchParams();
-		foreach ($params as &$param) {
-			if( isset($param['widget']['autocomplete_callback'])){
-				unset($param['widget']['autocomplete_callback']);
-			}
-		}
-				//die(print_r($params));
-		return $params;
-	}
-	public static function getSearchParams() {
-		$conf = \MediaWiki\MediaWikiServices::getInstance()->getMainConfig();
-		$params = $conf->get('FennecAdvancedSearchParams');
-		\Hooks::run( 'FennecAdvancedSearchParams', [ &$params ] );
-		//die(print_r($params,1));
-		return $params;
-	}
+	
 	public static function getResultsTemplates() {
 		$conf = \MediaWiki\MediaWikiServices::getInstance()->getMainConfig();
 		$templates = $conf->get('FennecAdvancedSearchResultsTemplates');

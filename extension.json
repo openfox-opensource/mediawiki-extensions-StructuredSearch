@@ -57,19 +57,19 @@
 	},
 	"Hooks": {
 		"FennecAdvancedSearchParams": [
-        	"MediaWiki\\Extension\\FennecAdvancedSearch\\FennecAdvancedSearchHooks::onFennecAdvancedSearchParams"
+        	"MediaWiki\\Extension\\FennecAdvancedSearch\\Hooks::onFennecAdvancedSearchParams"
     	],
     	"SearchIndexFields": [
-        	"MediaWiki\\Extension\\FennecAdvancedSearch\\FennecAdvancedSearchHooks::onSearchIndexFields"
+        	"MediaWiki\\Extension\\FennecAdvancedSearch\\Hooks::onSearchIndexFields"
     	],
-    	"BeforePageDisplay": [
-            "MediaWiki\\Extension\\FennecAdvancedSearch\\FennecAdvancedSearchHooks::onBeforePageDisplay"
+    	"_BeforePageDisplay": [
+            "MediaWiki\\Extension\\FennecAdvancedSearch\\Hooks::onBeforePageDisplay"
         ],
         "CirrusSearchAddQueryFeatures": [
-            "MediaWiki\\Extension\\FennecAdvancedSearch\\FennecAdvancedSearchHooks::onCirrusSearchAddQueryFeatures"
+            "MediaWiki\\Extension\\FennecAdvancedSearch\\Hooks::onCirrusSearchAddQueryFeatures"
         ],
     	"SearchDataForIndex": [
-        	"MediaWiki\\Extension\\FennecAdvancedSearch\\FennecAdvancedSearchHooks::onSearchDataForIndex"
+        	"MediaWiki\\Extension\\FennecAdvancedSearch\\Hooks::onSearchDataForIndex"
     	]
 	},
 	"ExtensionMessagesFiles": {
@@ -77,20 +77,21 @@
 		"FennecAdvancedSearchMagic" : "FennecAdvancedSearch.i18n.magic.php"
 	},
 	"AutoloadClasses": {
-		"MediaWiki\\Extension\\FennecAdvancedSearch\\FennecAdvancedSearchApiParams": "includes/FennecAdvancedSearchApiParams.php",
-		"MediaWiki\\Extension\\FennecAdvancedSearch\\FennecAdvancedSearchApiSearch": "includes/FennecAdvancedSearchApiSearch.php",
+		"MediaWiki\\Extension\\FennecAdvancedSearch\\Utils": "includes/FennecAdvancedSearchUtils.php",
+		"MediaWiki\\Extension\\FennecAdvancedSearch\\ApiParams": "includes/FennecAdvancedSearchApiParams.php",
+		"MediaWiki\\Extension\\FennecAdvancedSearch\\ApiSearch": "includes/FennecAdvancedSearchApiSearch.php",
 		"MediaWiki\\Extension\\FennecAdvancedSearch\\SpecialFennecAdvancedSearch": "includes/SpecialFennecAdvancedSearch.php",
-		"MediaWiki\\Extension\\FennecAdvancedSearch\\FennecAdvancedSearchApiAutocomplete": "includes/FennecAdvancedSearchApiAutocomplete.php",
-		"MediaWiki\\Extension\\FennecAdvancedSearch\\FennecAdvancedSearchHooks": "includes/FennecAdvancedSearchHooks.php",
+		"MediaWiki\\Extension\\FennecAdvancedSearch\\ApiAutocomplete": "includes/FennecAdvancedSearchApiAutocomplete.php",
+		"MediaWiki\\Extension\\FennecAdvancedSearch\\Hooks": "includes/FennecAdvancedSearchHooks.php",
 		"MediaWiki\\Extension\\FennecAdvancedSearch\\InCargoFeature": "includes/InCargoFeature.php"
 	},
 	"AutoloadNamespaces": {
 		"MediaWiki\\Extension\\FennecAdvancedSearch\\": "includes/"
 	},
 	"APIModules": {
-		"fennecadvancedsearchparams": "MediaWiki\\Extension\\FennecAdvancedSearch\\FennecAdvancedSearchApiParams",
-		"fennecadvancedsearchautocomplete": "MediaWiki\\Extension\\FennecAdvancedSearch\\FennecAdvancedSearchApiAutocomplete",
-		"fennecadvancedsearchsearch": "MediaWiki\\Extension\\FennecAdvancedSearch\\FennecAdvancedSearchApiSearch"
+		"fennecadvancedsearchparams": "MediaWiki\\Extension\\FennecAdvancedSearch\\ApiParams",
+		"fennecadvancedsearchautocomplete": "MediaWiki\\Extension\\FennecAdvancedSearch\\ApiAutocomplete",
+		"fennecadvancedsearchsearch": "MediaWiki\\Extension\\FennecAdvancedSearch\\ApiSearch"
 	},
 	"_ContentHandlers": {
 		"xmldata": "MediaWiki\\Extension\\FennecAdvancedSearch\\XmlContentHandler"

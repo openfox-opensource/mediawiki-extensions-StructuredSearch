@@ -30,12 +30,12 @@ class InCargoFeature extends SimpleKeywordFeature {
 	 */
 	protected function getKeywords() {
 		$config = \MediaWiki\MediaWikiServices::getInstance()->getMainConfig();
-		$params = FennecAdvancedSearchApiParams::getSearchParams();//$config->get( 'FennecAdvancedSearchParams' );
+		$params = Utils::getSearchParams();//$config->get( 'FennecAdvancedSearchParams' );
 		$keywords = [];
 		foreach ($params as $param) {
 			$fieldName = $param['field'];
-			if( strpos($fieldName,':') ){
-				$keywords[] = 'in_' . preg_replace('/:/', '__', $fieldName);
+			if( Utils::isCargoField($fieldName) ){
+				$keywords[] = 'in_' . Utils::replaceCargoFieldToElasticField( $fieldName);
 			}
 		}
 		//die(print_r($keywords));
@@ -75,8 +75,9 @@ class InCargoFeature extends SimpleKeywordFeature {
 	/**
 	 * Builds an or between many categories that the page could be in.
 	 *
-	 * @param string[] $categories categories to match
-	 * @return \Elastica\Query\BoolQuery|null A null return value means all values are filtered
+	 * @param string $tableDef table defination to use as elastic field
+	 * @param string[] $values cargo values to match
+	 * @return \Elastica\Query\Match|null A null return value means all values are filtered
 	 *  and an empty result set should be returned.
 	 */
 	private function matchCargoQuery(string $tableDef, array $values ) {

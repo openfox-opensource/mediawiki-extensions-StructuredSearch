@@ -20,7 +20,7 @@
 namespace MediaWiki\Extension\FennecAdvancedSearch;
 use MediaWiki\MediaWikiServices;
 
-class FennecAdvancedSearchApiSearch extends \ApiBase {
+class ApiSearch extends \ApiBase {
 	use \SearchApi;
 	public function __construct( $query, $moduleName ) {
 		parent::__construct( $query, $moduleName );
@@ -77,7 +77,7 @@ class FennecAdvancedSearchApiSearch extends \ApiBase {
 		return $this->getResultsAdditionalFields($results);
 	}	
 	public static function extractSearchStringFromFields( $params ) {
-		$searchParamsKeys = array_column( FennecAdvancedSearchApiParams::getSearchParams(), 'field');
+		$searchParamsKeys = array_column( Utils::getSearchParams(), 'field');
 		//print_r($searchParamsKeys);
 		foreach ($params as $pKey => $pValue) {
 			//print_r([in_array($pKey, $searchParamsKeys), self::isSearchableField( $pKey )]);
@@ -95,17 +95,9 @@ class FennecAdvancedSearchApiSearch extends \ApiBase {
 		//die();
 		return $params;
 	}
-	public static function isSearchableField( $key ) {
-		return 'category' == $key || self::isCargoField( $key );
-	}
-	public static function isCargoField( $key ) {
-		return strpos($key, ':');
-	}
-	public static function getFeatureKey( $key ) {
-		return 'in' . (self::isCargoField($key) ? '_' : '')  . preg_replace('/:/', '__', $key);
-	}
+	
 	protected function getAllowedParams() {
-		$searchParams = FennecAdvancedSearchApiParams::getSearchParams();
+		$searchParams = Utils::getSearchParams();
 		$newParams = $this->buildCommonApiParams();
 		foreach ($searchParams as $key => $value) {
 			$newParams[$key] = NULL;
@@ -264,7 +256,7 @@ class FennecAdvancedSearchApiSearch extends \ApiBase {
 //		return $tables;
 	}
 	protected function getParamDescription() {
-		$searchParams = FennecAdvancedSearchApiParams::getSearchParams();
+		$searchParams = Utils::getSearchParams();
 		$newParams = [];
 		foreach ($searchParams as $key => $value) {
 			$newParams[$key] = $value['label'];
@@ -289,9 +281,9 @@ class FennecAdvancedSearchApiSearch extends \ApiBase {
 	}
 	public static function getFieldsByTable(){
 		$allFieldsByTemplates = [];
-		$searchParams = FennecAdvancedSearchApiParams::getSearchParams();
+		$searchParams = Utils::getSearchParams();
 		foreach ($searchParams as $searchParam ) {
-			if( FALSE !== strpos($searchParam['field'],':') ){
+			if( Utils::isCargoField( $searchParam['field'] ) ){
 				$splitted = explode(':', $searchParam['field']);
 				$allFieldsByTemplates[$splitted[0]][] = $splitted[1];
 

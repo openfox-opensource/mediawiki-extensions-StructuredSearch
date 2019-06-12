@@ -19,7 +19,7 @@
 
 namespace MediaWiki\Extension\FennecAdvancedSearch;
 
-class FennecAdvancedSearchApiAutocomplete extends \ApiBase {
+class ApiAutocomplete extends \ApiBase {
 		public function __construct( $query, $moduleName ) {
 		parent::__construct( $query, $moduleName );
 
@@ -39,18 +39,23 @@ class FennecAdvancedSearchApiAutocomplete extends \ApiBase {
 	public function getAutocompleteSearch() {
 		$search = [];
 		
-		$searchParams = FennecAdvancedSearchApiParams::getSearchParams();
+		$searchParams = Utils::getSearchParams();
 		$params = $this->extractRequestParams();
 		$searchField = $params['field'];
-		if(isset( $searchParams[ $searchField ] ) && isset( $searchParams[ $searchField ]['widget']['autocomplete_callback'] ) ){
-			//die("Ffff" . $searchParams[ $searchField ]['widget']['autocomplete_callback']);
-			$search = call_user_func( $searchParams[ $searchField ]['widget']['autocomplete_callback'],$params['search']);
+		if(isset( $searchParams[ $searchField ] ) ){
+			if(isset( $searchParams[ $searchField ]['widget']['autocomplete_callback'] )){
+				$search = call_user_func( $searchParams[ $searchField ]['widget']['autocomplete_callback'],$params['search'], $searchField);
+			}
+			else if( Utils::isCargoField($searchField) ){
+				$search = Utils::cargoAutocomplete( $params['search'], $searchField );
+			}
 		}
-		else{
-			die(print_r($searchParams));
+		else {
+			die(print_r([$searchParams, $searchField]));
 		}
 		return $search;
 	}
+	
 	protected function getAllowedParams() {
 		return array(
 			'search' => null,
