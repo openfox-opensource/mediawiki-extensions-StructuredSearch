@@ -38,6 +38,7 @@ class InCargoFeature extends SimpleKeywordFeature {
 				$keywords[] = 'in_' . preg_replace('/:/', '__', $fieldName);
 			}
 		}
+		//die(print_r($keywords));
 		return $keywords;
 	}
 
@@ -83,7 +84,11 @@ class InCargoFeature extends SimpleKeywordFeature {
 		
 		
 		foreach ( $values as $value ) {
-			$filter->addShould( QueryHelper::matchPage( $tableDef . '.lowercase_keyword', $value ) );
+			//die($tableDef . '.lowercase_keyword >> ' . $value);
+			$match = new \Elastica\Query\Match();
+			$match->setFieldQuery( $tableDef , $value );
+			//die(print_r($match));
+			$filter->addShould( $match );
 		}
 
 		return $filter;

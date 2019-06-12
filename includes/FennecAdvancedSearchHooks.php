@@ -155,7 +155,7 @@ class FennecAdvancedSearchHooks{
 				$fields[ $keyForCirrus ] = isset($vals[ $fieldName[1] ]) ? $vals[ $fieldName[1] ] : '';
 			}
 		}
-		print_r($fields);
+		//print_r($fields);
 
 	}
 	public static function onCirrusSearchMappingConfig( array &$config, MappingConfigBuilder $builder ) { 

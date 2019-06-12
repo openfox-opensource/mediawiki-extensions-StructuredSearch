@@ -76,6 +76,9 @@ class FennecAdvancedSearchApiSearch extends \ApiBase {
 		return self::getResultsAdditionalFieldsFromTitles( $results[1]);
 	}
 	public static function getResultsAdditionalFieldsFromTitles( $titles ) {
+		if(!count($titles)){
+			return $titles;
+		}
 		$conf = \MediaWiki\MediaWikiServices::getInstance()->getMainConfig();
 		$wgArticlePath = $conf->get('ArticlePath');
 		$resultsTitlesForCheck = [];
@@ -83,6 +86,10 @@ class FennecAdvancedSearchApiSearch extends \ApiBase {
 		$namespaceIds = self::getNamespaces();
 		//die(print_r($namespaceIds));
 		foreach ($titles as $key => $val) {
+			$dashed_val = preg_replace('/\s/','_',$val);
+			if( $dashed_val === $val && strpos('_', $val)){
+				$val = preg_replace('/_/',' ',$val);
+			}
 			$valSplitted = explode(':', $val);
 			if( count($valSplitted) > 1 ){
 				$namespace = array_shift($valSplitted);
@@ -102,6 +109,7 @@ class FennecAdvancedSearchApiSearch extends \ApiBase {
 					'namespaceId' => $namespaceIds[$namespace],
 					'title_key' => $titleKey,
 			];
+			
 			$resultsTitlesAliases[$val] = &$resultsTitlesForCheck[$titleKey]; 
 		}
 		//die(print_r($resultsTitlesAliases));
