@@ -55,11 +55,12 @@ class FormInput extends Component {
 		else{
 			ajaxCall.get(`action=fennecadvancedsearchautocomplete&field=${this.state.inputData.field}&search=${typed}`).then(data => {
 				if(data.data.values){
-					let valuesAsArray = [];
-					for(let valKey of Object.keys(data.data.values) ){
+					let valuesAsArray = [],
+						vals = data.data.values;
+					for(let valKey of Object.keys(vals) ){
 
 						valuesAsArray.push({
-							label:data.data.values[valKey],
+							label:vals[valKey],
 							value:valKey
 						});
 					}
@@ -74,7 +75,9 @@ class FormInput extends Component {
 	}
 	autocompleteSelected( fieldName, itemLabel, autocompleteItem){
 		FormMain.addValue( fieldName, autocompleteItem );
-		//console.log(fieldName, itemLabel,autocompleteItem,"fieldName, value fffffffffffffffff")
+		this.setState({
+			typed:''
+		});
 	}
 	selectChanged( fieldName, value){
 		this.setState({selected : value});
@@ -104,6 +107,8 @@ class FormInput extends Component {
 					//console.log(inputData,'inputData');
 					html = this[inputData.widget.type + 'Build']( this.state.inputData );
 					break;
+				default:
+					break;
 			}
 			return <div className='field-wrp'>{label}:{html}</div>;
 		}
@@ -131,7 +136,9 @@ class FormInput extends Component {
 	selectBuild (inputData){
 		let options = this.extractOptions( inputData.widget.options);
 		if(!this.state.selected){
-			this.state.selected = options[0].value;
+			this.setState({
+				selected : options[0].value
+			});
 		}
 		return <Select
 			className={'select select-' + inputData.field}
@@ -148,7 +155,6 @@ class FormInput extends Component {
 	}
 	autocompleteBuild (inputData){
 			//console.log(inputData, 'inputData');
-			let value = '';
 			return   <Autocomplete
 						  getItemValue={(item) => item.label}
 						  items={this.state.filteredOptions}

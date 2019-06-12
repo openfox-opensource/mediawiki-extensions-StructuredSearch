@@ -8,7 +8,7 @@ class FormMain{
 		FormMain.fireChangeEvent();
 	}
 	static removeValue(name, value){
-		let ind = FormMain.allData[ name ].findIndex( item => value.value == item.value);
+		let ind = FormMain.allData[ name ].findIndex( item => value.value === item.value);
 		if( ind > -1){
 			FormMain.allData[ name ].splice(ind , 1)
 		}
@@ -32,6 +32,7 @@ class FormMain{
 	}
 	static getAllValuesProcessed(){
 		let copyOfData = Object.assign({}, FormMain.allData);
+
 		for( let dataKey of Object.keys(copyOfData)){
 			if('object' === typeof copyOfData[dataKey] && 'undefined' !== typeof copyOfData[dataKey].length){
 				copyOfData[dataKey] = copyOfData[dataKey].map(val => {return val.value});

@@ -1,8 +1,6 @@
 import React, { Component } from "react";
-import logo from './logo.svg';
 import settingsGetter from './libs/settingsGetter';
 import FormInput from './libs/FormInput';
-import FormMain from './libs/FormMain';
 import EventEmitter from './libs/EventEmitter';
 import ReactMustache from 'react-mustache'
 import './App.css';
@@ -44,7 +42,7 @@ class App extends Component {
       //console.log('this.state.inputs',this.state.inputs);
       for(let inputDataKey of Object.keys(this.state.inputs)){
        // console.log(this.state.inputs[inputDataKey],inputDataKey,'this.state.inputs[inputDataKey],inputDataKey');
-        if('topbar' != this.state.inputs[inputDataKey].widget.position){
+        if('topbar' !== this.state.inputs[inputDataKey].widget.position){
           allInputs.push( <FormInput key={inputDataKey} inputData={this.state.inputs[inputDataKey]} /> )
           }
         }

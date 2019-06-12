@@ -20,7 +20,7 @@ class Utils{
 		
 		while ( $row = $dbrCargo->fetchObject( $res ) ) {
 			if( strpos($row->val, $term) === 0 ){
-				$results[] = $row->val;
+				$results[$row->val] = $row->val;
 			}
 		}
 		return $results;

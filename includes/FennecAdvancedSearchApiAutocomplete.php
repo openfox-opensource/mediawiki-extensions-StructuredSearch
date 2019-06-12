@@ -51,7 +51,7 @@ class ApiAutocomplete extends \ApiBase {
 			}
 		}
 		else {
-			die(print_r([$searchParams, $searchField]));
+			$search = [];
 		}
 		return $search;
 	}

@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import logo from './logo.svg';
 import settingsGetter from './libs/settingsGetter'
 import FormInput from './libs/FormInput'
 import FormMain from './libs/FormMain'
@@ -17,7 +16,7 @@ class TopBar extends Component {
       console.log(this.state.inputs)
       for(let fieldKey of Object.keys(allData)){
         ;
-        if(allData[fieldKey] && this.state.inputs[fieldKey] && ('autocomplete' == this.state.inputs[fieldKey].widget.type || this.state.inputs[fieldKey].withLabels) ){
+        if(allData[fieldKey] && this.state.inputs[fieldKey] && ('autocomplete' === this.state.inputs[fieldKey].widget.type || this.state.inputs[fieldKey].withLabels) ){
           //console.log(allData[fieldKey]);
           for(let item of allData[fieldKey]){
             newLabels.push({
@@ -43,9 +42,8 @@ class TopBar extends Component {
        }
       );
   }
-  removeLabel( fieldName, value) {
-    //console.log(fieldName, value,"fieldName, value");
-    FormMain.removeValue(fieldName, value);
+  removeLabel( fieldName, valueObj) {
+    FormMain.removeValue(fieldName, valueObj);
   }
   toQueryStr( params ){
     return Object.keys(params).map(key => key + '=' + params[key]).join('&');
@@ -67,7 +65,7 @@ class TopBar extends Component {
     if(this.state.inputs){
       for(let inputDataKey of Object.keys(this.state.inputs)){
         //console.log(this.state.inputs[inputDataKey],inputDataKey,'this.state.inputs[inputDataKey],inputDataKey');
-        if('topbar' == this.state.inputs[inputDataKey].widget.position){
+        if('topbar' === this.state.inputs[inputDataKey].widget.position){
           allInputs.push( <FormInput key={inputDataKey} inputData={this.state.inputs[inputDataKey]} /> )
         }
       }
@@ -75,7 +73,7 @@ class TopBar extends Component {
     if(this.state.labels){
       for(let label of this.state.labels){
         //console.log(this.state.inputs[inputDataKey],inputDataKey,'this.state.inputs[inputDataKey],inputDataKey');
-        labels.push( <span key={label.field + ':' + label.value} className="label-wrp">{label.label}<button type="button" className='label-remove' onClick={this.removeLabel.bind(this, label.field, label.value)}>X</button></span> )
+        labels.push( <span key={label.field + ':' + label.value} className="label-wrp">{label.label}<button type="button" className='label-remove' onClick={this.removeLabel.bind(this, label.field, label)}>X</button></span> )
         
       }
     }
