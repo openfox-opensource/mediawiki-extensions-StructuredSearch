@@ -44,7 +44,7 @@ class ApiSearch extends \ApiBase {
 			
 		$params = $this->extractRequestParams();
 		if(!isset($params['namespace']) || !$params['namespace']){
-			$namespaces = FennecAdvancedSearchHooks::getDefinedNamespaces();
+			$namespaces = Hooks::getDefinedNamespaces();
 		//print_r([$namespaces, $params]);
 			$params['namespace'] = implode('|', array_column($namespaces, 'value'));
 		}
@@ -81,10 +81,10 @@ class ApiSearch extends \ApiBase {
 		//print_r($searchParamsKeys);
 		foreach ($params as $pKey => $pValue) {
 			//print_r([in_array($pKey, $searchParamsKeys), self::isSearchableField( $pKey )]);
-			if( in_array($pKey, $searchParamsKeys) && self::isSearchableField( $pKey ) && $pValue){
+			if( in_array($pKey, $searchParamsKeys) && Utils::isSearchableField( $pKey ) && $pValue){
 				$queryValue = is_array($pValue) ? implode("|", $pValue) : $pValue;
 				$queryValue = '"' . $queryValue .  '"';
-				$params['search'] .= ' ' . self::getFeatureKey( $pKey) . ':' . $queryValue;
+				$params['search'] .= ' ' . Utils::getFeatureKey( $pKey) . ':' . $queryValue;
 				unset($params[$pKey]);
 			}
 			else if( !$pValue ){

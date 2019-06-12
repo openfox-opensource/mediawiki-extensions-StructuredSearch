@@ -18,7 +18,7 @@ class Hooks{
 	        'widget' => [
 	            'type' => 'autocomplete',
 	            'position' => 'sidebar',
-	            'autocomplete_callback' => "\\MediaWiki\\Extension\\FennecAdvancedSearch\\FennecAdvancedSearchHooks::categoryAutocomplete",
+	            'autocomplete_callback' => "\\MediaWiki\\Extension\\FennecAdvancedSearch\\Hooks::categoryAutocomplete",
 	        ],
 	    ];
 	}
