@@ -9,11 +9,14 @@ class FormInput extends Component {
 	constructor(props) {
 		super(props);
 		//console.log("props",props);
+		let initOptions = props.inputData.widget.options|| [];
+		initOptions = this.extractOptions( initOptions );
 		this.state = { 
 			inputData : props.inputData,
-			filteredOptions : props.inputData.widget.options|| [],
-			options : props.inputData.widget.options || [],
+			filteredOptions : initOptions,
+			options : initOptions,
 			typed:'' };
+
 		
 	}
 	componentDidMount() {
@@ -62,6 +65,9 @@ class FormInput extends Component {
 			});
 		}
 		else{
+			this.setState({
+				typed:typed
+			});
 			ajaxCall.get(`action=fennecadvancedsearchautocomplete&field=${this.state.inputData.field}&search=${typed}`).then(data => {
 				if(data.data.values){
 					let valuesAsArray = [],
@@ -74,7 +80,6 @@ class FormInput extends Component {
 						});
 					}
 					this.setState({
-						typed:typed,
 						filteredOptions : valuesAsArray
 					});
 				}
@@ -108,6 +113,7 @@ class FormInput extends Component {
 		else{
 			let inputData = this.state.inputData,
 				label = this.getLabel( inputData ),
+				wrpClass = 'field-wrp field-wrp-type-' + inputData.widget.type + ' field-wrp-name-' + inputData.field,
 				html = '';
 
 			switch( inputData.widget.type){
@@ -123,18 +129,35 @@ class FormInput extends Component {
 				default:
 					break;
 			}
-			return <div className='field-wrp'>{label}:{html}</div>;
+			return <div className={wrpClass}>{label}:{html}</div>;
 		}
 	}
+	showAdvanced (){
+		this.setState({showAdvanced : !this.state.showAdvanced});
+	}
 	checkboxesBuild (inputData){
-		let checkboxes = [];
+		let checkboxesMain = [],
+			checkboxesAdvanced = [],
+			wrpClass = 'main-and-advanced-wrp' + 
+				( this.state.showAdvanced ? ' opened' : '');
 		for( let option of inputData.widget.options){
-			checkboxes.push(<span key={ inputData.field +'-' + option.value} className='checkbox-wrp'>
+			let checkbox = <span key={ inputData.field +'-' + option.value} className='checkbox-wrp'>
 				<input type='checkbox' value="{option.value}" onChange={this.checkboxChanges.bind(this, inputData.field, option)} />
 				<span className='checkbox-label'>{option.label}</span>
-				</span>)
+				</span>;
+			if('advanced' == option.show){
+				checkboxesAdvanced.push(checkbox);
+			}
+			else if('disable' != option.show){
+				checkboxesMain.push(checkbox);
+			}
+
 		}
-		return checkboxes;
+		return <div className={wrpClass}>
+					<div className="main">{checkboxesMain}</div>
+					<button onClick={this.showAdvanced.bind(this)} >More </button>
+					<div className="advanced">{checkboxesAdvanced}</div>
+				</div>;
 	}
 	radiosBuild (inputData){
 		let radios = [];
@@ -188,6 +211,7 @@ class FormInput extends Component {
 			//console.log(inputData, 'inputData');
 			return   <Autocomplete
 						  getItemValue={(item) => item.label}
+						  menuStyle={ {position:'absolute'}}
 						  items={this.state.filteredOptions}
 						  renderItem={(item, isHighlighted) =>
 						    <div style={{ background: isHighlighted ? 'lightgray' : 'white' }}>

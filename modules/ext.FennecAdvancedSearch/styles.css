@@ -27,3 +27,6 @@
   display: inline-block;
   width: 45px;
 }
+.field-wrp-name-search input {
+   width: calc(100% - 100px);
+}

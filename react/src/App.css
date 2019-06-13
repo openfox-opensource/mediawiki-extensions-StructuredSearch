@@ -31,7 +31,15 @@ body {
   border: 1px solid;
   padding: 3px 10px;
 }
-
+.field-wrp-name-search input {
+   width: calc(100% - 100px);
+}
+.main-and-advanced-wrp .advanced{
+  display: none;
+}
+.main-and-advanced-wrp.opened .advanced{
+  display: block;
+}
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);

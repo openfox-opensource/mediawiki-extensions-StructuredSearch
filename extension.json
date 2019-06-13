@@ -35,12 +35,12 @@
 			"description": "Black list of categories to filter with. ignored if FennecAdvancedSearchCategoryInclude set",
 			"value": []
 		},
-		"FennecAdvancedSearchNSInclude": {
-			"description": "White list of namespaces to filter with",
+		"FennecAdvancedSearchNSReplace": {
+			"description": "Replace NS list. Usefull if you want to start from scratch. Each NS can be 'main', 'advanced' or 'disable'",
 			"value": []
 		},
-		"FennecAdvancedSearchNSExclude": {
-			"description": "Black list of namespaces to filter with. ignored if FennecAdvancedSearchNSInclude set",
+		"FennecAdvancedSearchNSOverride": {
+			"description": "Override NS list. Usefull to modify full list Each NS can be 'main', 'advanced' or 'disable'",
 			"value": []
 		},
 		"FennecAdvancedSearchNSIncludeTalkPages": {

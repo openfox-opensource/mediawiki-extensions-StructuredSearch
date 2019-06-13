@@ -22,21 +22,23 @@ class Hooks{
 	        ],
 	    ];
 	}
-	static public function tryGetIncluded( ){
+	static public function tryGetNSReplace( ){
 		global $wgContLang;
 		$conf = \MediaWiki\MediaWikiServices::getInstance()->getMainConfig();
-		$includeNamespaces = $conf->get('FennecAdvancedSearchNSInclude');
+		$manualNamespaces = $conf->get('FennecAdvancedSearchNSReplace');
 
 		$fullNsData = [];
-		if($includeNamespaces && count($includeNamespaces)){
+		if($manualNamespaces && count($manualNamespaces)){
 			$namespaceIds = $wgContLang->getNamespaceIds();
+			$manualNamespacesIds = array_keys($manualNamespace);//array_column($manualNamespaces, 'id')
 			//print_r($namespaceIds);
 			foreach ($namespaceIds as $name => $nsId) {
 				//echo $nsId . '<br/>';
-				if(in_array($nsId, $includeNamespaces)){
+				if(in_array($nsId, $manualNamespacesIds)){
 					$fullNsData[] = [
 						'label' => $name,
 						'value' => $nsId,
+						'show' => $manualNamespaces[ $nsId ],
 					];
 				}
 			}
@@ -45,8 +47,8 @@ class Hooks{
 		return $fullNsData;
 	}
 	static public function getDefinedNamespaces( ){
-		$included = self::tryGetIncluded();
-		return count($included) ? $included : self::getNamspacesFromApi();
+		$included = self::tryGetNSReplace();
+		return count($included) ? $included : array_values( self::getNamspacesDefaultWithOverrides() );
 	}
 	static public function namespacesExtract( &$params ){
 		
@@ -63,45 +65,31 @@ class Hooks{
 		//die("resa" . print_r([100]));
 		
 	}
-	static public function getNamspacesFromApi( ){
-		global $wgRequest;
-		$callApiParams = new \DerivativeRequest(
-		    $wgRequest,
-			    [
-				'action'     => 'query',
-				'meta'      => 'siteinfo',
-				'siprop' => 'namespaces',
-				//'token'      => $user->getEditToken(),
-			]
-		);
-		$api = new \ApiMain( $callApiParams );
-		$api->execute();
-		
-		$result = $api->getResult()->getResultData();
-		return self::namespacesProccess($result['query']['namespaces']);
+	static public function getNamspacesDefaultWithOverrides( ){
+		global $wgContLang;
+		$namespaceIds = $wgContLang->getNamespaceIds();
+		//die(print_r($namespaceIds));
+		return self::namespacesProccess( $namespaceIds );
 	}
 	static public function namespacesProccess( $namespaces ){
 		$conf = \MediaWiki\MediaWikiServices::getInstance()->getMainConfig();
 		$includeTalkPages = $conf->get('FennecAdvancedSearchNSIncludeTalkPages');
-		$NSExclude = $conf->get('FennecAdvancedSearchNSExclude');
+		
 		$returnedNamespaces = [];
-		foreach ($namespaces as $key => $namespace) {
-			if( $key < 0 ){
-				continue;
-			}
-			//filter excluded
-			if( in_array($key, $NSExclude)){
-				continue;
-			} 
-			//filter even - no talks, expet if includeTalkPages true (default false)
-			if	( ( !$includeTalkPages && ( (integer) $key % 2) ) || ! is_numeric($key) ){
-				continue;
-			}
-			$returnedNamespaces[] = [
-				'label' => $key ? $namespace['name'] : wfMessage('fennecadvancedsearch-main-namesapce')->text(),
-				'value' => $key
+		foreach ($namespaces as $nsName => $namespaceId) {
+			
+
+			$returnedNamespaces[$namespaceId] = [
+				'label' => $nsName ? $nsName : wfMessage('fennecadvancedsearch-main-namesapce')->text(),
+				'value' => $namespaceId,
+				'show' => ( ( !$includeTalkPages && ( (integer) $namespaceId % 2) ) || ! is_numeric($namespaceId) || $namespaceId < 0 ) ? 'advanced': 'main'
 			];
 		}
+		$NSOverride = $conf->get('FennecAdvancedSearchNSOverride');
+		foreach ($NSOverride as $NSKey => $NSData) {
+			$returnedNamespaces[ $NSKey ] = $NSData;
+		}
+		//die(print_r($returnedNamespaces));
 		return $returnedNamespaces;
 	}
 /**
