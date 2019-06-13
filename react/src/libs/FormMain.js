@@ -36,10 +36,9 @@ class FormMain{
 	}
 	static getAllValuesProcessed(){
 		let copyOfData = Object.assign({}, FormMain.allData);
-
 		for( let dataKey of Object.keys(copyOfData)){
 			if('object' === typeof copyOfData[dataKey] && 'undefined' !== typeof copyOfData[dataKey].length){
-				copyOfData[dataKey] = copyOfData[dataKey].map(val => {return val.value || val});
+				copyOfData[dataKey] = copyOfData[dataKey].map(val => {return 'undefine' != typeof val.value ?val.value: val});
 			}
 			if( 'string' != typeof copyOfData[dataKey] && copyOfData[dataKey].length){
 				copyOfData[dataKey] = copyOfData[dataKey].join('|');
