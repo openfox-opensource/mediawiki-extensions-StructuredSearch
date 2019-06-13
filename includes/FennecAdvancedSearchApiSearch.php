@@ -180,7 +180,7 @@ class ApiSearch extends \ApiBase {
 		$allFieldsByTables = self::getFieldsByTable( );
 		//no normal way to find 
 		foreach ($allFieldsByTables as $tableName => $fields) {
-			$allSubtablesOfFields = self::getSubtablesOfFields( $tableName );
+			$allSubtablesOfFields = Utils::getSubtablesOfFields( $tableName );
 			//die(print_r($allSubtablesOfFields));
 			$fieldsDeclared = self::getFieldsNames($dbrCargo, $tableName);
 			//die(in_array('jhkjhj', [0], TRUE));
@@ -237,24 +237,7 @@ class ApiSearch extends \ApiBase {
 		}
 		return $results;
 	}
-	public static function getSubtablesOfFields( $tableName ) {
-		$conf = \MediaWiki\MediaWikiServices::getInstance()->getMainConfig();
-		$dbr = wfGetDB( DB_REPLICA );
-		$dbrCargo = \CargoUtils::getDB();
-		$res = $dbr->select( 'cargo_tables', array( 'field_tables' ),
-			array( 'main_table' => $tableName ) );
-		$row = $dbrCargo->fetchRow( $res );
-		$tables = unserialize($row[0]);
-		$allDefinedTables = $dbrCargo->query( 'show tables' );
-		$tablesFromShow = [];
-		$cargoPrefix = $conf->get('DBprefix') . 'cargo__';
-		while ( $table = $dbr->fetchObject( $allDefinedTables ) ) {
-			$tableAsArr = ( array) $table;
-			$tablesFromShow[] = preg_replace('/' . $cargoPrefix .'/','',array_pop($tableAsArr));
-		}
-		return array_intersect($tables, $tablesFromShow);
-//		return $tables;
-	}
+	
 	protected function getParamDescription() {
 		$searchParams = Utils::getSearchParams();
 		$newParams = [];

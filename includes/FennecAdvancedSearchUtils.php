@@ -13,9 +13,20 @@ class Utils{
 		$splitted = preg_split('/:/', $fieldName);
 		$tableName = $splitted[0];
 		$columnName = $splitted[1];
-		$res = $dbrCargo->select($tableName,[
-						'DISTINCT(' . $columnName . '__full) as val'
-		]);
+		$subTable = Utils::replaceCargoFieldToElasticField($fieldName);
+		$tables = Utils::getSubtablesOfFields( $tableName );
+		if( in_array($subTable, $tables) ){
+			
+			//read subtitle
+			$res = $dbrCargo->select($subTable,[
+				'DISTINCT(_value) as val'
+			]);
+		}
+		else{
+			$res = $dbrCargo->select($tableName,[
+				'DISTINCT(' . $columnName . ') as val'
+			]);
+		}
 		$results = [];
 		
 		while ( $row = $dbrCargo->fetchObject( $res ) ) {
@@ -81,6 +92,24 @@ class Utils{
 		}
 				//die(print_r($params));
 		return $params;
+	}
+	public static function getSubtablesOfFields( $tableName ) {
+		$conf = \MediaWiki\MediaWikiServices::getInstance()->getMainConfig();
+		$dbr = wfGetDB( DB_REPLICA );
+		$dbrCargo = \CargoUtils::getDB();
+		$res = $dbr->select( 'cargo_tables', array( 'field_tables' ),
+			array( 'main_table' => $tableName ) );
+		$row = $dbrCargo->fetchRow( $res );
+		$tables = unserialize($row[0]);
+		$allDefinedTables = $dbrCargo->query( 'show tables' );
+		$tablesFromShow = [];
+		$cargoPrefix = $conf->get('DBprefix') . 'cargo__';
+		while ( $table = $dbr->fetchObject( $allDefinedTables ) ) {
+			$tableAsArr = ( array) $table;
+			$tablesFromShow[] = preg_replace('/' . $cargoPrefix .'/','',array_pop($tableAsArr));
+		}
+		return array_intersect($tables, $tablesFromShow);
+//		return $tables;
 	}
 	public static function getSearchParams() {
 		$conf = \MediaWiki\MediaWikiServices::getInstance()->getMainConfig();
