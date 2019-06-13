@@ -5,6 +5,7 @@ class FormMain{
 	static addValue(name, value){
 		FormMain.allData[ name ] = FormMain.allData[ name ] || [];
 		FormMain.allData[ name ].push( FormMain.standardizeValue(value) );
+		console.log("FormMain.allData",FormMain.allData);
 		FormMain.fireChangeEvent();
 	}
 	static removeValue(name, value){

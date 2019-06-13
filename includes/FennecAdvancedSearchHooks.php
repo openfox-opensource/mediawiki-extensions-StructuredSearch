@@ -18,7 +18,7 @@ class Hooks{
 	        'widget' => [
 	            'type' => 'autocomplete',
 	            'position' => 'sidebar',
-	            'autocomplete_callback' => "\\MediaWiki\\Extension\\FennecAdvancedSearch\\Hooks::categoryAutocomplete",
+	            'autocomplete_callback' => "\\MediaWiki\\Extension\\FennecAdvancedSearch\\Utils::categoryAutocomplete",
 	        ],
 	    ];
 	}
@@ -27,24 +27,24 @@ class Hooks{
 		$conf = \MediaWiki\MediaWikiServices::getInstance()->getMainConfig();
 		$manualNamespaces = $conf->get('FennecAdvancedSearchNSReplace');
 
-		$fullNsData = [];
-		if($manualNamespaces && count($manualNamespaces)){
-			$namespaceIds = $wgContLang->getNamespaceIds();
-			$manualNamespacesIds = array_keys($manualNamespace);//array_column($manualNamespaces, 'id')
-			//print_r($namespaceIds);
-			foreach ($namespaceIds as $name => $nsId) {
-				//echo $nsId . '<br/>';
-				if(in_array($nsId, $manualNamespacesIds)){
-					$fullNsData[] = [
-						'label' => $name,
-						'value' => $nsId,
-						'show' => $manualNamespaces[ $nsId ],
-					];
-				}
-			}
+		// $fullNsData = [];
+		// if($manualNamespaces && count($manualNamespaces)){
+		// 	$namespaceIds = $wgContLang->getNamespaceIds();
+		// 	$manualNamespacesIds = array_keys($manualNamespace);//array_column($manualNamespaces, 'id')
+		// 	//print_r($namespaceIds);
+		// 	foreach ($namespaceIds as $name => $nsId) {
+		// 		//echo $nsId . '<br/>';
+		// 		if(in_array($nsId, $manualNamespacesIds)){
+		// 			$fullNsData[] = [
+		// 				'label' => $name,
+		// 				'value' => $nsId,
+		// 				'show' => $manualNamespaces[ $nsId ],
+		// 			];
+		// 		}
+		// 	}
 
-		}
-		return $fullNsData;
+		// }
+		return $manualNamespaces && count($manualNamespaces) ? $manualNamespaces : NULL;
 	}
 	static public function getDefinedNamespaces( ){
 		$included = self::tryGetNSReplace();
@@ -57,7 +57,7 @@ class Hooks{
         	'field' => 'namespace',
 	        'widget' => [
 	            'type' => 'checkboxes',
-	            'position' => 'sidebar',
+	            'position' => 'topbar',
 	            'options' => self::getDefinedNamespaces(),
 	        ],
 	    ];
@@ -73,21 +73,31 @@ class Hooks{
 	}
 	static public function namespacesProccess( $namespaces ){
 		$conf = \MediaWiki\MediaWikiServices::getInstance()->getMainConfig();
-		$includeTalkPages = $conf->get('FennecAdvancedSearchNSIncludeTalkPages');
+		$includeTalkPagesType = $conf->get('FennecAdvancedSearchNSIncludeTalkPagesType');
 		
 		$returnedNamespaces = [];
 		foreach ($namespaces as $nsName => $namespaceId) {
 			
-
+			$show = 'main';
+			if( ( ( (integer) $namespaceId % 2) ) || ! is_numeric($namespaceId) ){
+				$show = $includeTalkPagesType;
+			}
+			else if( $namespaceId < 0 ){
+				$show = 'advanced';
+			}
 			$returnedNamespaces[$namespaceId] = [
 				'label' => $nsName ? $nsName : wfMessage('fennecadvancedsearch-main-namesapce')->text(),
 				'value' => $namespaceId,
-				'show' => ( ( !$includeTalkPages && ( (integer) $namespaceId % 2) ) || ! is_numeric($namespaceId) || $namespaceId < 0 ) ? 'advanced': 'main'
+				'show' => $show,
 			];
 		}
 		$NSOverride = $conf->get('FennecAdvancedSearchNSOverride');
 		foreach ($NSOverride as $NSKey => $NSData) {
-			$returnedNamespaces[ $NSKey ] = $NSData;
+			foreach( ['show', 'defaultChecked'] as $key){
+				if( isset( $NSData[ $key ] ) ){
+					$returnedNamespaces[ $NSKey ][ $key ] = $NSData[ $key ];
+				}
+			}
 		}
 		//die(print_r($returnedNamespaces));
 		return $returnedNamespaces;

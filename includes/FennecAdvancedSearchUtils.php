@@ -6,7 +6,7 @@ class Utils{
 	static public function categoryAutocomplete( $term ){
 		$conf = \MediaWiki\MediaWikiServices::getInstance()->getMainConfig();
 		$categoryInclude = $conf->get('FennecAdvancedSearchCategoryInclude');
-		return  $categoryInclude ? self::preccessDefaultCategories( $categoryInclude ) : self::getCategiresFromDb($term);
+		return  $categoryInclude ? self::preccessDefaultCategories( $categoryInclude, $term ) : self::getCategiresFromDb($term);
 	}
 	static public function cargoAutocomplete( $term, $fieldName ){
 		$dbrCargo = \CargoUtils::getDB();
@@ -36,12 +36,15 @@ class Utils{
 		}
 		return $results;
 	}
-	static public function preccessDefaultCategories( $cats ){
+	static public function preccessDefaultCategories( $cats, $term = FALSE ){
 		$newCats = [];
 		foreach ($cats as $cat) {
 				$catTitle = \Title::newFromText($cat);
 				if($catTitle){
-					$newCats[$catTitle->getDbKey()] = $catTitle->getText();
+					$readableTitle = $catTitle->getText();
+					if( !$term || 0 === strpos($term, $readableTitle )){
+						$newCats[$catTitle->getDbKey()] = $readableTitle;
+					}
 				}
 			}
 		return $newCats;	
@@ -69,7 +72,7 @@ class Utils{
 			array( 'category' ),
 			array( 'cat_title', 'cat_id' ),
 			array(
-				"cat_title LIKE " . $dbr->addQuotes('%' . $term) ,
+				"cat_title LIKE " . $dbr->addQuotes( $term . '%') ,
 			),
 			__METHOD__
 		);

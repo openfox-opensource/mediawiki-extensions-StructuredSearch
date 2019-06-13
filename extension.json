@@ -1,11 +1,8 @@
 {
 	"name": "fennecadvancedsearchs",
 	"author": [
-		"Timo Tijhof",
-		"Kaldari",
-		"Ævar Arnfjörð Bjarmason",
-		"Daniel Kinzler",
-		"Derick Alangi"
+		"[[mw:user:Anysite|Anysite]]",
+		"[[mw:user:Yacohen|Yacohen]]"
 	],
 	"url": "https://www.mediawiki.org/wiki/Extension:FennecAdvancedSearch",
 	"descriptionmsg": "fennecadvancedsearch-desc",
@@ -43,9 +40,9 @@
 			"description": "Override NS list. Usefull to modify full list Each NS can be 'main', 'advanced' or 'disable'",
 			"value": []
 		},
-		"FennecAdvancedSearchNSIncludeTalkPages": {
+		"FennecAdvancedSearchNSIncludeTalkPagesType": {
 			"description": "Are talk pages includes in filters",
-			"value": false
+			"value": "advanced"
 		}
 		
 	},

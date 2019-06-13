@@ -16,7 +16,7 @@ class TopBar extends Component {
       //console.log(this.state.inputs)
       for(let fieldKey of Object.keys(allData)){
         ;
-        if(allData[fieldKey] && this.state.inputs[fieldKey] && ('autocomplete' === this.state.inputs[fieldKey].widget.type || this.state.inputs[fieldKey].withLabels) ){
+        if(allData[fieldKey] && this.state.inputs && this.state.inputs[fieldKey] && ('autocomplete' === this.state.inputs[fieldKey].widget.type || this.state.inputs[fieldKey].withLabels) ){
           //console.log(allData[fieldKey]);
           for(let item of allData[fieldKey]){
             newLabels.push({

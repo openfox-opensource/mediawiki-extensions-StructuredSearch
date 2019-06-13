@@ -15,7 +15,9 @@ class FormInput extends Component {
 			inputData : props.inputData,
 			filteredOptions : initOptions,
 			options : initOptions,
-			typed:'' };
+			typed:'' 
+		};
+
 
 		
 	}
@@ -27,6 +29,13 @@ class FormInput extends Component {
 				this.setState(stateToChange);
 
 			});
+		}
+		for(let option of this.state.options){
+			//console.log("oprion", option);
+			if(option.defaultChecked){
+				console.log('in', this.state.inputData.field)
+				FormMain.addValue( this.state.inputData.field, option );
+			}
 		}
 	}
 	extractOptions( options){
@@ -57,7 +66,6 @@ class FormInput extends Component {
 		//console.log(fieldName, value, event.target.checked,"fieldName, value, event");
 	}
 	autocompleteChanged(  event , typed){
-		//console.log(event.target,typed,"valuesss")
 		if(this.state.options.length){
 			this.setState({
 				typed:typed,
@@ -142,7 +150,7 @@ class FormInput extends Component {
 				( this.state.showAdvanced ? ' opened' : '');
 		for( let option of inputData.widget.options){
 			let checkbox = <span key={ inputData.field +'-' + option.value} className='checkbox-wrp'>
-				<input type='checkbox' value="{option.value}" onChange={this.checkboxChanges.bind(this, inputData.field, option)} />
+				<input type='checkbox' value="{option.value}" defaultChecked={option.defaultChecked} onChange={this.checkboxChanges.bind(this, inputData.field, option)} />
 				<span className='checkbox-label'>{option.label}</span>
 				</span>;
 			if('advanced' == option.show){
