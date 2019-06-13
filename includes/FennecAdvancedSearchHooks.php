@@ -176,7 +176,7 @@ class Hooks{
 			'label' => wfMessage('fennecadvancedsearch-search-label')->text(),
         	'field' => 'search',
 	        'widget' => [
-	            'type' => 'text',
+	            'type' => 'autocomplete',
 	            'position' => 'topbar',
 	        ],
 		];

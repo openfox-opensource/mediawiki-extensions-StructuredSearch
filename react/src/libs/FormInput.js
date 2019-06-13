@@ -66,16 +66,18 @@ class FormInput extends Component {
 		//console.log(fieldName, value, event.target.checked,"fieldName, value, event");
 	}
 	autocompleteChanged(  event , typed){
+		this.setState({
+			typed:typed
+		});
 		if(this.state.options.length){
 			this.setState({
-				typed:typed,
 				filteredOptions : this.state.options.filter( item => !typed || item.label.indexOf(typed) > -1)
 			});
 		}
+		else if( this.isSearchAutomplete() ){
+			this.searchAutocomplete(typed);
+		}
 		else{
-			this.setState({
-				typed:typed
-			});
 			ajaxCall.get(`action=fennecadvancedsearchautocomplete&field=${this.state.inputData.field}&search=${typed}`).then(data => {
 				if(data.data.values){
 					let valuesAsArray = [],
@@ -95,11 +97,37 @@ class FormInput extends Component {
 		}
 
 	}
-	autocompleteSelected( fieldName, itemLabel, autocompleteItem){
-		FormMain.addValue( fieldName, autocompleteItem );
-		this.setState({
-			typed:''
+	searchAutocomplete( typed ){
+		let values = FormMain.getAllValuesProcessed(),
+			namespaces = values['namespace'];
+		ajaxCall.get(`action=opensearch&formatversion=2&search=${typed}&namespace=${namespaces}&limit=10&suggest=true`).then(data => {
+			let allData = data.data,
+				titles = data.data[1],
+				links = data.data[3],
+				filteredOptions = [];
+			for(let i = 0; i < titles.length; i++){
+				filteredOptions.push({
+					label : titles[i],
+					value : links[i],
+					href : links[i],
+				});
+			}
+			console.log(data, "namespaces");
 		});
+	}
+	autocompleteSelected( fieldName, itemLabel, autocompleteItem){
+		if( this.isSearchAutomplete() ){
+			window.location.href = autocompleteItem.value;
+		}
+		else{
+			FormMain.addValue( fieldName, autocompleteItem );
+			this.setState({
+				typed:''
+			});
+		}
+	}
+	isSearchAutomplete( ){
+		return 'search' === this.state.inputData.field;
 	}
 	selectChanged( fieldName, value){
 		this.setState({selected : value});
@@ -153,10 +181,10 @@ class FormInput extends Component {
 				<input type='checkbox' value="{option.value}" defaultChecked={option.defaultChecked} onChange={this.checkboxChanges.bind(this, inputData.field, option)} />
 				<span className='checkbox-label'>{option.label}</span>
 				</span>;
-			if('advanced' == option.show){
+			if('advanced' === option.show){
 				checkboxesAdvanced.push(checkbox);
 			}
-			else if('disable' != option.show){
+			else if('disable' !== option.show){
 				checkboxesMain.push(checkbox);
 			}
 
@@ -221,15 +249,17 @@ class FormInput extends Component {
 						  getItemValue={(item) => item.label}
 						  menuStyle={ {position:'absolute'}}
 						  items={this.state.filteredOptions}
-						  renderItem={(item, isHighlighted) =>
-						    <div style={{ background: isHighlighted ? 'lightgray' : 'white' }}>
-						      {item.label}
-						    </div>
-						  }
+						  renderItem={ this.autocompleteRender.bind(this) }
 						  value={this.state.typed}
 						  onChange={ this.autocompleteChanged.bind(this)}
 						  onSelect={this.autocompleteSelected.bind(this, inputData.field)}
 						/>
+	}
+	autocompleteRender (item, isHighlighted){
+		let innerHtml = this.isSearchAutomplete() ? <a href={item.href}>{item.label}</a> : item.label
+		return <div style={{ background: isHighlighted ? 'lightgray' : 'white' }}>
+				     {innerHtml}
+				</div>;
 	}
 	getLabel (inputData){
 		return <label htmlFor={inputData.field} >{inputData.label} </label>;
