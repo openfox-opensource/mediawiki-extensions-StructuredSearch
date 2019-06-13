@@ -36,3 +36,25 @@
 .main-and-advanced-wrp.opened .advanced{
   display: block;
 }
+.field-wrp-type-autocomplete > div {
+    position: relative;
+}
+.autocomplete-item{
+   min-width: 260px;
+    padding: 9px;
+}
+.regular {
+    background: #fff;
+}
+.highlighted {
+    background: #e8e8e8;
+}
+.ns-wrapper{
+  float: left;
+  width: 29%;
+  font-style: italic;
+}
+.label-wrapper{
+  float:right;
+  width: 70%;
+}

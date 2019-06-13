@@ -258,7 +258,7 @@ class FormInput extends Component {
 			//console.log(inputData, 'inputData');
 			return   <Autocomplete
 						  getItemValue={(item) => item.label}
-						  menuStyle={ {position:'absolute',top:0,right:0,left:'auto'}}
+						  menuStyle={ {position:'absolute',top:'45px',right:0,left:'auto'}}
 						  items={this.state.filteredOptions}
 						  renderItem={ this.autocompleteRender.bind(this) }
 						  value={this.state.typed}
@@ -270,7 +270,7 @@ class FormInput extends Component {
 
 		let nsWrapper = this.isSearchAutomplete() && item.ns ? <span className="ns-wrapper">{item.ns}</span> : '',
 			innerHtml = this.isSearchAutomplete() ? <a href={item.href}>{nsWrapper}<span className="label-wrapper">{item.label}</span></a> : item.label;
-		return <div className={ isHighlighted ? 'highlighted' : 'regular' }>
+		return <div className={ 'autocomplete-item ' + (isHighlighted ? 'highlighted' : 'regular') }>
 				     {innerHtml}
 				</div>;
 	}
