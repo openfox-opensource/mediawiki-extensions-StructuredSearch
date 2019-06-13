@@ -50,11 +50,10 @@
     background: #e8e8e8;
 }
 .ns-wrapper{
-  float: left;
+  float: right;
   width: 29%;
   font-style: italic;
 }
 .label-wrapper{
-  float:right;
   width: 70%;
 }
