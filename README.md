@@ -3,9 +3,13 @@
 ## Settings
 
 ```FennecAdvancedSearchParams```
-Main config. 
+
+Main config.
+
 Array of details about fields to search/show as inputs in search form/add to results
+
 The structure of the array
+
 ```
 [
     'label' => "Text showed on form as input's label",
@@ -32,8 +36,11 @@ The structure of the array
 ```
 
 ```FennecAdvancedSearchResultsTemplates```
+
 Templates for results
+
 Array in the structure
+
 ```
 [
 'default' => 'mustache_string',
@@ -43,13 +50,21 @@ Array in the structure
 ```
 ```FennecAdvancedSearchDefaultParams```
 Array. show or hide predefined fields - for now this is 'namespaces' and 'category'. 
+
 If defined need to include all predefined fields you want.
+
 ```FennecAdvancedSearchCategoryInclude```
+
 Include only this categories in categories autocomplete
+
 ```FennecAdvancedSearchCategoryExclude```
+
 Use all categories in categories autocomplete but exclude those categories
+
 ```FennecAdvancedSearchNSReplace```
+
 This option replace completely default NS option. you hove to build array like this
+
 ```
 array(
     'label' => 'main',//ns readable name,
@@ -60,11 +75,15 @@ array(
 ```
 
 ```FennecAdvancedSearchNSOverride```
+
 if this var defined, we will take all default NS and override "show" and "defaultChecked" options
+
 ```FennecAdvancedSearchNSIncludeTalkPagesType```
+
 "show" value for talk page by default. Default value is "advanced"
 
 ## Hooks
+
 ```
 function FennecAdvancedSearchParams( &FennecAdvancedSearchParams ){ ... }
 ```
