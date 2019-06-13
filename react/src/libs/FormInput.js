@@ -106,8 +106,16 @@ class FormInput extends Component {
 				links = data.data[3],
 				filteredOptions = [];
 			for(let i = 0; i < titles.length; i++){
+				let ns, label, 
+					labelSplitted = titles[i].split(':');
+				if( labelSplitted.length > 1 ){
+					ns = labelSplitted.shift();
+				}
+				label = labelSplitted.join(':')
+		
 				filteredOptions.push({
-					label : titles[i],
+					label : label,
+					ns : ns,
 					value : links[i],
 					href : links[i],
 				});
@@ -259,7 +267,7 @@ class FormInput extends Component {
 						/>
 	}
 	autocompleteRender (item, isHighlighted){
-		let innerHtml = this.isSearchAutomplete() ? <a href={item.href}>{item.label}</a> : item.label
+		let innerHtml = this.isSearchAutomplete() ? <a href={item.href}>{item.ns} --- {item.label}</a> : item.label
 		return <div style={{ background: isHighlighted ? 'lightgray' : 'white' }}>
 				     {innerHtml}
 				</div>;
