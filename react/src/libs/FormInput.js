@@ -258,7 +258,7 @@ class FormInput extends Component {
 			//console.log(inputData, 'inputData');
 			return   <Autocomplete
 						  getItemValue={(item) => item.label}
-						  menuStyle={ {position:'absolute'}}
+						  menuStyle={ {position:'absolute',top:0,right:0,left:'auto'}}
 						  items={this.state.filteredOptions}
 						  renderItem={ this.autocompleteRender.bind(this) }
 						  value={this.state.typed}
