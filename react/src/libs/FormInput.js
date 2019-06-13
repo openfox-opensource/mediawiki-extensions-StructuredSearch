@@ -267,8 +267,10 @@ class FormInput extends Component {
 						/>
 	}
 	autocompleteRender (item, isHighlighted){
-		let innerHtml = this.isSearchAutomplete() ? <a href={item.href}>{item.ns} --- {item.label}</a> : item.label
-		return <div style={{ background: isHighlighted ? 'lightgray' : 'white' }}>
+
+		let nsWrapper = this.isSearchAutomplete() && item.ns ? <span className="ns-wrapper">{item.ns}</span> : '',
+			innerHtml = this.isSearchAutomplete() ? <a href={item.href}>{nsWrapper}<span className="label-wrapper">{item.label}</span></a> : item.label;
+		return <div className={ isHighlighted ? 'highlighted' : 'regular' }>
 				     {innerHtml}
 				</div>;
 	}
