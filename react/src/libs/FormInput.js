@@ -112,6 +112,9 @@ class FormInput extends Component {
 					href : links[i],
 				});
 			}
+			this.setState({
+				filteredOptions : filteredOptions
+			});
 			console.log(data, "namespaces");
 		});
 	}
