@@ -30,3 +30,9 @@
 .field-wrp-name-search input {
    width: calc(100% - 100px);
 }
+.main-and-advanced-wrp .advanced{
+  display: none;
+}
+.main-and-advanced-wrp.opened .advanced{
+  display: block;
+}
