@@ -259,13 +259,13 @@ console.log(this.state,"this.state")
 		return   <span>
 					<span>{fennecadvancedsearch_from_label}</span>
 					<input 
-						type="text" 
+						type="number" 
 						className="range-input range-input-from"
 						name={inputData.field} 
 						onChange={this.rangeChanges.bind(this, inputData.field,0)} />
 					<span>{fennecadvancedsearch_to_label}</span>
 					<input 
-						type="text" 
+						type="number" 
 						className="range-input range-input-to"
 						name={inputData.field} 
 						onChange={this.rangeChanges.bind(this, inputData.field,1)} />
