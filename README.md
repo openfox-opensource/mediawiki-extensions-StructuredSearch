@@ -40,7 +40,7 @@ Array in the structure
 'template_100' => 'mustache_string'
 ]
 ```
-```FennecAdvancedSearchDefaultParams```
+```FennecAdvancedSearchDefaultParams```  
 Array. show or hide predefined fields - for now this is 'namespaces' and 'category'.   
 If defined need to include all predefined fields you want.  
 ```FennecAdvancedSearchCategoryInclude```  
