@@ -31,8 +31,11 @@
   display: inline-block;
   width: 45px;
 }
-.field-wrp-name-search input {
-   width: calc(100% - 100px);
+.field-wrp-name-search > div > div {
+    width: calc(100% - 100px);
+}
+.field-wrp-name-search input{
+  width: 98%;
 }
 .main-and-advanced-wrp .advanced{
   display: none;
