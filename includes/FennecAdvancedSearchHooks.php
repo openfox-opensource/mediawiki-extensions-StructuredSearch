@@ -53,7 +53,7 @@ class Hooks{
 	static public function namespacesExtract( &$params ){
 		
 		$params['namespace'] = [
-			'label' => wfMessage('fennecadvancedsearch-namespace-label')->text(),
+			'label' => '',//wfMessage('fennecadvancedsearch-namespace-label')->text(),
         	'field' => 'namespace',
 	        'widget' => [
 	            'type' => 'checkboxes',
@@ -173,7 +173,7 @@ class Hooks{
 	}
 	static public function onFennecAdvancedSearchParams( &$params ){
 		$params['search'] = [
-			'label' => wfMessage('fennecadvancedsearch-search-label')->text(),
+			'label' => '',// wfMessage('fennecadvancedsearch-search-label')->text(),
         	'field' => 'search',
 	        'widget' => [
 	            'type' => 'autocomplete',

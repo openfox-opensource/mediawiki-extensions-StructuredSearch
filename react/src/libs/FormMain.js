@@ -1,11 +1,11 @@
 import EventEmitter from './EventEmitter'
+import ajaxCall from './ajaxCall'
 
 class FormMain{
 	static allData = {}
 	static addValue(name, value){
 		FormMain.allData[ name ] = FormMain.allData[ name ] || [];
 		FormMain.allData[ name ].push( FormMain.standardizeValue(value) );
-		console.log("FormMain.allData",FormMain.allData);
 		FormMain.fireChangeEvent();
 	}
 	static removeValue(name, value){
@@ -22,6 +22,12 @@ class FormMain{
 	static setValue(name, value){
 		FormMain.allData[ name ] = value;
 		FormMain.fireChangeEvent();
+	}
+	static getValue(name){
+		return FormMain.allData[ name ];
+	}
+	static includes(name, valueToCheck){
+		return FormMain.allData[ name ] && FormMain.allData[ name ].filter( item => item.value === valueToCheck).length;
 	}
 	static fireChangeEvent(){
 		EventEmitter.emit("FormDataChanged", FormMain.getAllValuesRaw());
@@ -46,6 +52,19 @@ class FormMain{
 			}
 		}
 		return copyOfData;
+	}
+	static toQueryStr( params ){
+	    return Object.keys(params).map(key => key + '=' + params[key]).join('&');
+	  }
+	static submitData(){
+		let params = this.getAllValuesProcessed();
+	    //console.log(params,'params');
+	    params.action = 'fennecadvancedsearchsearch';
+	    let urlSuffix = this.toQueryStr( params);
+	    ajaxCall.get(urlSuffix).then(data=>{
+	      console.log(data, "data");
+	      EventEmitter.emit('dataRecieved', data.data.error ? {error:true} : data.data.FennecAdvancedSearchSearch);
+	    });
 	}
 
 }

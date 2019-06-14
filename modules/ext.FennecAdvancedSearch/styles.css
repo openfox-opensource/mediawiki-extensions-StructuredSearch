@@ -2,17 +2,21 @@
     padding: 25px;
     border-bottom: 1px solid;
     margin-bottom: 10px;
-    background: green;
+    position: fixed;
 }
-.results, 
+/*.results, 
 .side-bar {
    float: left;
+}*/
+#side-bar {
+    width: 30%;
+    float: left;
 }
-.side-bar{
-  width: 30%;
-  border-right: 1px solid;
-  margin-right: 10px;
+.top-and-results-wrp {
+    width: 70%;
+    float: left;
 }
+
 .results{
   width: 68%;
 }
@@ -56,4 +60,24 @@
 }
 .label-wrapper{
   width: 70%;
+}
+.form-input.form-input-wrp-meta_table-duration {
+    width: 64%;
+    display: inline-block;
+    font-size: 12px;
+}
+.form-input.form-input-wrp-meta_table-duration_type {
+    width: 30%;
+    display: inline-block;
+    font-size: 12px;
+}
+.checkbox-wrp {
+    display: inline-block;
+    padding: 0 3px;
+}
+.checkbox-wrp input{
+  display: none;
+}
+.checkbox-wrp .fa-check-square{
+  margin: 0 3px;
 }

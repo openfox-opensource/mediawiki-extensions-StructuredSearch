@@ -14,5 +14,7 @@
 	"fennecadvancedsearch-category-label": "Categories",
 	"fennecadvancedsearch-namespace-label": "Page's namespace",
 	"fennecadvancedsearch-from-label": "From",
-	"fennecadvancedsearch-to-label": "To"
+	"fennecadvancedsearch-to-label": "To",
+	"fennecadvancedsearch-no-results": "No results found",
+	"fennecadvancedsearch-no-results-error": "Error during search"
 }

@@ -17,9 +17,17 @@ class FormInput extends Component {
 			options : initOptions,
 			typed:'' 
 		};
+		if( "select" === props.inputData.widget.type ){
+			let selected = props.inputData.widget.default || initOptions[0];
+			if('string' == typeof selected){
+				selected = [{
+					value:selected,
+					label:selected
+				}];
+			}
+			this.state.selected = selected;
+		}
 
-
-		
 	}
 	componentDidMount() {
 		for(let key of ['fennecadvancedsearch-to-label','fennecadvancedsearch-from-label']){
@@ -65,13 +73,24 @@ class FormInput extends Component {
 		}
 		//console.log(fieldName, value, event.target.checked,"fieldName, value, event");
 	}
+	filterAlreadyChosenOptions( options ){
+		let alreadyChosenOptions = FormMain.getValue(this.state.inputData.field);
+		//nothing to filter
+		if( !alreadyChosenOptions ){
+			return options;
+		}
+		alreadyChosenOptions = alreadyChosenOptions.map( item => item.value);
+		options = options.filter( item => !alreadyChosenOptions.includes( item.value ));
+		return options;
+	}
 	autocompleteChanged(  event , typed){
 		this.setState({
 			typed:typed
 		});
 		if(this.state.options.length){
+			let filteredOptions = this.state.options.filter( item => !typed || item.label.indexOf(typed) > -1);
 			this.setState({
-				filteredOptions : this.state.options.filter( item => !typed || item.label.indexOf(typed) > -1)
+				filteredOptions : this.filterAlreadyChosenOptions( filteredOptions )
 			});
 		}
 		else if( this.isSearchAutomplete() ){
@@ -83,14 +102,13 @@ class FormInput extends Component {
 					let valuesAsArray = [],
 						vals = data.data.values;
 					for(let valKey of Object.keys(vals) ){
-
 						valuesAsArray.push({
 							label:vals[valKey],
 							value:valKey
 						});
 					}
 					this.setState({
-						filteredOptions : valuesAsArray
+						filteredOptions : this.filterAlreadyChosenOptions( valuesAsArray )
 					});
 				}
 			});
@@ -100,6 +118,7 @@ class FormInput extends Component {
 	searchAutocomplete( typed ){
 		let values = FormMain.getAllValuesProcessed(),
 			namespaces = values['namespace'];
+		FormMain.setValue( this.state.inputData.field, typed );
 		ajaxCall.get(`action=opensearch&formatversion=2&search=${typed}&namespace=${namespaces}&limit=10&suggest=true`).then(data => {
 			let allData = data.data,
 				titles = data.data[1],
@@ -125,6 +144,9 @@ class FormInput extends Component {
 			});
 			console.log(data, "namespaces");
 		});
+	}
+	submitClicked(){
+		FormMain.submitData();
 	}
 	autocompleteSelected( fieldName, itemLabel, autocompleteItem){
 		if( this.isSearchAutomplete() ){
@@ -176,7 +198,7 @@ class FormInput extends Component {
 				default:
 					break;
 			}
-			return <div className={wrpClass}>{label}:{html}</div>;
+			return <div className={wrpClass}>{label}{html}</div>;
 		}
 	}
 	showAdvanced (){
@@ -188,10 +210,15 @@ class FormInput extends Component {
 			wrpClass = 'main-and-advanced-wrp' + 
 				( this.state.showAdvanced ? ' opened' : '');
 		for( let option of inputData.widget.options){
-			let checkbox = <span key={ inputData.field +'-' + option.value} className='checkbox-wrp'>
-				<input type='checkbox' value="{option.value}" defaultChecked={option.defaultChecked} onChange={this.checkboxChanges.bind(this, inputData.field, option)} />
-				<span className='checkbox-label'>{option.label}</span>
-				</span>;
+			let faType = FormMain.includes(inputData.field, option.value) ? 'fa' : 'far',
+				uniqe = (inputData.field + '-' + option.value).replace(/\s|:/g,'-'),
+				checkbox = <span key={ inputData.field +'-' + option.value} className='checkbox-wrp'>
+					<input id={uniqe} type='checkbox' value="{option.value}" defaultChecked={option.defaultChecked} onChange={this.checkboxChanges.bind(this, inputData.field, option)} />
+					<label htmlFor={ uniqe } >
+						<i className={"fa-check-square " + faType}></i>
+						<span className='checkbox-label'>{option.label}</span>
+					</label>
+					</span>;
 			if('advanced' === option.show){
 				checkboxesAdvanced.push(checkbox);
 			}
@@ -218,11 +245,7 @@ class FormInput extends Component {
 	}
 	selectBuild (inputData){
 		let options = this.extractOptions( inputData.widget.options);
-		if(!this.state.selected){
-			this.setState({
-				selected : options[0].value
-			});
-		}
+console.log(this.state,"this.state")
 		return <Select
 			className={'select select-' + inputData.field}
 			value={this.state.selected}
@@ -255,33 +278,36 @@ class FormInput extends Component {
 					onChange={this.inputChanges.bind(this, inputData.field)} />;
 	}
 	autocompleteBuild (inputData){
-			//console.log(inputData, 'inputData');
-			return   <Autocomplete
+			let submitButton = this.isSearchAutomplete() ? <button type='button' onClick={this.submitClicked.bind(this)} >חפש</button> : ''; 
+			
+			return   <div className="autocomplete-wrp"><Autocomplete
 						  getItemValue={(item) => item.label}
-						  menuStyle={ {position:'absolute',top:'45px',right:0,left:'auto'}}
+						  menuStyle={ {position:'absolute',top:'45px',right:0,left:'auto',zIndex:5,'background': '#FFF'}}
 						  items={this.state.filteredOptions}
 						  renderItem={ this.autocompleteRender.bind(this) }
 						  value={this.state.typed}
 						  onChange={ this.autocompleteChanged.bind(this)}
 						  onSelect={this.autocompleteSelected.bind(this, inputData.field)}
 						/>
+					{submitButton}
+					</div>
 	}
 	autocompleteRender (item, isHighlighted){
 
 		let nsWrapper = this.isSearchAutomplete() && item.ns ? <span className="ns-wrapper">{item.ns}</span> : '',
 			innerHtml = this.isSearchAutomplete() ? <a href={item.href}>{nsWrapper}<span className="label-wrapper">{item.label}</span></a> : item.label;
-		return <div className={ 'autocomplete-item ' + (isHighlighted ? 'highlighted' : 'regular') }>
+		return <div className={ 'autocomplete-item ' + (isHighlighted ? 'highlighted' : 'regular') } key={item.label}>
 				     {innerHtml}
 				</div>;
 	}
 	getLabel (inputData){
-		return <label htmlFor={inputData.field} >{inputData.label} </label>;
+		return inputData.label ? <label htmlFor={inputData.field} >{inputData.label}: </label> : '';
 	}
 	render() {
 		let inputHtml = this.getInputHtml();
 		
 	return (
-	  <div className="form-input">
+	  <div className={"form-input form-input-wrp-" + this.state.inputData.field.replace(/:/g,'-')}>
 	    {inputHtml}
 	</div>
 	);

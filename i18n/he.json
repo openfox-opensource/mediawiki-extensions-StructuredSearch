@@ -14,5 +14,7 @@
 	"fennecadvancedsearch-category-label": "קטגוריות",
 	"fennecadvancedsearch-namespace-label": "סוג דף",
 	"fennecadvancedsearch-from-label": "מ",
-	"fennecadvancedsearch-to-label": "עד"
+	"fennecadvancedsearch-to-label": "עד",
+	"fennecadvancedsearch-no-results": "לא נמצאו תוצאות",
+	"fennecadvancedsearch-on-results-error": "שגיאה במהלך החיפוש"
 }

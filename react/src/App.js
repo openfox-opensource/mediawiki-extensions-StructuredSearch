@@ -3,21 +3,15 @@ import settingsGetter from './libs/settingsGetter';
 import FormInput from './libs/FormInput';
 import EventEmitter from './libs/EventEmitter';
 import ReactMustache from 'react-mustache'
-import './App.css';
+import translate from './libs/translations'
 
-if(!window.mw){
-  window.mw = {
-    message : function(val){
-      return val;
-    }
-  }
-}
+import './App.css';
 
 class App extends Component {
   constructor() {
     super();
-    this.state = { data: [],dataJsoned:"ss" };
-    EventEmitter.on('dataRecieved', results => this.setState({results:results}));
+    this.state = { data: [] };
+
 
   }
   componentDidMount() {
@@ -32,6 +26,7 @@ class App extends Component {
         }
        }
       );
+      
   }
   getTempalteByResult( result ){
     let ns = result.namespaceId;
@@ -44,7 +39,7 @@ class App extends Component {
   }
 
   render() {
-    let allInputs = [], results =[];
+    let allInputs = [];
     if(this.state.inputs){
       //console.log('this.state.inputs',this.state.inputs);
       for(let inputDataKey of Object.keys(this.state.inputs)){
@@ -54,23 +49,11 @@ class App extends Component {
           }
         }
     }
-    if(this.state.results){
-      for(let resultKey of Object.keys(this.state.results)){
-        let result = this.state.results[resultKey];
-        results.push(this.getResultJsx( result ) )
-        //console.log("result",result);
-      }
-      //  console.log("results",results);
-    }
+   
     return (
-      <div className="App">
           <div className='side-bar'>
             {allInputs}
           </div>
-          <div className='results'>
-            {results}
-          </div>
-    </div>
     );
   }
 }

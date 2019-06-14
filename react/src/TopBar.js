@@ -16,7 +16,11 @@ class TopBar extends Component {
       //console.log(this.state.inputs)
       for(let fieldKey of Object.keys(allData)){
         ;
-        if(allData[fieldKey] && this.state.inputs && this.state.inputs[fieldKey] && ('autocomplete' === this.state.inputs[fieldKey].widget.type || this.state.inputs[fieldKey].withLabels) ){
+        if(allData[fieldKey] && this.state.inputs && this.state.inputs[fieldKey] && 
+          ( 
+            ('autocomplete' === this.state.inputs[fieldKey].widget.type && 'search' != this.state.inputs[fieldKey].field )
+           || this.state.inputs[fieldKey].withLabels) 
+          ){
           //console.log(allData[fieldKey]);
           for(let item of allData[fieldKey]){
             newLabels.push({
@@ -45,19 +49,10 @@ class TopBar extends Component {
   removeLabel( fieldName, valueObj) {
     FormMain.removeValue(fieldName, valueObj);
   }
-  toQueryStr( params ){
-    return Object.keys(params).map(key => key + '=' + params[key]).join('&');
-  }
-  submitClicked(){
-    let params = FormMain.getAllValuesProcessed();
-    //console.log(params,'params');
-    params.action = 'fennecadvancedsearchsearch';
-    let urlSuffix = this.toQueryStr( params);
-    ajaxCall.get(urlSuffix).then(data=>{
-      //console.log()
-      EventEmitter.emit('dataRecieved', data.data.FennecAdvancedSearchSearch);
-    });
-//    console.log(this.toQueryStr());
+  
+  submitClicked( event ){
+    event.preventDefault();
+    FormMain.submitData();
   }
   render() {
     let allInputs = [],
@@ -80,10 +75,12 @@ class TopBar extends Component {
     return (
       <div className="TopBar">
         <header className="App-header">
-          {labels}
-          {allInputs}
+          <form onSubmit={this.submitClicked.bind(this)}>
+            {allInputs}
+            {labels}
+          </form>
         </header>
-        <button type='button' onClick={this.submitClicked.bind(this)} >חפש</button>
+        
     </div>
     );
   }
