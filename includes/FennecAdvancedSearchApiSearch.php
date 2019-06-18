@@ -43,9 +43,8 @@ class ApiSearch extends \ApiBase {
 	public function getSearchParams() {
 			
 		$params = $this->extractRequestParams();
-		if(!isset($params['namespace']) || !$params['namespace']){
+		if(!isset($params['namespace']) || !is_numeric($params['namespace'])){
 			$namespaces = Hooks::getDefinedNamespaces();
-		//print_r([$namespaces, $params]);
 			$params['namespace'] = implode('|', array_column($namespaces, 'value'));
 		}
 		$params = self::extractSearchStringFromFields($params);
@@ -58,6 +57,7 @@ class ApiSearch extends \ApiBase {
 			}
 		}
 		$params = $srParams;
+		//die(print_r($params));
 		$params['action'] = 'query';
 		$params['list'] = 'search';
 		
