@@ -15,6 +15,9 @@ class App extends Component {
 
   }
   componentDidMount() {
+    EventEmitter.on("FormDataChanged", allData => {
+      this.forceUpdate();
+    });
       settingsGetter.get().then(data => {
         //console.log(data.templates, data);
         if( data ){

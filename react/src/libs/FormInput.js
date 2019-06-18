@@ -121,8 +121,8 @@ class FormInput extends Component {
 		FormMain.setValue( this.state.inputData.field, typed );
 		ajaxCall.get(`action=opensearch&formatversion=2&search=${typed}&namespace=${namespaces}&limit=10&suggest=true`).then(data => {
 			let allData = data.data,
-				titles = data.data[1],
-				links = data.data[3],
+				titles = allData[1],
+				links = allData[3],
 				filteredOptions = [];
 			for(let i = 0; i < titles.length; i++){
 				let ns, label, 
@@ -198,7 +198,7 @@ class FormInput extends Component {
 				default:
 					break;
 			}
-			return <div className={wrpClass}>{label}{html}</div>;
+			return <div className={wrpClass}><span className="">{label}</span>{html}</div>;
 		}
 	}
 	showAdvanced (){
@@ -210,13 +210,14 @@ class FormInput extends Component {
 			wrpClass = 'main-and-advanced-wrp' + 
 				( this.state.showAdvanced ? ' opened' : '');
 		for( let option of inputData.widget.options){
+
 			let faType = FormMain.includes(inputData.field, option.value) ? 'fa' : 'far',
 				uniqe = (inputData.field + '-' + option.value).replace(/\s|:/g,'-'),
 				checkbox = <span key={ inputData.field +'-' + option.value} className='checkbox-wrp'>
-					<input id={uniqe} type='checkbox' value="{option.value}" defaultChecked={option.defaultChecked} onChange={this.checkboxChanges.bind(this, inputData.field, option)} />
+					<input id={uniqe} type='checkbox' value={option.value} defaultChecked={option.defaultChecked} onChange={this.checkboxChanges.bind(this, inputData.field, option)} />
 					<label htmlFor={ uniqe } >
 						<i className={"fa-check-square " + faType}></i>
-						<span className='checkbox-label'>{option.label}</span>
+						<span className='checkbox-label' dangerouslySetInnerHTML={{__html: option.label}}></span>
 					</label>
 					</span>;
 			if('advanced' === option.show){
@@ -301,7 +302,7 @@ console.log(this.state,"this.state")
 				</div>;
 	}
 	getLabel (inputData){
-		return inputData.label ? <label htmlFor={inputData.field} >{inputData.label}: </label> : '';
+		return inputData.label ? <label htmlFor={inputData.field} dangerouslySetInnerHTML={{__html: inputData.label + ':' }} ></label> : '';
 	}
 	render() {
 		let inputHtml = this.getInputHtml();

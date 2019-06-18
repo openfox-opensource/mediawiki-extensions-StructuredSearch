@@ -86,14 +86,14 @@ class Hooks{
 				$show = 'advanced';
 			}
 			$returnedNamespaces[$namespaceId] = [
-				'label' => $nsName ? $nsName : wfMessage('fennecadvancedsearch-main-namesapce')->text(),
+				'label' => $nsName ? preg_replace('/_/',' ', $nsName) : wfMessage('fennecadvancedsearch-main-namesapce')->text(),
 				'value' => $namespaceId,
 				'show' => $show,
 			];
 		}
 		$NSOverride = $conf->get('FennecAdvancedSearchNSOverride');
 		foreach ($NSOverride as $NSKey => $NSData) {
-			foreach( ['show', 'defaultChecked'] as $key){
+			foreach( ['show', 'defaultChecked', 'label'] as $key){
 				if( isset( $NSData[ $key ] ) ){
 					$returnedNamespaces[ $NSKey ][ $key ] = $NSData[ $key ];
 				}

@@ -29,8 +29,8 @@ class ApiSearch extends \ApiBase {
 
 	public function execute() {
 		
-		header("Access-Control-Allow-Origin: *");
 		if('127.0.0.1' == $_SERVER["REMOTE_ADDR"]){
+		header("Access-Control-Allow-Origin: *");
 		}
 		$result = $this->getResult();
 		
