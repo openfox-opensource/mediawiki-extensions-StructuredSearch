@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import settingsGetter from './libs/settingsGetter';
 import FormInput from './libs/FormInput';
 import EventEmitter from './libs/EventEmitter';
-import ReactMustache from 'react-mustache'
 import translate from './libs/translations'
 
 import './App.css';
@@ -31,15 +30,7 @@ class App extends Component {
       );
       
   }
-  getTempalteByResult( result ){
-    let ns = result.namespaceId;
-    return this.templates['template_' + ns] || this.templates['default'];
-  }
-  getResultJsx( result ){
-    let template = this.getTempalteByResult( result ); 
-    //console.log(template,'template',result);
-    return <ReactMustache template={template} data={result} />;
-  }
+
 
   render() {
     let allInputs = [];
