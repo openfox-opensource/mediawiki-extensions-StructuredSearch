@@ -24,7 +24,6 @@ class App extends Component {
           this.setState({ 
             inputs: data.params
           });
-          this.templates = data.templates;
         }
        }
       );

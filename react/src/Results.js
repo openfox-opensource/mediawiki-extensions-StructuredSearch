@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import EventEmitter from './libs/EventEmitter';
 import translate from './libs/translations';
 import ReactMustache from 'react-mustache'
+import settingsGetter from './libs/settingsGetter';
 
 
 class Results extends Component {
@@ -31,6 +32,12 @@ class Results extends Component {
         })
       }
 
+    });
+    settingsGetter.get().then(data => {
+        //console.log(data.templates, data);
+        if( data ){
+          this.templates = data.templates;
+        }
     });
   }
   getTempalteByResult( result ){
