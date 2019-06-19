@@ -48,7 +48,7 @@ class Hooks{
 	}
 	static public function getDefinedNamespaces( ){
 		$included = self::tryGetNSReplace();
-		return count($included) ? $included : array_values( self::getNamspacesDefaultWithOverrides() );
+		return $included && count($included) ? $included : array_values( self::getNamspacesDefaultWithOverrides() );
 	}
 	static public function namespacesExtract( &$params ){
 		

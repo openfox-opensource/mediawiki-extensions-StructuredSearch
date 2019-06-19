@@ -117,9 +117,18 @@ class Utils{
 	public static function getSearchParams() {
 		$conf = \MediaWiki\MediaWikiServices::getInstance()->getMainConfig();
 		$params = $conf->get('FennecAdvancedSearchParams');
-		\Hooks::run( 'FennecAdvancedSearchParams', [ &$params ] );
+		$newKeyedArray = [];
+		foreach ($params as $param) {
+			$newKeyedArray[$param['field']] = $param;
+		}
+		\Hooks::run( 'FennecAdvancedSearchParams', [ &$newKeyedArray ] );
 		//die(print_r($params,1));
-		return $params;
+		return $newKeyedArray;
+	}
+	public static function getFeatureSearchStr( $fieldName, $fieldValue ) {
+		$fieldValue = is_array($fieldValue) ? implode("|", $fieldValue) : $fieldValue;
+		$fieldValue = '"' . $fieldValue .  '"';
+		return ' ' . Utils::getFeatureKey( $fieldName) . ':' . $fieldValue;
 	}
 	public static function replaceCargoFieldToElasticField( $field ) {
 		return preg_replace('/:/', '__',$field);
