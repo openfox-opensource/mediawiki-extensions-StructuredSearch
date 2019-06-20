@@ -209,6 +209,10 @@ class Hooks{
 						'value' => $option,
 					];
 				}
+				array_unshift($options, [
+						'label' => '',
+						'value' => '',
+				]);
 				$param['widget']['options'] = $options;
 			}
 		}
