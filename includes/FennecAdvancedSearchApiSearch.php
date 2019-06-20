@@ -43,10 +43,15 @@ class ApiSearch extends \ApiBase {
 	public function getSearchParams() {
 			
 		$params = $this->extractRequestParams();
-		if(!isset($params['namespace']) || !is_numeric($params['namespace'])){
+		if(!isset($params['namespace']) || !strlen($params['namespace'])){
 			$namespaces = Hooks::getDefinedNamespaces();
+			$namespaces = array_column($namespaces, 'value');
+			$namespaces = array_filter($namespaces, function($val){
+				return (integer) $val >= 0;
+			});
 			$params['namespace'] = implode('|', array_column($namespaces, 'value'));
 		}
+		$params['namespace'] = $params['namespace'];
 		$params = self::extractSearchStringFromFields($params);
 		$srParams = [];
 		
@@ -56,10 +61,12 @@ class ApiSearch extends \ApiBase {
 				$srParams['sr' . $pKey ] = $pValue;
 			}
 		}
-		$params = $srParams;
-		//die(print_r($params));
+		$params = array_filter($srParams, function( $val ){
+			return !is_null($val);
+		});
 		$params['action'] = 'query';
 		$params['list'] = 'search';
+		//die(print_r($params));
 		
 		//die(http_build_query($params));
 		$callApiParams = new \DerivativeRequest(
@@ -77,18 +84,22 @@ class ApiSearch extends \ApiBase {
 		return $this->getResultsAdditionalFields($results);
 	}	
 	public static function extractSearchStringFromFields( $params ) {
-			$searchParams = Utils::getSearchParams();
-			$searchParamsKeys = array_column($searchParams , 'field');
-
+		
+		$searchParams = Utils::getSearchParams();
+		$searchParamsKeys = array_column($searchParams , 'field');
+		foreach ($params as $pKey => $pValue) {
+			//print_r([in_array($pKey, $searchParamsKeys), self::isSearchableField( $pKey )]);
+			if( in_array($pKey, $searchParamsKeys) && isset($searchParams[$pKey]['search_callbak']) && function_exists($searchParams[$pKey]['search_callbak']) ){
+					call_user_func_array($searchParams[$pKey]['search_callbak'], [&$params, $pKey]);
+					print_r($params);
+				}
+		}
 		//print_r($searchParamsKeys);
 		foreach ($params as $pKey => $pValue) {
 			//print_r([in_array($pKey, $searchParamsKeys), self::isSearchableField( $pKey )]);
 			if( in_array($pKey, $searchParamsKeys) ){
 				
-				if( isset($searchParams[$pKey]['search_callbak']) && function_exists($searchParams[$pKey]['search_callbak']) ){
-					call_user_func_array($searchParams[$pKey]['search_callbak'], [&$params, $pKey]);
-				}
-				else if(  Utils::isSearchableField( $pKey ) && $pValue){					
+				if(  Utils::isSearchableField( $pKey ) && $pValue){
 					$params['search'] .= Utils::getFeatureSearchStr( $pKey, $pValue);
 					unset($params[$pKey]);
 				}
@@ -208,7 +219,7 @@ class ApiSearch extends \ApiBase {
 			$res = $dbrCargo->select( $tableName, $fields, $conditions);
 			//print_r($conditions);
 			while ( $row = $dbrCargo->fetchObject( $res ) ) {
-				print_r([$row,'d']);
+				//print_r([$row,'d']);
 				$addToArr = &$resultsTitlesAliases[$row->_pageName];
 				foreach ($row as $key => $value) {
 					//echo "$key $value<br/>";

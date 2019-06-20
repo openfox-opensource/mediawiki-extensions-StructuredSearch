@@ -147,6 +147,11 @@ class Utils{
 	public static function isCargoField( $key ) {
 		return strpos($key, ':');
 	}
+	public static function isNumericField( $param ) {
+		$isRange = isset($param['widget']['type']) && 'range' == $param['widget']['type'];
+		$isNumber = isset($param['filed_type']) && 'number' == $param['filed_type'];
+		return $isRange || $isNumber;
+	}
 	public static function getFeatureKey( $key ) {
 		return 'in' . (self::isCargoField($key) ? '_' : '')  . self::replaceCargoFieldToElasticField($key);
 	}
