@@ -5,7 +5,8 @@
 ```FennecAdvancedSearchParams```  
 Main config.  
 Array of details about fields to search/show as inputs in search form/add to results  
-The structure of the array  
+The structure of the array .
+No key needed, the field would be unieqe identifier
 ```
 [
     'label' => "Text showed on form as input's label",
@@ -18,6 +19,7 @@ The structure of the array
 	    'position' => 'sidebar',
 	    //for select, autocomplete, rdios or checkboes
 	    // array of strings or object as described
+	    //if ommited and this is cargo field, all table values would be options automaticcaly
 	    'options' => [
 	        {
 	            label:"text of label",
@@ -27,7 +29,10 @@ The structure of the array
 	    //if you want autocomplete by API call, register it with this option.
 	    //the function gets as arguments $term, $fieldname
 	    and returns data in the same strcture og options
-	    'autocomplete_callback' => callable_string
+	    'autocomplete_callback' => callable_string,
+	    //if you want to proccess by yourself this param and how it would send to search api, use this function.
+	    //the function gets two variables: &$params, $fieldName
+	    'search_callbak' => callable_string,
 ]
 ```  
 ```FennecAdvancedSearchResultsTemplates```  
