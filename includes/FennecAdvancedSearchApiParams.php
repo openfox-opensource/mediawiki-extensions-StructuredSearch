@@ -50,6 +50,7 @@ class ApiParams extends \ApiBase {
 		$translateStrs = [
 			"fennecadvancedsearch-from-label",
 			"fennecadvancedsearch-to-label",
+			"fennecadvancedsearch-more-label",
 			"fennecadvancedsearch-no-results",
 			"fennecadvancedsearch-on-results-error",
 		];

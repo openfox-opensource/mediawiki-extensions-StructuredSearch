@@ -8,7 +8,7 @@ class Utils{
 		$categoryInclude = $conf->get('FennecAdvancedSearchCategoryInclude');
 		return  $categoryInclude ? self::preccessDefaultCategories( $categoryInclude, $term ) : self::getCategiresFromDb($term);
 	}
-	static public function cargoAutocomplete( $term, $fieldName ){
+	static public function cargoAllRows( $fieldName ){
 		$dbrCargo = \CargoUtils::getDB();
 		$splitted = preg_split('/:/', $fieldName);
 		$tableName = $splitted[0];
@@ -30,10 +30,15 @@ class Utils{
 		$results = [];
 		
 		while ( $row = $dbrCargo->fetchObject( $res ) ) {
-			if( strpos($row->val, $term) === 0 ){
-				$results[$row->val] = $row->val;
-			}
+			$results[$row->val] = $row->val;
 		}
+		return $results;
+	}
+	static public function cargoAutocomplete( $term, $fieldName ){
+		$results = self::cargoAllRows( $fieldName);
+		$results = array_filter( $results, function( $val ) use ($term){
+			return  strpos($val, $term) === 0;
+		});
 		return $results;
 	}
 	static public function preccessDefaultCategories( $cats, $term = FALSE ){

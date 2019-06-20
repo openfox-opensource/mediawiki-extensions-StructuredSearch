@@ -30,7 +30,10 @@ class FormInput extends Component {
 
 	}
 	componentDidMount() {
-		for(let key of ['fennecadvancedsearch-to-label','fennecadvancedsearch-from-label']){
+		for(let key of [
+			'fennecadvancedsearch-to-label',
+			'fennecadvancedsearch-from-label',
+			'fennecadvancedsearch-more-label']){
 			translate(key).then( val => {
 				let stateToChange = {};
 				stateToChange[key] = val;
@@ -211,12 +214,12 @@ class FormInput extends Component {
 				( this.state.showAdvanced ? ' opened' : '');
 		for( let option of inputData.widget.options){
 
-			let faType = FormMain.includes(inputData.field, option.value) ? 'fa' : 'far',
+			let faClass = 'far ' + (FormMain.includes(inputData.field, option.value) ? 'fa-check-square' : 'fa-square'),
 				uniqe = (inputData.field + '-' + option.value).replace(/\s|:/g,'-'),
 				checkbox = <span key={ inputData.field +'-' + option.value} className='checkbox-wrp'>
 					<input id={uniqe} type='checkbox' value={option.value} defaultChecked={option.defaultChecked} onChange={this.checkboxChanges.bind(this, inputData.field, option)} />
 					<label htmlFor={ uniqe } >
-						<i className={"fa-check-square " + faType}></i>
+						<i className={faClass}></i>
 						<span className='checkbox-label' dangerouslySetInnerHTML={{__html: option.label}}></span>
 					</label>
 					</span>;
@@ -228,9 +231,10 @@ class FormInput extends Component {
 			}
 
 		}
+		let moreButton = checkboxesAdvanced.length ? <button type={'button'} onClick={this.showAdvanced.bind(this)} >{this.state['fennecadvancedsearch-more-label']}</button> : '';
 		return <div className={wrpClass}>
 					<div className="main">{checkboxesMain}</div>
-					<button onClick={this.showAdvanced.bind(this)} >More </button>
+					{moreButton}
 					<div className="advanced">{checkboxesAdvanced}</div>
 				</div>;
 	}

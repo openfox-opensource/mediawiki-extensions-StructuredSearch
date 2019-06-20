@@ -180,7 +180,7 @@ class Hooks{
 	            'position' => 'topbar',
 	        ],
 		];
-
+		
 		$conf = \MediaWiki\MediaWikiServices::getInstance()->getMainConfig();
 		$defaultParams = $conf->get('FennecAdvancedSearchDefaultParams');
 		if( !count( $defaultParams ) ){
@@ -196,9 +196,23 @@ class Hooks{
 					break;
 			}
 		}
+		self::addOptionsToCargoTable( $params );
 		
 	}
-
+	static public function addOptionsToCargoTable( &$params ){
+		foreach ($params as &$param ) {
+			if( in_array($param['widget']['type'] , ['checkboxes','radios','select']) && !isset($param['widget']['options']) && Utils::isCargoField( $param['field'] ) ){
+				$options = array_values(Utils::cargoAllRows($param['field']));
+				foreach ($options as &$option) {
+					$option = [
+						'label' => $option,
+						'value' => $option,
+					];
+				}
+				$param['widget']['options'] = $options;
+			}
+		}
+	}
 
 	
 
