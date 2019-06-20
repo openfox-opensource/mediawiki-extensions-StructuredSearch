@@ -209,10 +209,12 @@ class Hooks{
 						'value' => $option,
 					];
 				}
-				array_unshift($options, [
+				if( 'select' === $param['widget']['type'] ){
+					array_unshift($options, [
 						'label' => '',
 						'value' => '',
-				]);
+					]);
+				}
 				$param['widget']['options'] = $options;
 			}
 		}
