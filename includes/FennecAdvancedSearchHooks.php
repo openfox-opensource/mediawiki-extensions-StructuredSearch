@@ -121,7 +121,7 @@ class Hooks{
 					$keyForCirrus = Utils::replaceCargoFieldToElasticField( $param['field']);
 					$builder = new CirrusSearchIndexFieldFactory($engine->getConfig());
 
-					$fields[$keyForCirrus] = 'range' == $param['widget']['type'] ? $builder->newLongField($keyForCirrus) : $builder->newStringField($keyForCirrus);
+					$fields[$keyForCirrus] = Utils::isNumericField($param) ? $builder->newLongField($keyForCirrus) : $builder->newStringField($keyForCirrus);
 				}
 			}
 			//$fields['tryToText'] = CoordinatesIndexField::build( 'coordinates', $engine->getConfig(), $engine );
@@ -148,7 +148,7 @@ class Hooks{
 		$params = Utils::getSearchParams();
 		$vals = ApiSearch::getResultsAdditionalFieldsFromTitles( [$page->getTitle()->getPrefixedText()]);
 		$vals = array_pop( $vals );
-				print_r($vals);
+				//print_r($vals);
 		
 		foreach ($params as $param) {
 			if( Utils::isCargoField($param['field']) ){
