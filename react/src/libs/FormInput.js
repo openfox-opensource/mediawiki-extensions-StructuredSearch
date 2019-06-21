@@ -213,10 +213,17 @@ class FormInput extends Component {
 			wrpClass = 'main-and-advanced-wrp' + 
 				( this.state.showAdvanced ? ' opened' : '');
 		for( let option of inputData.widget.options){
-
-			let faClass = 'far ' + (FormMain.includes(inputData.field, option.value) ? 'fa-check-square' : 'fa-square'),
-				uniqe = (inputData.field + '-' + option.value).replace(/\s|:/g,'-'),
-				checkbox = <span key={ inputData.field +'-' + option.value} className='checkbox-wrp'>
+			let faClass = 'far ',
+				selectedClass = '';
+			if( FormMain.includes(inputData.field, option.value) ){
+				selectedClass =' selected';
+				faClass += 'fa-check-square';
+			}
+			else{
+				faClass += 'fa-square';
+			}
+			let uniqe = (inputData.field + '-' + option.value).replace(/\s|:/g,'-'),
+				checkbox = <span key={ inputData.field +'-' + option.value} className={'checkbox-wrp' + selectedClass }>
 					<input id={uniqe} type='checkbox' value={option.value} defaultChecked={option.defaultChecked} onChange={this.checkboxChanges.bind(this, inputData.field, option)} />
 					<label htmlFor={ uniqe } >
 						<i className={faClass}></i>
@@ -250,7 +257,7 @@ class FormInput extends Component {
 	}
 	selectBuild (inputData){
 		let options = this.extractOptions( inputData.widget.options);
-console.log(this.state,"this.state")
+
 		return <Select
 			className={'select select-' + inputData.field}
 			value={this.state.selected}

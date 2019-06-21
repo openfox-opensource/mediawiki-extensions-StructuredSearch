@@ -12,18 +12,19 @@ class TopBar extends Component {
     super();
     this.state = { labels: [] };
     EventEmitter.on("FormDataChanged", allData => {
-      let newLabels = [];
-      //console.log(this.state.inputs)
+      let newLabels = {};
+      //console.log(this.state.inputs,"this.state.inputs")
       for(let fieldKey of Object.keys(allData)){
         ;
         if(allData[fieldKey] && this.state.inputs && this.state.inputs[fieldKey] && 
           ( 
-            ('autocomplete' === this.state.inputs[fieldKey].widget.type && 'search' != this.state.inputs[fieldKey].field )
+            ('sidebar' === this.state.inputs[fieldKey].widget.position && 'search' != this.state.inputs[fieldKey].field )
            || this.state.inputs[fieldKey].withLabels) 
           ){
-          //console.log(allData[fieldKey]);
+          console.log(allData[fieldKey],"allData[fieldKey]");
+          newLabels[fieldKey] = [];
           for(let item of allData[fieldKey]){
-            newLabels.push({
+            newLabels[fieldKey].push({
               label : item.label,
               value: item.value,
               field: fieldKey
@@ -55,8 +56,8 @@ class TopBar extends Component {
     FormMain.submitData();
   }
   render() {
-    let allInputs = [],
-        labels = [];
+    let allInputs = [], 
+        labelsKeyed = [];
     if(this.state.inputs){
       for(let inputDataKey of Object.keys(this.state.inputs)){
         //console.log(this.state.inputs[inputDataKey],inputDataKey,'this.state.inputs[inputDataKey],inputDataKey');
@@ -66,10 +67,19 @@ class TopBar extends Component {
       }
     }
     if(this.state.labels){
-      for(let label of this.state.labels){
-        //console.log(this.state.inputs[inputDataKey],inputDataKey,'this.state.inputs[inputDataKey],inputDataKey');
-        labels.push( <span key={label.field + ':' + label.value} className="label-wrp">{label.label}<button type="button" className='label-remove' onClick={this.removeLabel.bind(this, label.field, label)}>X</button></span> )
-        
+      for(let labelKey of Object.keys(this.state.labels)){
+        let labels =[];
+        for(let label of this.state.labels[labelKey]){
+          labels.push( <span key={label.field + ':' + label.value} className="label-wrp">{label.label}<button type="button" className='label-remove' onClick={this.removeLabel.bind(this, label.field, label)}>X</button></span> )
+        }
+
+       //console.log(this.state.inputs[inputDataKey],inputDataKey,'this.state.inputs[inputDataKey],inputDataKey');
+       let labelName = this.state.inputs[labelKey] ? this.state.inputs[labelKey].label + ':' : '';
+       console.log("labelName:", labelName,this.state.inputs[labelKey],this.state.inputs[labelKey].label);
+       labelsKeyed.push(<div className={'labels-with-title'}>
+          <span className={'lables-title lables-title' + labelKey}>{labelName}</span>
+          {labels}
+        </div>); 
       }
     }
     return (
@@ -77,7 +87,7 @@ class TopBar extends Component {
         <header className="App-header">
           <form onSubmit={this.submitClicked.bind(this)}>
             {allInputs}
-            {labels}
+            {labelsKeyed}
           </form>
         </header>
         
