@@ -315,6 +315,11 @@ class FormInput extends Component {
 	getLabel (inputData){
 		return inputData.label ? <label htmlFor={inputData.field} dangerouslySetInnerHTML={{__html: inputData.label + ':' }} ></label> : '';
 	}
+	stripHTML( str ){
+		let el = document.createElement('div');
+		el.innerHTML = str;
+		return el.innerText;;
+	}
 	render() {
 		let inputHtml = this.getInputHtml();
 		

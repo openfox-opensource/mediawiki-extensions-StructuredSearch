@@ -23,6 +23,7 @@ class TopBar extends Component {
           ){
           console.log(allData[fieldKey],"allData[fieldKey]");
           newLabels[fieldKey] = [];
+          allData[fieldKey] = this.standardizeItem( allData[fieldKey] );
           for(let item of allData[fieldKey]){
             newLabels[fieldKey].push({
               label : item.label,
@@ -46,6 +47,15 @@ class TopBar extends Component {
         }
        }
       );
+  }
+  standardizeItem( item) {
+    if( 'string' === typeof item ){
+      item = [{
+        label:item,
+        value:item
+      }];
+    }
+    return item;
   }
   removeLabel( fieldName, valueObj) {
     FormMain.removeValue(fieldName, valueObj);
@@ -77,7 +87,7 @@ class TopBar extends Component {
        let labelName = this.state.inputs[labelKey] ? this.state.inputs[labelKey].label + ':' : '';
        console.log("labelName:", labelName,this.state.inputs[labelKey],this.state.inputs[labelKey].label);
        labelsKeyed.push(<div className={'labels-with-title'}>
-          <span className={'lables-title lables-title' + labelKey}>{labelName}</span>
+          <span className={'lables-title lables-title' + labelKey} dangerouslySetInnerHTML={{__html: labelName }}></span>
           {labels}
         </div>); 
       }
