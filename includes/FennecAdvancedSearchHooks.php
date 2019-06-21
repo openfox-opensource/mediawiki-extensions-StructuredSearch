@@ -74,11 +74,11 @@ class Hooks{
 	static public function namespacesProccess( $namespaces ){
 		$conf = \MediaWiki\MediaWikiServices::getInstance()->getMainConfig();
 		$includeTalkPagesType = $conf->get('FennecAdvancedSearchNSIncludeTalkPagesType');
-		
+		$showDefault = $conf->get('FennecAdvancedSearchNSDefaultPosition');
 		$returnedNamespaces = [];
 		foreach ($namespaces as $nsName => $namespaceId) {
 			
-			$show = 'main';
+			$show = $showDefault;
 			if( ( ( (integer) $namespaceId % 2) ) || ! is_numeric($namespaceId) ){
 				$show = $includeTalkPagesType;
 			}

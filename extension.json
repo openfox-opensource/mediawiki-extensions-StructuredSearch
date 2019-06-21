@@ -40,6 +40,10 @@
 			"description": "Override NS list. Usefull to modify full list Each NS can be 'main', 'advanced' or 'disable'",
 			"value": []
 		},
+		"FennecAdvancedSearchNSDefaultPosition": {
+			"description": "What is the default position of NS",
+			"value": "main"
+		},
 		"FennecAdvancedSearchNSIncludeTalkPagesType": {
 			"description": "Are talk pages includes in filters",
 			"value": "advanced"
