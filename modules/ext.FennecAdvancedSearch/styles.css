@@ -4,7 +4,7 @@
     margin-bottom: 10px;
     position: fixed;
 }
-/*.results, 
+/*.results,
 .side-bar {
    float: left;
 }*/
@@ -81,9 +81,34 @@
 .checkbox-wrp input{
   display: none;
 }
-.checkbox-wrp .fa-check-square{
+.checkbox-wrp .fa-square{
   margin: 0 3px;
 }
+.checkbox-wrp .fa-check-square {
+    margin: 0 3px;
+}
+
+/* main namespace picker */
+.form-input.form-input-wrp-namespace {
+    margin-top: 1em;
+}
+
+.TopBar .main .checkbox-wrp > label > i {
+    display: none;
+}
+
+.TopBar .checkbox-wrp.selected {
+    background: #ececec;
+}
+
+.TopBar .main .checkbox-wrp.selected i {
+    font-weight: bold;
+}
+
+.TopBar .checkbox-wrp label {
+    padding: 8px 1em 1px;
+}
+
 .range-input{
   padding: 1px;
 }

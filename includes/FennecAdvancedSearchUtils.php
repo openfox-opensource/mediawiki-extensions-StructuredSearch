@@ -132,7 +132,7 @@ class Utils{
 	}
 	public static function getFeatureSearchStr( $fieldName, $fieldValue ) {
 		$fieldValue = is_array($fieldValue) ? implode("|", $fieldValue) : $fieldValue;
-		$fieldValue = '"' . $fieldValue .  '"';
+		$fieldValue = '"' . addslashes($fieldValue) .  '"';
 		return ' ' . Utils::getFeatureKey( $fieldName) . ':' . $fieldValue;
 	}
 	public static function replaceCargoFieldToElasticField( $field ) {

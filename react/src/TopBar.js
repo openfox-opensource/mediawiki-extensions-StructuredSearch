@@ -80,7 +80,7 @@ class TopBar extends Component {
       for(let labelKey of Object.keys(this.state.labels)){
         let labels =[];
         for(let label of this.state.labels[labelKey]){
-          labels.push( <span key={label.field + ':' + label.value} className="label-wrp">{label.label}<button type="button" className='label-remove' onClick={this.removeLabel.bind(this, label.field, label)}>X</button></span> )
+          labels.push( <span key={label.field + ':' + label.value} className="label-wrp">{label.label}<button type="button" className='label-remove' onClick={this.removeLabel.bind(this, label.field, label)}><i class="far fa-times"></i></button></span> )
         }
 
        //console.log(this.state.inputs[inputDataKey],inputDataKey,'this.state.inputs[inputDataKey],inputDataKey');
