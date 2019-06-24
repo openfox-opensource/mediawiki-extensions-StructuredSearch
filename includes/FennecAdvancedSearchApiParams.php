@@ -51,6 +51,8 @@ class ApiParams extends \ApiBase {
 			"fennecadvancedsearch-from-label",
 			"fennecadvancedsearch-to-label",
 			"fennecadvancedsearch-more-label",
+			"fennecadvancedsearch-less-label",
+			"fennecadvancedsearch-search-label",
 			"fennecadvancedsearch-no-results",
 			"fennecadvancedsearch-on-results-error",
 		];

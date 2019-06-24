@@ -15,6 +15,7 @@ class Hooks{
 		$params['category'] = [
 			'label' => wfMessage('fennecadvancedsearch-category-label')->text(),
         	'field' => 'category',
+        	'weight' =>0,
 	        'widget' => [
 	            'type' => 'autocomplete',
 	            'position' => 'sidebar',

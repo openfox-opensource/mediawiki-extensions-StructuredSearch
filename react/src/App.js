@@ -3,6 +3,7 @@ import settingsGetter from './libs/settingsGetter';
 import FormInput from './libs/FormInput';
 import EventEmitter from './libs/EventEmitter';
 import translate from './libs/translations'
+import sortByWeight from './libs/sortByWeight'
 
 import './App.css';
 
@@ -35,12 +36,14 @@ class App extends Component {
     let allInputs = [];
     if(this.state.inputs){
       //console.log('this.state.inputs',this.state.inputs);
-      for(let inputDataKey of Object.keys(this.state.inputs)){
+      let inputsSorted = Object.values(this.state.inputs).sort( sortByWeight );
+      console.log("inputsSorted",inputsSorted);
+      for(let inputData of inputsSorted){
        // console.log(this.state.inputs[inputDataKey],inputDataKey,'this.state.inputs[inputDataKey],inputDataKey');
-        if( !['topbar','hide'].includes(this.state.inputs[inputDataKey].widget.position) ){
-          allInputs.push( <FormInput key={inputDataKey} inputData={this.state.inputs[inputDataKey]} /> )
-          }
+        if( !['topbar','hide'].includes(inputData.widget.position) ){
+          allInputs.push( <FormInput key={inputData.field} inputData={inputData} /> )
         }
+      }
     }
    
     return (

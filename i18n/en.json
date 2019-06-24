@@ -17,5 +17,7 @@
 	"fennecadvancedsearch-to-label": "To",
 	"fennecadvancedsearch-no-results": "No results found",
 	"fennecadvancedsearch-more-label": "More",
+	"fennecadvancedsearch-less-label": "Close",
+	"fennecadvancedsearch-search-label": "<i class='far fa-search'></i>",
 	"fennecadvancedsearch-no-results-error": "Error during search"
 }

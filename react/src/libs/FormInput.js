@@ -33,7 +33,10 @@ class FormInput extends Component {
 		for(let key of [
 			'fennecadvancedsearch-to-label',
 			'fennecadvancedsearch-from-label',
-			'fennecadvancedsearch-more-label']){
+			'fennecadvancedsearch-search-label',
+			'fennecadvancedsearch-more-label',
+			'fennecadvancedsearch-less-label'
+			]){
 			translate(key).then( val => {
 				let stateToChange = {};
 				stateToChange[key] = val;
@@ -167,7 +170,8 @@ class FormInput extends Component {
 	}
 	selectChanged( fieldName, value){
 		this.setState({selected : value});
-		this.valueChanged( fieldName, value.value);
+		FormMain.addValue(fieldName, value);
+		//this.valueChanged( fieldName, value.value);
 	}
 	rangeChanges(  fieldName, key, event){
 		FormMain.ChangeValueByKey( fieldName, key, event.target.value );
@@ -238,7 +242,8 @@ class FormInput extends Component {
 			}
 
 		}
-		let moreButton = checkboxesAdvanced.length ? <button type={'button'} onClick={this.showAdvanced.bind(this)} >{this.state['fennecadvancedsearch-more-label']}</button> : '';
+		let moreText = this.state.showAdvanced ? this.state['fennecadvancedsearch-less-label'] : this.state['fennecadvancedsearch-more-label'],
+			moreButton = checkboxesAdvanced.length ? <button type={'button'} onClick={this.showAdvanced.bind(this)} >{moreText}</button> : '';
 		return <div className={wrpClass}>
 					<div className="main">{checkboxesMain}</div>
 					{moreButton}
@@ -290,7 +295,7 @@ class FormInput extends Component {
 					onChange={this.inputChanges.bind(this, inputData.field)} />;
 	}
 	autocompleteBuild (inputData){
-			let submitButton = this.isSearchAutomplete() ? <button type='button' onClick={this.submitClicked.bind(this)} ><i className="far fa-search"></i></button> : ''; 
+			let submitButton = this.isSearchAutomplete() ? <button type='button' onClick={this.submitClicked.bind(this)} dangerouslySetInnerHTML={{__html:this.state['fennecadvancedsearch-search-label']}}></button> : ''; 
 			return   <div className="autocomplete-wrp"><Autocomplete
 						  getItemValue={(item) => item.label}
 						  menuStyle={ {position:'absolute',top:'45px',right:0,left:'auto',zIndex:5,'background': '#FFF'}}

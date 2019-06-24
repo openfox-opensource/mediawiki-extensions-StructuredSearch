@@ -4,6 +4,7 @@ import FormInput from './libs/FormInput'
 import FormMain from './libs/FormMain'
 import ajaxCall from './libs/ajaxCall'
 import EventEmitter from './libs/EventEmitter'
+import sortByWeight from './libs/sortByWeight'
 import './App.css';
 
 
@@ -67,37 +68,35 @@ class TopBar extends Component {
   }
   render() {
     let allInputs = [], 
-        labelsKeyed = [];
+        labelsKeyed = [], 
+        labels = [];
     if(this.state.inputs){
-      for(let inputDataKey of Object.keys(this.state.inputs)){
+      let inputsSorted = Object.values(this.state.inputs).sort(sortByWeight);
+      console.log("inputsSorted",inputsSorted);
+      for(let inputData of inputsSorted){
+      //for(let inputDataKey of Object.keys(this.state.inputs)){
         //console.log(this.state.inputs[inputDataKey],inputDataKey,'this.state.inputs[inputDataKey],inputDataKey');
-        if('topbar' === this.state.inputs[inputDataKey].widget.position){
-          allInputs.push( <FormInput key={inputDataKey} inputData={this.state.inputs[inputDataKey]} /> )
+        if('topbar' === inputData.widget.position){
+          allInputs.push( <FormInput key={inputData.field} inputData={inputData} /> )
         }
       }
     }
     if(this.state.labels){
+      
       for(let labelKey of Object.keys(this.state.labels)){
-        let labels =[];
         for(let label of this.state.labels[labelKey]){
           labels.push( <span key={label.field + ':' + label.value} className="label-wrp">{label.label}<button type="button" className='label-remove' onClick={this.removeLabel.bind(this, label.field, label)}><i class="fal fa-times"></i></button></span> )
         }
-
-       //console.log(this.state.inputs[inputDataKey],inputDataKey,'this.state.inputs[inputDataKey],inputDataKey');
-       let labelName = this.state.inputs[labelKey] ? this.state.inputs[labelKey].label + ':' : '';
-       console.log("labelName:", labelName,this.state.inputs[labelKey],this.state.inputs[labelKey].label);
-       labelsKeyed.push(<div className={'labels-with-title'}>
-          <span className={'lables-title lables-title' + labelKey} dangerouslySetInnerHTML={{__html: labelName }}></span>
-          <span className={'lables-labels'}>{labels}</span>
-        </div>); 
       }
+    
     }
+      
     return (
       <div className="TopBar">
         <header className="App-header">
           <form onSubmit={this.submitClicked.bind(this)}>
             {allInputs}
-            <div className={'lables-wrp'}>{labelsKeyed}</div>
+            <div className={'lables-wrp'}>{labels}</div>
           </form>
         </header>
         
