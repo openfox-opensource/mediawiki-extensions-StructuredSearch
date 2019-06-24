@@ -106,7 +106,7 @@
 	"ResourceModules": {
 		"ext.FennecAdvancedSearch": {
 			"styles": [
-				"ext.FennecAdvancedSearch/styles.css"
+				"ext.FennecAdvancedSearch/styles.less"
 			],
 			"messages" : [
 				"fennecadvancedsearch-from-label",

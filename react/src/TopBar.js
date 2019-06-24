@@ -88,7 +88,7 @@ class TopBar extends Component {
        console.log("labelName:", labelName,this.state.inputs[labelKey],this.state.inputs[labelKey].label);
        labelsKeyed.push(<div className={'labels-with-title'}>
           <span className={'lables-title lables-title' + labelKey} dangerouslySetInnerHTML={{__html: labelName }}></span>
-          {labels}
+          <span className={'lables-labels'}>{labels}</span>
         </div>); 
       }
     }
@@ -97,7 +97,7 @@ class TopBar extends Component {
         <header className="App-header">
           <form onSubmit={this.submitClicked.bind(this)}>
             {allInputs}
-            {labelsKeyed}
+            <div className={'lables-wrp'}>{labelsKeyed}</div>
           </form>
         </header>
         

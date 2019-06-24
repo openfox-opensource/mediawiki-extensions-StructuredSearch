@@ -290,8 +290,7 @@ class FormInput extends Component {
 					onChange={this.inputChanges.bind(this, inputData.field)} />;
 	}
 	autocompleteBuild (inputData){
-			let submitButton = this.isSearchAutomplete() ? <button type='button' onClick={this.submitClicked.bind(this)} ><i class="far fa-search"></i<i class="far fa-search"></i>></button> : ''; 
-		<i class="far fa-search"></i>	
+			let submitButton = this.isSearchAutomplete() ? <button type='button' onClick={this.submitClicked.bind(this)} ><i className="far fa-search"></i></button> : ''; 
 			return   <div className="autocomplete-wrp"><Autocomplete
 						  getItemValue={(item) => item.label}
 						  menuStyle={ {position:'absolute',top:'45px',right:0,left:'auto',zIndex:5,'background': '#FFF'}}
