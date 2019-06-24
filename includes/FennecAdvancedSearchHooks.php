@@ -92,7 +92,8 @@ class Hooks{
 			];
 		}
 		$NSOverride = $conf->get('FennecAdvancedSearchNSOverride');
-		foreach ($NSOverride as $NSKey => $NSData) {
+		foreach ($NSOverride as $NSData) {
+			$NSKey = $NSData['ns'];
 			foreach( ['show', 'defaultChecked', 'label'] as $key){
 				if( isset( $NSData[ $key ] ) ){
 					$returnedNamespaces[ $NSKey ][ $key ] = $NSData[ $key ];
