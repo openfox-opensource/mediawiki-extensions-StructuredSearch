@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import FormMain from './FormMain'
 import ajaxCall from './ajaxCall'
+import utils from './utils'
 import translate from './translations'
 import Select from 'react-select';
 import Autocomplete from 'react-autocomplete';
@@ -9,13 +10,14 @@ class FormInput extends Component {
 	constructor(props) {
 		super(props);
 		//console.log("props",props);
-		let initOptions = props.inputData.widget.options|| [];
+		let initOptions = props.inputData.widget.options|| [],
+			initValue = FormMain.getValue(props.inputData.field);
 		initOptions = this.extractOptions( initOptions );
 		this.state = { 
 			inputData : props.inputData,
 			filteredOptions : initOptions,
 			options : initOptions,
-			typed:'' 
+			typed: initValue && initValue.length ? initValue[0].value : '' 
 		};
 		if( "select" === props.inputData.widget.type ){
 			let selected = props.inputData.widget.default || initOptions[0];
@@ -47,7 +49,7 @@ class FormInput extends Component {
 		for(let option of this.state.options){
 			//console.log("oprion", option);
 			if(option.defaultChecked){
-				console.log('in', this.state.inputData.field)
+				//console.log('in', this.state.inputData.field)
 				FormMain.addValue( this.state.inputData.field, option );
 			}
 		}
@@ -218,17 +220,19 @@ class FormInput extends Component {
 				( this.state.showAdvanced ? ' opened' : '');
 		for( let option of inputData.widget.options){
 			let faClass = 'far ',
-				selectedClass = '';
+				selectedClass = '',
+				defaultChecked = option.defaultChecked;
 			if( FormMain.includes(inputData.field, option.value) ){
 				selectedClass =' selected';
 				faClass += 'fa-check-square';
+				defaultChecked = 1;
 			}
 			else{
 				faClass += 'fa-square';
 			}
 			let uniqe = (inputData.field + '-' + option.value).replace(/\s|:/g,'-'),
 				checkbox = <span key={ inputData.field +'-' + option.value} className={'checkbox-wrp' + selectedClass }>
-					<input id={uniqe} type='checkbox' value={option.value} defaultChecked={option.defaultChecked} onChange={this.checkboxChanges.bind(this, inputData.field, option)} />
+					<input id={uniqe} type='checkbox' value={option.value} defaultChecked={defaultChecked} onChange={this.checkboxChanges.bind(this, inputData.field, option)} />
 					<label htmlFor={ uniqe } >
 						<i className={faClass}></i>
 						<span className='checkbox-label' dangerouslySetInnerHTML={{__html: option.label}}></span>
@@ -272,30 +276,48 @@ class FormInput extends Component {
 	}
 	rangeBuild (inputData){
 		let fennecadvancedsearch_from_label = this.state['fennecadvancedsearch-from-label'],
-			fennecadvancedsearch_to_label = this.state['fennecadvancedsearch-to-label'];
+			fennecadvancedsearch_to_label = this.state['fennecadvancedsearch-to-label'],
+			defaultValue1, defaultValue2,
+			currentValue = FormMain.getValue( inputData.field );
+		if(currentValue){
+			if( utils.isArray( currentValue ) ){
+				currentValue = currentValue[0];
+			}
+			if(currentValue.value){
+				currentValue = currentValue.value;
+			}
+			console.log(currentValue,"currentValue");
+			let splitted = currentValue.split('|');
+			defaultValue1 = splitted[0]
+			defaultValue2 = splitted[1]
+		}
 		return   <span>
 					<span>{fennecadvancedsearch_from_label}</span>
 					<input 
 						type="number" 
 						className="range-input range-input-from"
 						name={inputData.field} 
+						defaultValue={defaultValue1}
 						onChange={this.rangeChanges.bind(this, inputData.field,0)} />
 					<span>{fennecadvancedsearch_to_label}</span>
 					<input 
 						type="number" 
 						className="range-input range-input-to"
+						defaultValue={defaultValue2}
 						name={inputData.field} 
 						onChange={this.rangeChanges.bind(this, inputData.field,1)} />
 					</span>;
 	}
 	textBuild (inputData){
+			let value = FormMain.getValue(inputData.field);
 			return   <input 
 					type="text" 
+					value={value}
 					name={inputData.field} 
 					onChange={this.inputChanges.bind(this, inputData.field)} />;
 	}
 	autocompleteBuild (inputData){
-			let submitButton = this.isSearchAutomplete() ? <button type='button' onClick={this.submitClicked.bind(this)} dangerouslySetInnerHTML={{__html:this.state['fennecadvancedsearch-search-label']}}></button> : ''; 
+			let submitButton = this.isSearchAutomplete() ? <button type='button' onClick={this.submitClicked.bind(this)} dangerouslySetInnerHTML={{__html:this.state['fennecadvancedsearch-search-label']}}></button> : '';
 			return   <div className="autocomplete-wrp"><Autocomplete
 						  getItemValue={(item) => item.label}
 						  menuStyle={ {position:'absolute',top:'45px',right:0,left:'auto',zIndex:5,'background': '#FFF'}}

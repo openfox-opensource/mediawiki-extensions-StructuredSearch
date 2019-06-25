@@ -1,15 +1,20 @@
 import EventEmitter from './EventEmitter'
 import ajaxCall from './ajaxCall'
+import utils from './utils'
 
 class FormMain{
 	static allData = {}
 	static addValue(name, value){
 		FormMain.allData[ name ] = FormMain.allData[ name ] || [];
-		FormMain.allData[ name ].push( FormMain.standardizeValue(value) );
-		FormMain.fireChangeEvent();
+		let standardizeValue = FormMain.standardizeValue(value);
+		//console.log(FormMain.allData[ name ], standardizeValue);
+		if( !FormMain.allData[ name ].map( item => ('' + item.value)).includes( '' + standardizeValue.value ) ){
+			FormMain.allData[ name ].push( standardizeValue );
+			FormMain.fireChangeEvent();
+		}
 	}
 	static removeValue(name, value){
-		let ind = FormMain.allData[ name ].findIndex( item => value.value === item.value);
+		let ind = FormMain.allData[ name ].findIndex( item => ('' + value.value) === ('' + item.value) );
 		if( ind > -1){
 			FormMain.allData[ name ].splice(ind , 1)
 		}
@@ -18,6 +23,8 @@ class FormMain{
 	static ChangeValueByKey(name, key, value){
 		FormMain.allData[ name ] = FormMain.allData[ name ] || Array(key).fill(null);
 		FormMain.allData[ name ][ key ] = value;
+		FormMain.fireChangeEvent();
+
 	}
 	static setValue(name, value){
 		FormMain.allData[ name ] = value;
@@ -27,7 +34,7 @@ class FormMain{
 		return FormMain.allData[ name ];
 	}
 	static includes(name, valueToCheck){
-		return FormMain.allData[ name ] && FormMain.allData[ name ].filter( item => item.value === valueToCheck).length;
+		return FormMain.allData[ name ] && FormMain.allData[ name ].filter( item => '' + item.value === '' + valueToCheck).length;
 	}
 	static fireChangeEvent(){
 		EventEmitter.emit("FormDataChanged", FormMain.getAllValuesRaw());
@@ -43,6 +50,7 @@ class FormMain{
 	}
 	static getAllValuesProcessed(){
 		let copyOfData = Object.assign({}, FormMain.allData);
+		console.log(copyOfData,"copyOfData");
 		for( let dataKey of Object.keys(copyOfData)){
 			if('object' === typeof copyOfData[dataKey] && 'undefined' !== typeof copyOfData[dataKey].length){
 				copyOfData[dataKey] = copyOfData[dataKey].map(val => {return 'undefined' != typeof val.value ?val.value: val});
@@ -53,16 +61,14 @@ class FormMain{
 		}
 		return copyOfData;
 	}
-	static toQueryStr( params ){
-	    return Object.keys(params).map(key => key + '=' + params[key]).join('&');
-	  }
+
 	static submitData(){
 		let params = this.getAllValuesProcessed();
 	    //console.log(params,'params');
 	    params.action = 'fennecadvancedsearchsearch';
-	    let urlSuffix = this.toQueryStr( params);
+	    let urlSuffix = utils.toQueryStr( params);
 	    ajaxCall.get(urlSuffix).then(data=>{
-	      console.log(data, "data");
+	      //console.log(data, "data");
 	      EventEmitter.emit('dataRecieved', data.data.error ? {error:true} : data.data.FennecAdvancedSearchSearch);
 	    });
 	}

@@ -3,7 +3,8 @@ import settingsGetter from './libs/settingsGetter';
 import FormInput from './libs/FormInput';
 import EventEmitter from './libs/EventEmitter';
 import translate from './libs/translations'
-import sortByWeight from './libs/sortByWeight'
+import utils from './libs/utils'
+import historySearch from './libs/historySearch'
 
 import './App.css';
 
@@ -15,13 +16,15 @@ class App extends Component {
 
   }
   componentDidMount() {
+    
     EventEmitter.on("FormDataChanged", allData => {
+      historySearch.setHistoryFromSearch( this.state.inputs );
       this.forceUpdate();
     });
       settingsGetter.get().then(data => {
         //console.log(data.templates, data);
         if( data ){
-
+          historySearch.setSearchFromHistory( data.params );
           this.setState({ 
             inputs: data.params
           });
@@ -36,8 +39,7 @@ class App extends Component {
     let allInputs = [];
     if(this.state.inputs){
       //console.log('this.state.inputs',this.state.inputs);
-      let inputsSorted = Object.values(this.state.inputs).sort( sortByWeight );
-      console.log("inputsSorted",inputsSorted);
+      let inputsSorted = Object.values(this.state.inputs).sort( utils.sortByWeight );
       for(let inputData of inputsSorted){
        // console.log(this.state.inputs[inputDataKey],inputDataKey,'this.state.inputs[inputDataKey],inputDataKey');
         if( !['topbar','hide'].includes(inputData.widget.position) ){
