@@ -94,7 +94,7 @@ class TopBar extends Component {
     }
       
     return (
-      <div className="TopBar">
+      <div className="TopBar sticky-top">
         <header className="App-header">
           <form onSubmit={this.submitClicked.bind(this)}>
             {allInputs}
