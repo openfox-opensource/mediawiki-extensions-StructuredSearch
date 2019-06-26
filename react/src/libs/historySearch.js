@@ -20,7 +20,7 @@ class historySearch{
 			return;
 		}
 		else{
-			let state = FormMain.getAllValuesProcessed(),
+			let state = this.getState(),
 				query = utils.toQueryStr(state);
 			//console.log(state, query);
 			if( historySearch.lastQuery != query){
@@ -34,6 +34,9 @@ class historySearch{
 			//console.log(paramsSettings, "paramsSettings")
 		for( let paramKey in searchParams){
 			let paramValue = searchParams[ paramKey ];
+			if( 'advanced_search' === paramKey){
+					paramKey = 'search';
+				}
 			if( multyFieldsTypes.includes( paramsSettings[paramKey].widget.type ) ){
 				let paramValueSplitted = paramValue.split('|');
 				for(let part of paramValueSplitted){
@@ -41,11 +44,23 @@ class historySearch{
 				}
 			}
 			else{
+				
 				FormMain.setValue(paramKey, paramValue);
 			}
 
 		}
 		//console.log();
+	}
+	static getState(){
+		let state = FormMain.getAllValuesProcessed();
+		return this.fixState( state );
+	}
+	static fixState( state ){
+		if(state.search){
+			state.advanced_search = state.search;
+			delete( state.search );
+		}
+		return state;
 	}
 	static freeze(){
 		historySearch.isFreezed = true;
