@@ -198,7 +198,7 @@
         display: none;
       }
       &.selected {
-            background: #dcdcdc;
+            background: #d1cfc0;
             i {
                 font-weight: bold;
             }
@@ -267,7 +267,9 @@ span.label-wrp {
 }
 
 /* mobile hide*/
-
+@media (max-width: 992px) {
+ .main-and-advanced-wrp button {display: none;}
+}
 /* mobile */
 @media (max-width: 992px) {
     .side-bar {
@@ -290,6 +292,58 @@ span.label-wrp {
         outline: none;
       }
     }
-
-
+    .top-and-results-wrp {
+      width: auto;
+    }
+    .TopBar {
+    position: fixed;
+    top: 47px;
+    right: 0;
+    left: 0;
+    background: #f5f0e0;
+    padding: 8px;
+    }
+    .field-wrp-name-search input {
+    padding: 7px 1em;
+    }
+    .field-wrp-name-search button {
+    height: 37px;
+  }
+  .form-input.form-input-wrp-namespace {
+    margin: 4px 1px;
+    max-width: 93%;
+    .TopBar {
+       .main .checkbox-wrp {
+             label {
+            padding: 8px 8px 1px;
+            overflow: hidden;
+            height: 25px;
+          }
+        &.selected label {
+          width: 2em;
+          overflow: hidden;
+        }
+      }
+      button.hide-on-desktop {
+        background: #ffffff;
+        padding: 8px 2px 7px;
+        margin-top: 3px;
+        cursor: pointer;
+        top: 47px;
+        position: absolute;
+        outline: 0;
+        color: #8b8762;
+        border: #D1CFC1 solid 2px;
+        right: 8px;
+      }
+    }
+    .selected .checkbox-label {
+      font-size: 2px;
+      color: transparent;
+      i {
+        font-size: 16px;
+        color: #000;
+      }
+    }
+  }
 }
