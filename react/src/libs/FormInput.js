@@ -158,6 +158,18 @@ class FormInput extends Component {
 	submitClicked(){
 		FormMain.submitData();
 	}
+	autocompleteInputKeyDown( event){
+		if( 13 == event.keyCode){
+			console.log("event",);
+			setTimeout( ()=>{
+				let searchInput = document.querySelector('.field-wrp-name-search input'),
+					inputVal = searchInput.value,
+					inputValLength = inputVal.length;
+				searchInput.setSelectionRange(inputValLength, inputValLength);
+			},10);
+		}
+		console.log(event.keyCode,"ev");
+	}
 	autocompleteSelected( fieldName, itemLabel, autocompleteItem){
 		if( this.isSearchAutomplete() ){
 			window.location.href = autocompleteItem.value;
@@ -335,7 +347,8 @@ class FormInput extends Component {
 						  items={this.state.filteredOptions}
 						  renderItem={ this.autocompleteRender.bind(this) }
 						  value={this.state.typed}
-						  inputProps={ {placeholder:placeholder}}
+						  autoHighlight={false}
+						  inputProps={ {placeholder:placeholder,onKeyDown : this.autocompleteInputKeyDown.bind(this)}}
 						  onChange={ this.autocompleteChanged.bind(this)}
 						  onSelect={this.autocompleteSelected.bind(this, inputData.field)}
 						/>
@@ -345,7 +358,7 @@ class FormInput extends Component {
 	autocompleteRender (item, isHighlighted){
 
 		let nsWrapper = this.isSearchAutomplete() && item.ns ? <span className="ns-wrapper">{item.ns}</span> : '',
-			innerHtml = this.isSearchAutomplete() ? <a href={item.href}>{nsWrapper}<span className="label-wrapper">{item.label}</span></a> : item.label;
+			innerHtml = item.label;//this.isSearchAutomplete() ? <a href={item.href}>{nsWrapper}<span className="label-wrapper">{item.label}</span></a> : item.label;
 		return <div className={ 'autocomplete-item ' + (isHighlighted ? 'highlighted' : 'regular') } key={item.label}>
 				     {innerHtml}
 				</div>;
