@@ -11,7 +11,7 @@ import './App.css';
 class App extends Component {
   constructor() {
     super();
-    this.state = { data: [] };
+    this.state = { data: [],hide:true };
     EventEmitter.on("toggleSidebar", allData => {
       this.toggle( );
     });
