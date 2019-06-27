@@ -68,7 +68,7 @@ class App extends Component {
     return (
           <div className={'side-bar' + (this.state.hide ? ' hide' : ' show')}>
             <span className="close-button-wrp">
-              <button type="button" className="hide-on-desktop" onClick={this.hide.bind(this)}>X</button>
+              <button type="button" className="hide-on-desktop" onClick={this.hide.bind(this)}><i className="fal fa-times"></i></button>
             </span>
             {allInputs}
           </div>
