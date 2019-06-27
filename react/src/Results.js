@@ -56,7 +56,8 @@ class Results extends Component {
         let result = this.state.results[resultKey];
         results.push(this.getResultJsx( result ) )
       }
-      if( this.state.searchReturned && !this.state.results.length){
+      console.log("Object.keys(this.state.results).length",Object.keys(this.state.results).length);
+      if( this.state.searchReturned && !Object.keys(this.state.results).length){
         results.push( <div key={'error'}>{ this.state.lastIsError ? this.noResultsError : this.noResults}</div>)
         
       }

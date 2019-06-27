@@ -160,7 +160,6 @@ class FormInput extends Component {
 	}
 	autocompleteInputKeyDown( event){
 		if( 13 == event.keyCode){
-			console.log("event",);
 			setTimeout( ()=>{
 				let searchInput = document.querySelector('.field-wrp-name-search input'),
 					inputVal = searchInput.value,
@@ -168,7 +167,6 @@ class FormInput extends Component {
 				searchInput.setSelectionRange(inputValLength, inputValLength);
 			},10);
 		}
-		console.log(event.keyCode,"ev");
 	}
 	autocompleteSelected( fieldName, itemLabel, autocompleteItem){
 		if( this.isSearchAutomplete() ){
