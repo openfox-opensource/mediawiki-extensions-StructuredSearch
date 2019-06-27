@@ -2,7 +2,7 @@
 .side-bar {
    float: left;
 }*/
-#side-bar {
+.side-bar {
     width: 25%;
     float: left;
     padding: 3em 2em;
@@ -264,4 +264,32 @@ span.label-wrp {
 /*  results */
 #results {
     padding: 0 10px;
+}
+
+/* mobile hide*/
+
+/* mobile */
+@media (max-width: 992px) {
+    .side-bar {
+      left: -100vw;
+      position: absolute;
+      z-index: 3;
+      transition: all ease .3s;
+      width: 100%;
+      &.show {
+        left: 0;
+      }
+      button.hide-on-desktop {
+        background: transparent;
+        border: none;
+        font-size: 2em;
+        position: absolute;
+        right: 8px;
+        top: 10px;
+        color: #8f8b66;
+        outline: none;
+      }
+    }
+
+
 }

@@ -29,10 +29,10 @@ class TopBar extends Component {
 
       });
     }
-    
+
       settingsGetter.get().then(data => {
         if( data ){
-          this.setState({ 
+          this.setState({
             inputs: data.params,
             labels : []
           });
@@ -53,7 +53,7 @@ class TopBar extends Component {
   removeLabel( fieldName, valueObj) {
     FormMain.removeValue(fieldName, valueObj);
   }
-  
+
   submitClicked( event ){
     event.preventDefault();
     FormMain.submitData();
@@ -63,10 +63,10 @@ class TopBar extends Component {
       //console.log("FormDataChanged", allData,this.state.inputs)
       for(let fieldKey of Object.keys(allData)){
         ;
-        if(allData[fieldKey] && this.state.inputs && this.state.inputs[fieldKey] && 
-          ( 
+        if(allData[fieldKey] && this.state.inputs && this.state.inputs[fieldKey] &&
+          (
             ('sidebar' === this.state.inputs[fieldKey].widget.position && 'search' != this.state.inputs[fieldKey].field )
-           || this.state.inputs[fieldKey].withLabels) 
+           || this.state.inputs[fieldKey].withLabels)
           ){
           //console.log(allData[fieldKey],"allData[fieldKey]");
           newLabels[fieldKey] = [];
@@ -89,10 +89,10 @@ class TopBar extends Component {
     EventEmitter.emit('toggleSidebar');
   }
   render() {
-    let allInputs = [], 
-        labelsKeyed = [], 
+    let allInputs = [],
+        labelsKeyed = [],
         labels = [],
-        toggleSidebar = <button type="button" className="hide-on-desktop" onClick={this.toggleSidebar.bind(this)}>{this.state['fennecadvancedsearch-toggle-sidebar']}<i className="fas fa-chevron-down"></i></button>;
+        toggleSidebar = <button type="button" className="hide-on-desktop" onClick={this.toggleSidebar.bind(this)}>{this.state['fennecadvancedsearch-toggle-sidebar']}<i className="far fa-chevron-down"></i></button>;
     if(this.state.inputs){
       let inputsSorted = Object.values(this.state.inputs).sort(utils.sortByWeight);
       for(let inputData of inputsSorted){
@@ -104,15 +104,15 @@ class TopBar extends Component {
       }
     }
     if(this.state.labels){
-      
+
       for(let labelKey of Object.keys(this.state.labels)){
         for(let label of this.state.labels[labelKey]){
           labels.push( <span key={label.field + ':' + label.value} className="label-wrp">{label.label}<button type="button" className='label-remove' onClick={this.removeLabel.bind(this, label.field, label)}><i className="fal fa-times"></i></button></span> )
         }
       }
-    
+
     }
-      
+
     return (
       <div className="TopBar sticky-top">
         <header className="App-header">
@@ -122,7 +122,7 @@ class TopBar extends Component {
           </form>
           <button type="button" onClick={this.clearClicked.bind( this )}>{this.state['fennecadvancedsearch-clear']}</button>
         </header>
-        
+
     </div>
     );
   }
