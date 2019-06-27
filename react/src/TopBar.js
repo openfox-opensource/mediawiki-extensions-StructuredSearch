@@ -18,12 +18,18 @@ class TopBar extends Component {
     });
   }
   componentDidMount() {
-    translate('fennecadvancedsearch-clear').then( val => {
+    for(let key of [
+      'fennecadvancedsearch-clear',
+      'fennecadvancedsearch-toggle-sidebar'
+      ]){
+      translate(key).then( val => {
         let stateToChange = {};
-        stateToChange['fennecadvancedsearch-clear'] = val;
+        stateToChange[key] = val;
         this.setState(stateToChange);
 
       });
+    }
+    
       settingsGetter.get().then(data => {
         if( data ){
           this.setState({ 
@@ -79,10 +85,14 @@ class TopBar extends Component {
   clearClicked() {
     FormMain.clear();
   }
+  toggleSidebar(){
+    EventEmitter.emit('toggleSidebar');
+  }
   render() {
     let allInputs = [], 
         labelsKeyed = [], 
-        labels = [];
+        labels = [],
+        toggleSidebar = <button type="button" onClick={this.toggleSidebar.bind(this)}>{this.state['fennecadvancedsearch-toggle-sidebar']}<i className="fas fa-chevron-down"></i></button>;
     if(this.state.inputs){
       let inputsSorted = Object.values(this.state.inputs).sort(utils.sortByWeight);
       for(let inputData of inputsSorted){
@@ -107,7 +117,7 @@ class TopBar extends Component {
       <div className="TopBar sticky-top">
         <header className="App-header">
           <form onSubmit={this.submitClicked.bind(this)}>
-            {allInputs}
+            {allInputs}{toggleSidebar}
             <div className={'lables-wrp'}>{labels}</div>
           </form>
           <button type="button" onClick={this.clearClicked.bind( this )}>{this.state['fennecadvancedsearch-clear']}</button>

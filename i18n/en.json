@@ -23,5 +23,6 @@
 	"fennecadvancedsearch-search-label": "<i class='far fa-search'></i>",
 	"fennecadvancedsearch-no-results-error": "Error during search",
 	"fennecadvancedsearch-clear": "Clear",
+	"fennecadvancedsearch-toggle-sidebar": "Filter",
 	"fennecadvancedsearch-show-more": "Click to show more options"
 }

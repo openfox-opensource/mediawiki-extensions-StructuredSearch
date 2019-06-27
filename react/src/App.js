@@ -12,9 +12,26 @@ class App extends Component {
   constructor() {
     super();
     this.state = { data: [] };
-
+    EventEmitter.on("toggleSidebar", allData => {
+      this.toggle( );
+    });
+    EventEmitter.on("hideSidebar", allData => {
+      this.hide( );
+    });    
+    EventEmitter.on("showSidebar", allData => {
+      this.show( );
+    });
 
   }
+  toggle(){
+      this.setState({hide:!this.state.hide});
+  }   
+  hide(){
+      this.setState({hide:true});
+  } 
+  show(){
+      this.setState({hide:false});
+  } 
   componentDidMount() {
     
     EventEmitter.on("FormDataChanged", allData => {
@@ -49,7 +66,10 @@ class App extends Component {
     }
    
     return (
-          <div className='side-bar'>
+          <div className={'side-bar' + (this.state.hide ? ' hide' : ' show')}>
+            <span className="close-button-wrp">
+              <button type="button" onClick={this.hide.bind(this)}>X</button>
+            </span>
             {allInputs}
           </div>
     );

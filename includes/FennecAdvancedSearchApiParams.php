@@ -56,6 +56,7 @@ class ApiParams extends \ApiBase {
 			"fennecadvancedsearch-no-results",
 			"fennecadvancedsearch-on-results-error",
 			"fennecadvancedsearch-show-more",
+			"fennecadvancedsearch-toggle-sidebar",
 			"fennecadvancedsearch-clear",
 		];
 		$translations = [];
