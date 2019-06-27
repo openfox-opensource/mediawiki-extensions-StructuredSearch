@@ -10,7 +10,8 @@
     "react-dom": "^16.8.6",
     "react-mustache": "^0.1.5",
     "react-scripts": "3.0.1",
-    "react-select": "^2.4.3"
+    "react-select": "^2.4.3",
+    "react-tooltip": "^3.10.0"
   },
   "scripts": {
     "start": "react-scripts start",

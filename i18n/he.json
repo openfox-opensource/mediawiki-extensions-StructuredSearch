@@ -13,11 +13,15 @@
 	"fennecadvancedsearch-search-label": "חיפוש",
 	"fennecadvancedsearch-category-label": "קטגוריות",
 	"fennecadvancedsearch-namespace-label": "סוג דף",
+	"fennecadvancedsearch-search-placeholder": "הזן טקסט לחיפוש",
+	"fennecadvancedsearch-choose": "בחר",
 	"fennecadvancedsearch-from-label": "מ",
 	"fennecadvancedsearch-to-label": "עד",
 	"fennecadvancedsearch-more-label": "עוד",
 	"fennecadvancedsearch-less-label": "סגור",
 	"fennecadvancedsearch-no-results": "לא נמצאו תוצאות",
 	"fennecadvancedsearch-search-label": "<i class='far fa-search'></i>",
-	"fennecadvancedsearch-on-results-error": "שגיאה במהלך החיפוש"
+	"fennecadvancedsearch-on-results-error": "שגיאה במהלך החיפוש",
+	"fennecadvancedsearch-clear": "נקה",
+	"fennecadvancedsearch-show-more": "לחץ כדי להציג אפשרויות נוספות"
 }

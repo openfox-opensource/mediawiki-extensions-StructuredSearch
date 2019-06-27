@@ -50,7 +50,7 @@ class FormMain{
 	}
 	static getAllValuesProcessed(){
 		let copyOfData = Object.assign({}, FormMain.allData);
-		console.log(copyOfData,"copyOfData");
+		//console.log(copyOfData,"copyOfData");
 		for( let dataKey of Object.keys(copyOfData)){
 			if('object' === typeof copyOfData[dataKey] && 'undefined' !== typeof copyOfData[dataKey].length){
 				copyOfData[dataKey] = copyOfData[dataKey].map(val => {return 'undefined' != typeof val.value ?val.value: val});
@@ -71,6 +71,10 @@ class FormMain{
 	      //console.log(data, "data");
 	      EventEmitter.emit('dataRecieved', data.data.error ? {error:true} : data.data.FennecAdvancedSearchSearch);
 	    });
+	}
+	static clear(){
+		FormMain.allData = {};
+		this.fireChangeEvent();
 	}
 
 }

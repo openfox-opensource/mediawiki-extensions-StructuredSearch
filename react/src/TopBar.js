@@ -1,10 +1,11 @@
 import React, { Component } from "react";
-import settingsGetter from './libs/settingsGetter'
-import FormInput from './libs/FormInput'
-import FormMain from './libs/FormMain'
-import ajaxCall from './libs/ajaxCall'
-import EventEmitter from './libs/EventEmitter'
-import utils from './libs/utils'
+import settingsGetter from './libs/settingsGetter';
+import FormInput from './libs/FormInput';
+import FormMain from './libs/FormMain';
+import ajaxCall from './libs/ajaxCall';
+import EventEmitter from './libs/EventEmitter';
+import utils from './libs/utils';
+import translate from './libs/translations';
 import './App.css';
 
 
@@ -17,6 +18,12 @@ class TopBar extends Component {
     });
   }
   componentDidMount() {
+    translate('fennecadvancedsearch-clear').then( val => {
+        let stateToChange = {};
+        stateToChange['fennecadvancedsearch-clear'] = val;
+        this.setState(stateToChange);
+
+      });
       settingsGetter.get().then(data => {
         if( data ){
           this.setState({ 
@@ -69,6 +76,9 @@ class TopBar extends Component {
       }
       this.setState({labels:newLabels});
   }
+  clearClicked() {
+    FormMain.clear();
+  }
   render() {
     let allInputs = [], 
         labelsKeyed = [], 
@@ -100,6 +110,7 @@ class TopBar extends Component {
             {allInputs}
             <div className={'lables-wrp'}>{labels}</div>
           </form>
+          <button type="button" onClick={this.clearClicked.bind( this )}>{this.state['fennecadvancedsearch-clear']}</button>
         </header>
         
     </div>

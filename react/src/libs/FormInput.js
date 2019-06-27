@@ -5,6 +5,7 @@ import utils from './utils'
 import translate from './translations'
 import Select from 'react-select';
 import Autocomplete from 'react-autocomplete';
+import ReactTooltip from 'react-tooltip'
 
 class FormInput extends Component {
 	constructor(props) {
@@ -37,7 +38,8 @@ class FormInput extends Component {
 			'fennecadvancedsearch-from-label',
 			'fennecadvancedsearch-search-label',
 			'fennecadvancedsearch-more-label',
-			'fennecadvancedsearch-less-label'
+			'fennecadvancedsearch-less-label',
+			'fennecadvancedsearch-show-more'
 			]){
 			translate(key).then( val => {
 				let stateToChange = {};
@@ -150,7 +152,7 @@ class FormInput extends Component {
 			this.setState({
 				filteredOptions : filteredOptions
 			});
-			console.log(data, "namespaces");
+			//console.log(data, "namespaces");
 		});
 	}
 	submitClicked(){
@@ -213,6 +215,9 @@ class FormInput extends Component {
 	showAdvanced (){
 		this.setState({showAdvanced : !this.state.showAdvanced});
 	}
+	getPlaceholder( inputData ){
+		return inputData.widget.placeholder ? inputData.widget.placeholder : utils.stripHtml( inputData.label);
+	}
 	checkboxesBuild (inputData){
 		let checkboxesMain = [],
 			checkboxesAdvanced = [],
@@ -247,10 +252,13 @@ class FormInput extends Component {
 
 		}
 		let moreText = this.state.showAdvanced ? this.state['fennecadvancedsearch-less-label'] : this.state['fennecadvancedsearch-more-label'],
-			moreButton = checkboxesAdvanced.length ? <button type={'button'} onClick={this.showAdvanced.bind(this)} >{moreText}</button> : '';
+			moreButton = checkboxesAdvanced.length ? <button data-tip data-for="global" type={'button'} onClick={this.showAdvanced.bind(this)} >{moreText}</button> : '';
 		return <div className={wrpClass}>
 					<div className="main">{checkboxesMain}</div>
 					{moreButton}
+					<ReactTooltip id='global' aria-haspopup='true' role='example'>
+						 {this.state['fennecadvancedsearch-show-more']}
+					</ReactTooltip>
 					<div className="advanced">{checkboxesAdvanced}</div>
 				</div>;
 	}
@@ -286,7 +294,6 @@ class FormInput extends Component {
 			if(currentValue.value){
 				currentValue = currentValue.value;
 			}
-			console.log(currentValue,"currentValue");
 			let splitted = currentValue.split('|');
 			defaultValue1 = splitted[0]
 			defaultValue2 = splitted[1]
@@ -309,21 +316,26 @@ class FormInput extends Component {
 					</span>;
 	}
 	textBuild (inputData){
-			let value = FormMain.getValue(inputData.field);
+			let value = FormMain.getValue(inputData.field),
+				placeholder = this.getPlaceholder( inputData );
+			//console.log("value",value);
 			return   <input 
 					type="text" 
-					value={value}
+					placeholder={placeholder}
+					value={value ? value.value : ''}
 					name={inputData.field} 
 					onChange={this.inputChanges.bind(this, inputData.field)} />;
 	}
 	autocompleteBuild (inputData){
-			let submitButton = this.isSearchAutomplete() ? <button type='button' onClick={this.submitClicked.bind(this)} dangerouslySetInnerHTML={{__html:this.state['fennecadvancedsearch-search-label']}}></button> : '';
+			let submitButton = this.isSearchAutomplete() ? <button type='button' onClick={this.submitClicked.bind(this)} dangerouslySetInnerHTML={{__html:this.state['fennecadvancedsearch-search-label']}}></button> : '',
+				placeholder = this.getPlaceholder( inputData );
 			return   <div className="autocomplete-wrp"><Autocomplete
 						  getItemValue={(item) => item.label}
 						  menuStyle={ {position:'absolute',top:'45px',right:0,left:'auto',zIndex:5,'background': '#FFF'}}
 						  items={this.state.filteredOptions}
 						  renderItem={ this.autocompleteRender.bind(this) }
 						  value={this.state.typed}
+						  inputProps={ {placeholder:placeholder}}
 						  onChange={ this.autocompleteChanged.bind(this)}
 						  onSelect={this.autocompleteSelected.bind(this, inputData.field)}
 						/>
@@ -339,7 +351,7 @@ class FormInput extends Component {
 				</div>;
 	}
 	getLabel (inputData){
-		return inputData.label ? <label htmlFor={inputData.field} dangerouslySetInnerHTML={{__html: inputData.label + ':' }} ></label> : '';
+		return inputData.label ? <label htmlFor={inputData.field} dangerouslySetInnerHTML={{__html: inputData.label }} ></label> : '';
 	}
 	stripHTML( str ){
 		let el = document.createElement('div');

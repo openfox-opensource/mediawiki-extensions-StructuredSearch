@@ -13,11 +13,15 @@
 	"fennecadvancedsearch-search-label": "Search",
 	"fennecadvancedsearch-category-label": "Categories",
 	"fennecadvancedsearch-namespace-label": "Page's namespace",
+	"fennecadvancedsearch-search-placeholder": "Add text to search",
+	"fennecadvancedsearch-choose": "Choose",
 	"fennecadvancedsearch-from-label": "From",
 	"fennecadvancedsearch-to-label": "To",
 	"fennecadvancedsearch-no-results": "No results found",
 	"fennecadvancedsearch-more-label": "More",
 	"fennecadvancedsearch-less-label": "Close",
 	"fennecadvancedsearch-search-label": "<i class='far fa-search'></i>",
-	"fennecadvancedsearch-no-results-error": "Error during search"
+	"fennecadvancedsearch-no-results-error": "Error during search",
+	"fennecadvancedsearch-clear": "Clear",
+	"fennecadvancedsearch-show-more": "Click to show more options"
 }

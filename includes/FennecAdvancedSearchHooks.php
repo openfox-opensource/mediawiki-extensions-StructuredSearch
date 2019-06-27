@@ -93,6 +93,7 @@ class Hooks{
 			];
 		}
 		$NSOverride = $conf->get('FennecAdvancedSearchNSOverride');
+		$weightCount = 1;
 		foreach ($NSOverride as $NSData) {
 			$NSKey = $NSData['ns'];
 			foreach( ['show', 'defaultChecked', 'label'] as $key){
@@ -100,7 +101,19 @@ class Hooks{
 					$returnedNamespaces[ $NSKey ][ $key ] = $NSData[ $key ];
 				}
 			}
+			if(!isset($returnedNamespaces[ $NSKey ]['weight'])){
+				$returnedNamespaces[ $NSKey ]['weight'] = $weightCount;
+				$weightCount++;
+			}
 		}
+		foreach ($returnedNamespaces as &$ns) {
+			if(!isset($ns['weight'])){
+				$ns['weight'] = $weightCount;
+			}
+		}
+		usort($returnedNamespaces, function( $itemA, $itemB){
+			return $itemA['weight'] < $itemB['weight'] ? -1 : ( $itemA['weight'] === $itemB['weight'] ?0 :1);
+		});
 		//die(print_r($returnedNamespaces));
 		return $returnedNamespaces;
 	}
@@ -180,6 +193,7 @@ class Hooks{
 	        'widget' => [
 	            'type' => 'autocomplete',
 	            'position' => 'topbar',
+	            'placeholder' => wfMessage( "fennecadvancedsearch-search-placeholder" ),
 	        ],
 		];
 		
@@ -213,7 +227,7 @@ class Hooks{
 				}
 				if( 'select' === $param['widget']['type'] ){
 					array_unshift($options, [
-						'label' => '',
+						'label' => wfMessage('fennecadvancedsearch-choose'),
 						'value' => '',
 					]);
 				}
