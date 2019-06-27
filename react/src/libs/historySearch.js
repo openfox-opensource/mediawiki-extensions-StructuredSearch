@@ -88,7 +88,6 @@ class historySearch{
 	}
 	static isSearchEquleToDefault( paramsSettings, search ){
 		let defaultSearch = historySearch.getDefaultSearch( paramsSettings );
-		console.log(historySearch.fixQueryStr(utils.toQueryStr(defaultSearch)),  historySearch.fixQueryStr(utils.toQueryStr(search)),"historySearch.fixQueryStr(utils.toQueryStr(defaultSearch)) ===  historySearch.fixQueryStr(utils.toQueryStr(search));");
 		return historySearch.fixQueryStr(utils.toQueryStr(defaultSearch)) ===  historySearch.fixQueryStr(utils.toQueryStr(search));
 	}
 	static fixQueryStr( str ){

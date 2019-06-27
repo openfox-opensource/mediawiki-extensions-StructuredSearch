@@ -40,6 +40,21 @@ class TopBar extends Component {
         }
        }
       );
+      this.setStickyCheck();
+  }
+  setStickyCheck( ) {
+    const observer = new IntersectionObserver((records, observer) => {
+      for (const record of records) {
+        const targetInfo = record.boundingClientRect;
+        if(targetInfo.top > 0){
+          this.setState({sticky:false});
+        }
+        else if(targetInfo.top < 0){
+          this.setState({sticky:true})
+        }
+      }
+    }, {threshold: [0,1]});
+    observer.observe(document.querySelector('.checking-sticky'))
   }
   standardizeItem( item) {
     if( 'string' === typeof item ){
@@ -114,7 +129,7 @@ class TopBar extends Component {
     }
 
     return (
-      <div className="TopBar sticky-top">
+      <div className={'TopBar sticky-top' + (this.state.sticky ? ' sticky-on': '')}>
         <header className="App-header">
           <form onSubmit={this.submitClicked.bind(this)}>
             {allInputs}{toggleSidebar}
