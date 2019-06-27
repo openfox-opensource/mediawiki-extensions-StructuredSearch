@@ -92,7 +92,7 @@ class TopBar extends Component {
     let allInputs = [], 
         labelsKeyed = [], 
         labels = [],
-        toggleSidebar = <button type="button" onClick={this.toggleSidebar.bind(this)}>{this.state['fennecadvancedsearch-toggle-sidebar']}<i className="fas fa-chevron-down"></i></button>;
+        toggleSidebar = <button type="button" className="hide-on-desktop" onClick={this.toggleSidebar.bind(this)}>{this.state['fennecadvancedsearch-toggle-sidebar']}<i className="fas fa-chevron-down"></i></button>;
     if(this.state.inputs){
       let inputsSorted = Object.values(this.state.inputs).sort(utils.sortByWeight);
       for(let inputData of inputsSorted){
