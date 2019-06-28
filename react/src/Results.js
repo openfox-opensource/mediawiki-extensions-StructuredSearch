@@ -17,7 +17,7 @@ class Results extends Component {
       });
     EventEmitter.on('dataRecieved', results => {
       console.log("results",results);
-      if(results.error){
+      if(results && results.error){
         this.setState({
           lastIsError:true,
           results:[],
@@ -56,9 +56,14 @@ class Results extends Component {
         let result = this.state.results[resultKey];
         results.push(this.getResultJsx( result ) )
       }
-      console.log("Object.keys(this.state.results).length",Object.keys(this.state.results).length);
+      //console.log("Object.keys(this.state.results).length",Object.keys(this.state.results).length);
       if( this.state.searchReturned && !Object.keys(this.state.results).length){
-        results.push( <div key={'error'}>{ this.state.lastIsError ? this.noResultsError : this.noResults}</div>)
+        if( this.state.lastIsError ){
+          results.push( <div className="no-results no-results-error" key={'error'}>{ this.noResultsError }</div>);
+        }
+        else{
+          results.push( <div className="no-results no-results-empty" key={'error'}>{ this.noResults }</div>);
+        }
         
       }
     }

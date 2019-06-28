@@ -3,6 +3,7 @@ import FormMain from './FormMain'
 import ajaxCall from './ajaxCall'
 import utils from './utils'
 import translate from './translations'
+import fieldsDetector from './fieldsDetector'
 import Select from 'react-select';
 import Autocomplete from 'react-autocomplete';
 import ReactTooltip from 'react-tooltip'
@@ -180,7 +181,7 @@ class FormInput extends Component {
 		}
 	}
 	isSearchAutomplete( ){
-		return 'search' === this.state.inputData.field;
+		return fieldsDetector.isSearch(this.state.inputData);
 	}
 	selectChanged( fieldName, value){
 		this.setState({selected : value});

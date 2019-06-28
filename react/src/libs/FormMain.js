@@ -52,6 +52,9 @@ class FormMain{
 		let copyOfData = Object.assign({}, FormMain.allData);
 		//console.log(copyOfData,"copyOfData");
 		for( let dataKey of Object.keys(copyOfData)){
+			if(!copyOfData[dataKey]){
+				continue;
+			}
 			if('object' === typeof copyOfData[dataKey] && 'undefined' !== typeof copyOfData[dataKey].length){
 				copyOfData[dataKey] = copyOfData[dataKey].map(val => {return 'undefined' != typeof val.value ?val.value: val});
 			}
@@ -72,9 +75,25 @@ class FormMain{
 	      EventEmitter.emit('dataRecieved', data.data.error ? {error:true} : data.data.FennecAdvancedSearchSearch);
 	    });
 	}
-	static clear(){
-		FormMain.allData = {};
-		this.fireChangeEvent();
+	static clearField( paramKey ){
+		let currentVal =  FormMain.allData[paramKey],
+			newVal = null;
+			if('category' == paramKey)
+		
+		if(!currentVal){
+			return false;
+		}
+		else if ( utils.isArray(currentVal) ) {
+			newVal = [];
+		}
+		else if('object' == typeof currentVal){
+			newVal = {};
+		}
+		else{
+			newVal = ''
+		}
+		FormMain.allData[paramKey] = newVal;
+		return true;
 	}
 
 }

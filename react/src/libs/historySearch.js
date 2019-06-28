@@ -1,12 +1,9 @@
 import queryString from 'query-string';
 import FormMain from './FormMain';
 import utils from './utils';
+import fieldsDetector from './fieldsDetector';
 
-const multyFieldsTypes = [
-	'select',
-	'autocomplete',
-	'checkboxes'
-];
+
 
 class historySearch{
 	static setHistoryFromSearch( paramsSettings){
@@ -40,7 +37,7 @@ class historySearch{
 			if( 'advanced_search' === paramKey){
 					paramKey = 'search';
 				}
-			if( multyFieldsTypes.includes( paramsSettings[paramKey].widget.type ) ){
+			if( fieldsDetector.isMultiple( paramsSettings[paramKey] ) ){
 				let paramValueSplitted = paramValue.split('|');
 				for(let part of paramValueSplitted){
 					FormMain.addValue(paramKey, part);
