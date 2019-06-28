@@ -128,6 +128,21 @@ class Utils{
 		}
 		\Hooks::run( 'FennecAdvancedSearchParams', [ &$newKeyedArray ] );
 		//die(print_r($params,1));
+		return self::fixSearchParams( $newKeyedArray );
+	}
+	public static function fixSearchParams( $newKeyedArray ) {
+		foreach ($newKeyedArray as &$param) {
+			if( isset( $param['widget']['options'] ) ){
+				foreach ($param['widget']['options'] as &$option ) {
+					if( is_string($option) ){
+						$option = [
+							'value' => $option,
+							'label' => $option,
+						];
+					}
+				}
+			}
+		}
 		return $newKeyedArray;
 	}
 	public static function getFeatureSearchStr( $fieldName, $fieldValue ) {

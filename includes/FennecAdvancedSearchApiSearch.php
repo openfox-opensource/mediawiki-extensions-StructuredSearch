@@ -192,10 +192,8 @@ class ApiSearch extends \ApiBase {
 		);
 		//die(print_r('page_title IN (' . $dbr->makeList( array_keys($resultsTitlesForCheck )) . ')'));
 		while ( $row = $dbr->fetchObject( $res ) ) {
-			print_r($row);
 			$resultsTitlesForCheck[$row->page_title]['image'] =$row->pp_value ;
 		}
-		die(print_r($resultsTitlesForCheck));
 		$dbrCargo = \CargoUtils::getDB();
 		$allFieldsByTables = self::getFieldsByTable( );
 		//no normal way to find 
