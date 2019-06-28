@@ -125,10 +125,10 @@ class ApiSearch extends \ApiBase {
 
 	protected function getResultsAdditionalFields( $results) {
 		$titles = array_column($results['query']['search'], 'title');
-		//die(print_r($titles));
-		return self::getResultsAdditionalFieldsFromTitles( $titles);
+		//die(print_r($results['query']['search']));
+		return self::getResultsAdditionalFieldsFromTitles( $titles, $results['query']['search']);
 	}
-	public static function getResultsAdditionalFieldsFromTitles( $titles ) {
+	public static function getResultsAdditionalFieldsFromTitles( $titles, $fullResults ) {
 		if(!count($titles)){
 			return $titles;
 		}
@@ -146,23 +146,26 @@ class ApiSearch extends \ApiBase {
 			$valSplitted = explode(':', $val);
 			if( count($valSplitted) > 1 ){
 				$namespace = array_shift($valSplitted);
+				$title = implode(':',$valSplitted);
 				$namespace = preg_replace('/\s/','_',$namespace);
 				array_unshift($valSplitted, $namespaceIds[$namespace]);
 			} 
 			else{
 				//for main
+				$title  = implode(':',$valSplitted);
 				array_unshift($valSplitted,NS_MAIN);
 			}
 			$titleKey = preg_replace('/\s/','_', implode(':', $valSplitted));
 			$resultsTitlesForCheck[$titleKey] = [
-					'title'=>$val, 
+					'full_title'=>$val, 
+					'short_title'=> $title, 
 					'title_dash'=> preg_replace('/\s/','_',$val), 
 					'page_link'=> preg_replace('/\$1/',preg_replace('/\s/','_',$val),$wgArticlePath), 
 					'namespace' => isset($namespace) ? $namespace : '', 
 					'namespaceId' => $namespaceIds[$namespace],
 					'title_key' => $titleKey,
 			];
-			
+			$resultsTitlesForCheck[$titleKey] = array_merge($resultsTitlesForCheck[$titleKey], $fullResults[$key]);
 			$resultsTitlesAliases[$val] = &$resultsTitlesForCheck[$titleKey]; 
 		}
 		//die(print_r($resultsTitlesAliases));
@@ -189,10 +192,10 @@ class ApiSearch extends \ApiBase {
 		);
 		//die(print_r('page_title IN (' . $dbr->makeList( array_keys($resultsTitlesForCheck )) . ')'));
 		while ( $row = $dbr->fetchObject( $res ) ) {
-			//print_r($row);
+			print_r($row);
 			$resultsTitlesForCheck[$row->page_title]['image'] =$row->pp_value ;
 		}
-		//die(print_r($resultsTitlesForCheck));
+		die(print_r($resultsTitlesForCheck));
 		$dbrCargo = \CargoUtils::getDB();
 		$allFieldsByTables = self::getFieldsByTable( );
 		//no normal way to find 

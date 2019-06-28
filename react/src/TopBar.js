@@ -6,13 +6,14 @@ import ajaxCall from './libs/ajaxCall';
 import EventEmitter from './libs/EventEmitter';
 import utils from './libs/utils';
 import translate from './libs/translations';
+import fieldsDetector from './libs/fieldsDetector';
 import './App.css';
 
 
 class TopBar extends Component {
   constructor() {
     super();
-    this.state = { labels: [] };
+    this.state = { labels: [], chevronDir:'down'};
     EventEmitter.on("FormDataChanged", allData => {
       this.refreshAllInputsByData( allData );
     });
@@ -41,6 +42,12 @@ class TopBar extends Component {
        }
       );
       this.setStickyCheck();
+      EventEmitter.on("hideSidebar", allData => {
+        this.setState( {chevronDir : 'down'});
+      });    
+      EventEmitter.on("showSidebar", allData => {
+        this.setState( {chevronDir : 'up'});
+      });
   }
   setStickyCheck( ) {
     const observer = new IntersectionObserver((records, observer) => {
@@ -98,7 +105,16 @@ class TopBar extends Component {
       this.setState({labels:newLabels});
   }
   clearClicked() {
-    FormMain.clear();
+    let changed = false;
+    for(let paramKey in this.state.inputs){
+      let paramDef = this.state.inputs[ paramKey ];
+      if( fieldsDetector.isMultiple(paramDef) && !fieldsDetector.isSearch( paramDef ) ){
+        changed = FormMain.clearField( paramKey ) || changed;
+      }
+    }
+    if(changed){
+      FormMain.fireChangeEvent();
+    }
   }
   toggleSidebar(){
     EventEmitter.emit('toggleSidebar');
@@ -107,7 +123,7 @@ class TopBar extends Component {
     let allInputs = [],
         labelsKeyed = [],
         labels = [],
-        toggleSidebar = <button type="button" className="hide-on-desktop" onClick={this.toggleSidebar.bind(this)}>{this.state['fennecadvancedsearch-toggle-sidebar']}<i className="far fa-chevron-down"></i></button>;
+        toggleSidebar = <button type="button" className="hide-on-desktop" onClick={this.toggleSidebar.bind(this)}>{this.state['fennecadvancedsearch-toggle-sidebar']}<i className={'fas fa-chevron-' + this.state.chevronDir}></i></button>;
     if(this.state.inputs){
       let inputsSorted = Object.values(this.state.inputs).sort(utils.sortByWeight);
       for(let inputData of inputsSorted){

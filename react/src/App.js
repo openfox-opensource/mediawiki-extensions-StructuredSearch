@@ -20,20 +20,35 @@ class App extends Component {
     });    
     EventEmitter.on("showSidebar", allData => {
       this.show( );
+    });    
+    EventEmitter.on("dataRecieved", allData => {
+      this.hide( );
     });
+    
 
   }
   toggle(){
-      this.setState({hide:!this.state.hide});
+    //give other compoments know hiding/showing
+    if(this.state.hide){
+      EventEmitter.emit("showSidebar");
+    }
+    else{
+      EventEmitter.emit("hideSidebar");
+    }
   }   
   hide(){
       this.setState({hide:true});
+      document.body.classList.add('sidebar-hidden');
+      document.body.classList.remove('sidebar-visible');
   } 
   show(){
       this.setState({hide:false});
+      document.body.classList.remove('sidebar-hidden')
+      document.body.classList.add('sidebar-visible');
+
   } 
   componentDidMount() {
-    
+    this.hide();
     EventEmitter.on("FormDataChanged", allData => {
       historySearch.setHistoryFromSearch( this.state.inputs );
       this.forceUpdate();
