@@ -56,7 +56,7 @@ class ApiSearch extends \ApiBase {
 		$srParams = [];
 		
 
-		$params['limit'] = 100;
+		$params['limit'] = 10;
 		foreach ($params as $pKey => $pValue) {
 			if( !in_array($pKey, ['action','list'])){
 				$srParams['sr' . $pKey ] = $pValue;

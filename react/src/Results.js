@@ -3,6 +3,8 @@ import EventEmitter from './libs/EventEmitter';
 import translate from './libs/translations';
 import ReactMustache from 'react-mustache'
 import settingsGetter from './libs/settingsGetter';
+import FormMain from './libs/FormMain';
+
 
 
 class Results extends Component {
@@ -12,12 +14,15 @@ class Results extends Component {
     translate('fennecadvancedsearch-no-results').then( translatedStr =>{
           this.noResults = translatedStr;
       });
-      translate('fennecadvancedsearch-on-results-error').then( translatedStr =>{
-          this.noResultsError = translatedStr;
-      });
+    translate('fennecadvancedsearch-on-results-error').then( translatedStr =>{
+        this.noResultsError = translatedStr;
+    });    
+    translate('fennecadvancedsearch-next').then( translatedStr =>{
+        this.nextText = translatedStr;
+    });
     EventEmitter.on('dataRecieved', data => {
       let results = data.results;
-      console.log("results",results,data);
+      //console.log("results",results,data);
       if(results && results.error){
         this.setState({
           lastIsError:true,
@@ -26,9 +31,12 @@ class Results extends Component {
         })
       }
       else{
+        let newResults = this.state.results || {};
+        newResults = Object.assign(newResults, results);
         this.setState({
+          offset: data.continue ? data.continue.sroffset : null,
           lastIsError:false,
-          results:results,
+          results:newResults,
           searchReturned:true
         })
       }
@@ -50,9 +58,13 @@ class Results extends Component {
     //console.log(template,'template',result);
     return <ReactMustache template={template} data={result} />;
   }
+  next(){
+    console.log("xcliked");
+    FormMain.setNext( this.state.offset );
+  }
   render(){
-  	let results =[]
-    //console.log("Object.keys(this.state.results).length",this.state.results);
+  	let results =[], errorHtml,nextButton;
+    console.log("Object.keys(this.state.results).length",this.state.offset);
   	if(this.state.results){
       for(let resultKey of Object.keys(this.state.results)){
         let result = this.state.results[resultKey];
@@ -60,16 +72,22 @@ class Results extends Component {
       }
       if( this.state.searchReturned && !Object.keys(this.state.results).length){
         if( this.state.lastIsError ){
-          results.push( <div className="no-results no-results-error" key={'error'}>{ this.noResultsError }</div>);
+          errorHtml = <div className="no-results no-results-error" key={'error'}>{ this.noResultsError }</div>
         }
         else{
-          results.push( <div className="no-results no-results-empty" key={'error'}>{ this.noResults }</div>);
+          errorHtml = <div className="no-results no-results-empty" key={'error'}>{ this.noResults }</div>;
         }
         
       }
+      if(this.state.offset){
+        nextButton = <button type="button" onClick={this.next.bind(this)}>{this.nextText}</button>
+      }
     }
+    console.log("results 87",results);
   	return <div className='results'>
             	{results}
+              {errorHtml}
+              {nextButton}
      		</div>;
   }
  }

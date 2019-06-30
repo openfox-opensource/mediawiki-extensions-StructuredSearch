@@ -58,6 +58,7 @@ class ApiParams extends \ApiBase {
 			"fennecadvancedsearch-show-more",
 			"fennecadvancedsearch-toggle-sidebar",
 			"fennecadvancedsearch-clear",
+			"fennecadvancedsearch-next",
 		];
 		$translations = [];
 		foreach ($translateStrs as $tStr) {

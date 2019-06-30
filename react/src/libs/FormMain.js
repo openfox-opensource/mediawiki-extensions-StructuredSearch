@@ -65,11 +65,23 @@ class FormMain{
 		return copyOfData;
 	}
 
+	static setNext( next ){
+		console.log(next,"next")
+		if( next ){
+			FormMain.offset = next;
+			FormMain.submitData();
+		console.log(next,"submitData")
+		}
+	}
 	static submitData(){
 		let params = this.getAllValuesProcessed();
 	    //console.log(params,'params');
 	    params.action = 'fennecadvancedsearchsearch';
+	    if( FormMain.offset ){
+	    	params.offset = FormMain.offset;
+	    }
 	    let urlSuffix = utils.toQueryStr( params);
+	    console.log("urlSuffix",urlSuffix);
 	    ajaxCall.get(urlSuffix).then(data=>{
 	      //console.log(data, "data");
 	      EventEmitter.emit('dataRecieved', data.data.error ? {error:true} : data.data.FennecAdvancedSearchSearch);
