@@ -15,8 +15,9 @@ class Results extends Component {
       translate('fennecadvancedsearch-on-results-error').then( translatedStr =>{
           this.noResultsError = translatedStr;
       });
-    EventEmitter.on('dataRecieved', results => {
-      console.log("results",results);
+    EventEmitter.on('dataRecieved', data => {
+      let results = data.results;
+      console.log("results",results,data);
       if(results && results.error){
         this.setState({
           lastIsError:true,

@@ -56,6 +56,7 @@ class ApiSearch extends \ApiBase {
 		$srParams = [];
 		
 
+		$params['limit'] = 100;
 		foreach ($params as $pKey => $pValue) {
 			if( !in_array($pKey, ['action','list'])){
 				$srParams['sr' . $pKey ] = $pValue;
@@ -91,7 +92,7 @@ class ApiSearch extends \ApiBase {
 			//print_r([in_array($pKey, $searchParamsKeys), self::isSearchableField( $pKey )]);
 			if( in_array($pKey, $searchParamsKeys) && isset($searchParams[$pKey]['search_callbak']) && function_exists($searchParams[$pKey]['search_callbak']) ){
 					call_user_func_array($searchParams[$pKey]['search_callbak'], [&$params, $pKey]);
-					print_r($params);
+					//print_r($params);
 				}
 		}
 		//print_r($searchParamsKeys);
@@ -125,8 +126,12 @@ class ApiSearch extends \ApiBase {
 
 	protected function getResultsAdditionalFields( $results) {
 		$titles = array_column($results['query']['search'], 'title');
-		//die(print_r($results['query']['search']));
-		return self::getResultsAdditionalFieldsFromTitles( $titles, $results['query']['search']);
+		//die(print_r($results['query']));
+		return [
+			'continue' => $results['continue'],
+			'searchinfo' => $results['query']['searchinfo'],
+			'results' => self::getResultsAdditionalFieldsFromTitles( $titles, $results['query']['search'])
+		];
 	}
 	public static function getResultsAdditionalFieldsFromTitles( $titles, $fullResults ) {
 		if(!count($titles)){
@@ -168,6 +173,9 @@ class ApiSearch extends \ApiBase {
 			$resultsTitlesForCheck[$titleKey] = array_merge($resultsTitlesForCheck[$titleKey], $fullResults[$key]);
 			$resultsTitlesAliases[$val] = &$resultsTitlesForCheck[$titleKey]; 
 		}
+		if(!count($resultsTitlesForCheck)){
+			return $titles;
+		}
 		//die(print_r($resultsTitlesAliases));
 
 		// $results_with_data = array_map(function( $val ){
@@ -177,25 +185,44 @@ class ApiSearch extends \ApiBase {
 		// }, $results[1]);
 		$dbr = wfGetDB( DB_REPLICA );
 		//die('page_title IN (' . $dbr->makeList( $results[1] ) . ')');
+		// $res = $dbr->select(
+		// 	array( 'page_props', 'page' ),
+		// 	array( 'pp_value', 'CONCAT(page_namespace,":",page_title) as page_title' ),
+		// 	array(
+		// 		'CONCAT(page_namespace,":",page_title) IN (' . $dbr->makeList( array_keys($resultsTitlesForCheck )) . ')',
+		// 		'pp_propname="page_image"',
+		// 	),
+		// 	__METHOD__,
+		// 	array(),
+		// 	array( 
+		// 		'page' => array( 'INNER JOIN', array( 'page_id=pp_page' ) )
+		// 	)
+		// );
 		$res = $dbr->select(
-			array( 'page_props', 'page' ),
-			array( 'pp_value', 'CONCAT(page_namespace,":",page_title) as page_title' ),
+			array( 'categorylinks','page','category' ),
+			array( 'cl_from','cl_to', 'page_id','page_title','page_namespace', 'cat_id' ),
 			array(
-				'CONCAT(page_namespace,":",page_title) IN (' . $dbr->makeList( array_keys($resultsTitlesForCheck )) . ')',
-				'pp_propname="page_image"',
+				'page_id IN (' . $dbr->makeList( array_column($resultsTitlesForCheck, 'pageid' )) . ')',
 			),
 			__METHOD__,
 			array(),
 			array( 
-				'page' => array( 'INNER JOIN', array( 'page_id=pp_page' ) )
+				'page' => array( 'INNER JOIN', array( 'page_id=cl_from' ) ),
+				'category' => array( 'INNER JOIN', array( 'cat_title=cl_to' ) ),
 			)
 		);
 		//die(print_r('page_title IN (' . $dbr->makeList( array_keys($resultsTitlesForCheck )) . ')'));
 		while ( $row = $dbr->fetchObject( $res ) ) {
-			$resultsTitlesForCheck[$row->page_title]['image'] =$row->pp_value ;
+			$key = $row->page_namespace .  ':' . $row->page_title;
+			$resultsTitlesForCheck[$key]['category'][] = [
+				'name' => preg_replace('/_/',' ',$row->cl_to),
+				'key' => $row->cl_to,
+				'id' => $row->cat_id,
+			] ;
 		}
 		$dbrCargo = \CargoUtils::getDB();
 		$allFieldsByTables = self::getFieldsByTable( );
+		//die(print_r($allFieldsByTables));
 		//no normal way to find 
 		foreach ($allFieldsByTables as $tableName => $fields) {
 			$allSubtablesOfFields = Utils::getSubtablesOfFields( $tableName );
