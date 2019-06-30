@@ -80,14 +80,13 @@ class App extends Component {
       }
     }
    
-    return (
+    return allInputs.length ?
           <div className={'side-bar' + (this.state.hide ? ' hide' : ' show')}>
             <span className="close-button-wrp">
               <button type="button" className="hide-on-desktop" onClick={this.hide.bind(this)}><i className="fal fa-times"></i></button>
             </span>
             {allInputs}
-          </div>
-    );
+          </div> : <div className="side-bar side-bar-loader"></div>;
   }
 }
 

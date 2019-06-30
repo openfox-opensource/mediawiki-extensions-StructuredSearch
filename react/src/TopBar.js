@@ -144,7 +144,7 @@ class TopBar extends Component {
 
     }
 
-    return (
+    return allInputs.length ? 
       <div className={'TopBar sticky-top' + (this.state.sticky ? ' sticky-on': '')}>
         <header className="App-header">
           <form onSubmit={this.submitClicked.bind(this)}>
@@ -154,8 +154,7 @@ class TopBar extends Component {
           <button type="button" onClick={this.clearClicked.bind( this )}>{this.state['fennecadvancedsearch-clear']}</button>
         </header>
 
-    </div>
-    );
+    </div> : <div className='TopBar TopBar-loader'></div>;
   }
 }
 
