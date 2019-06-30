@@ -73,7 +73,13 @@ class TopBar extends Component {
     return item;
   }
   removeLabel( fieldName, valueObj) {
-    FormMain.removeValue(fieldName, valueObj);
+    if('range' === this.state.inputs[fieldName].widget.type){
+      FormMain.ChangeValueByKey(fieldName, 0,'');
+      FormMain.ChangeValueByKey(fieldName, 1,'');
+    }
+    else{
+      FormMain.removeValue(fieldName, valueObj);
+    }
   }
 
   submitClicked( event ){
@@ -93,15 +99,29 @@ class TopBar extends Component {
           //console.log(allData[fieldKey],"allData[fieldKey]");
           newLabels[fieldKey] = [];
           allData[fieldKey] = this.standardizeItem( allData[fieldKey] );
-          for(let item of allData[fieldKey]){
-            newLabels[fieldKey].push({
-              label : item.label,
-              value: item.value,
-              field: fieldKey
-            });
+          if( 'range' === this.state.inputs[fieldKey].widget.type ){
+            let data = allData[fieldKey];
+            //console.log('dataRange', data);
+            if(data && (data[0] || data[1]) ){
+              newLabels[fieldKey] = [{
+                label : data.join('-'),
+                value: data.join('-'),
+                field: fieldKey
+              }];
+            }
+          }
+          else{
+            for(let item of allData[fieldKey]){
+              newLabels[fieldKey].push({
+                label : item.label,
+                value: item.value,
+                field: fieldKey
+              });
+            }
           }
         }
       }
+      console.log(newLabels,"newLabels");
       this.setState({labels:newLabels});
   }
   clearClicked() {

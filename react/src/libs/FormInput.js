@@ -302,7 +302,7 @@ class FormInput extends Component {
 			if( utils.isArray( currentValue ) ){
 				currentValue = currentValue[0];
 			}
-			if(currentValue.value){
+			if(currentValue && currentValue.value){
 				currentValue = currentValue.value;
 			}
 			let splitted = currentValue.split('|');

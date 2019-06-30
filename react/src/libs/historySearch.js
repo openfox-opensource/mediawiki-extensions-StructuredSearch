@@ -39,11 +39,17 @@ class historySearch{
 			let paramValue = searchParams[ paramKey ];
 			if( 'advanced_search' === paramKey){
 					paramKey = 'search';
-				}
+			}
+
 			if( fieldsDetector.isMultiple( paramsSettings[paramKey] ) ){
 				let paramValueSplitted = paramValue.split('|');
 				for(let part of paramValueSplitted){
-					FormMain.addValue(paramKey, part);
+					if( fieldsDetector.isRange( paramsSettings[paramKey] ) ){
+						FormMain.setValue(paramKey, paramValueSplitted);
+					}
+					else{
+						FormMain.addValue(paramKey, part);
+					}
 				}
 			}
 			else{
