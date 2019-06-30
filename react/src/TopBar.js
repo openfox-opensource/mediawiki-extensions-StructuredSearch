@@ -74,12 +74,12 @@ class TopBar extends Component {
   }
   removeLabel( fieldName, valueObj) {
     if('range' === this.state.inputs[fieldName].widget.type){
-      FormMain.ChangeValueByKey(fieldName, 0,'');
-      FormMain.ChangeValueByKey(fieldName, 1,'');
+      FormMain.clearField(fieldName);
     }
     else{
       FormMain.removeValue(fieldName, valueObj);
     }
+    FormMain.fireChangeEvent();
   }
 
   submitClicked( event ){
@@ -87,9 +87,12 @@ class TopBar extends Component {
     FormMain.submitData();
   }
   refreshAllInputsByData( allData ) {
-      let newLabels = {};
+      let newLabels = {}, alreadyIcluded = [],binds = [].concat( FormMain.binds );
       //console.log("FormDataChanged", allData,this.state.inputs)
       for(let fieldKey of Object.keys(allData)){
+        if( alreadyIcluded.includes(fieldKey)){
+          continue;
+        }
         ;
         if(allData[fieldKey] && this.state.inputs && this.state.inputs[fieldKey] &&
           (
@@ -119,6 +122,20 @@ class TopBar extends Component {
               });
             }
           }
+          if(newLabels[fieldKey] && newLabels[fieldKey].length){
+            for(let bind of binds){
+              if(bind.includes(fieldKey)){
+                console.log(bind, fieldKey);
+                for(let boundFieldKey of bind){
+                  if(boundFieldKey != fieldKey){
+                    console.log(newLabels[fieldKey],allData[boundFieldKey][0],boundFieldKey);
+                    newLabels[fieldKey][0].label += (allData[boundFieldKey] && allData[boundFieldKey].length ? ' ' + allData[boundFieldKey][0].label :'');
+                    alreadyIcluded.push( boundFieldKey );
+                  }
+                }
+              }
+            }
+          }
         }
       }
       console.log(newLabels,"newLabels");
@@ -128,7 +145,7 @@ class TopBar extends Component {
     let changed = false;
     for(let paramKey in this.state.inputs){
       let paramDef = this.state.inputs[ paramKey ];
-      if( fieldsDetector.isMultiple(paramDef) && !fieldsDetector.isSearch( paramDef ) ){
+      if( fieldsDetector.isMultiple(paramDef) && !fieldsDetector.isSearchOrNs( paramDef ) ){
         changed = FormMain.clearField( paramKey ) || changed;
       }
     }

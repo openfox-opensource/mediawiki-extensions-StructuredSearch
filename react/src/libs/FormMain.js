@@ -4,6 +4,7 @@ import utils from './utils'
 
 class FormMain{
 	static allData = {}
+	static binds = []
 	static addValue(name, value){
 		FormMain.allData[ name ] = FormMain.allData[ name ] || [];
 		let standardizeValue = FormMain.standardizeValue(value);
@@ -17,6 +18,10 @@ class FormMain{
 		let ind = FormMain.allData[ name ].findIndex( item => ('' + value.value) === ('' + item.value) );
 		if( ind > -1){
 			FormMain.allData[ name ].splice(ind , 1)
+		}
+		//if no value left remove bound fields
+		if(!FormMain.allData[ name ].length){
+			FormMain.removeBoundFields( name );
 		}
 		FormMain.fireChangeEvent();
 	}
@@ -66,12 +71,18 @@ class FormMain{
 	}
 
 	static setNext( next ){
-		console.log(next,"next")
+		//console.log(next,"next")
 		if( next ){
 			FormMain.offset = next;
 			FormMain.submitData();
-		console.log(next,"submitData")
 		}
+	}
+	static setBinds( binds ){
+		FormMain.binds = binds.map( val => val.fields);
+		console.log(FormMain,"FormMain");
+	}	
+	static setInputsParams( params ){
+		FormMain.inputsParams = params;
 	}
 	static submitData(){
 		let params = this.getAllValuesProcessed();
@@ -81,17 +92,17 @@ class FormMain{
 	    	params.offset = FormMain.offset;
 	    }
 	    let urlSuffix = utils.toQueryStr( params);
-	    console.log("urlSuffix",urlSuffix);
+	    //console.log("urlSuffix",urlSuffix);
 	    ajaxCall.get(urlSuffix).then(data=>{
 	      //console.log(data, "data");
 	      EventEmitter.emit('dataRecieved', data.data.error ? {error:true} : data.data.FennecAdvancedSearchSearch);
 	    });
 	}
-	static clearField( paramKey ){
+	static clearField( paramKey, removeByField = null){
 		let currentVal =  FormMain.allData[paramKey],
 			newVal = null;
-			if('category' == paramKey)
-		
+			//if('category' == paramKey)
+		console.log(paramKey,currentVal,"currentVal,pa")
 		if(!currentVal){
 			return false;
 		}
@@ -105,7 +116,30 @@ class FormMain{
 			newVal = ''
 		}
 		FormMain.allData[paramKey] = newVal;
+		FormMain.removeBoundFields( paramKey, removeByField);
+		
+
 		return true;
+	}
+	static removeBoundFields( paramKey, removeByField){
+		let fieldsBounds = FormMain.getBounds( paramKey );
+		console.log(fieldsBounds, paramKey,"fieldsBounds")
+		for(let fieldBound of fieldsBounds){
+			if( fieldBound != removeByField ){
+				FormMain.clearField(fieldBound, paramKey);
+			}
+		}
+	}
+	static getBounds( paramKey){
+		let allBound = [];
+		for(let bind of FormMain.binds){
+			if(bind.includes(paramKey)){
+				let bindWithout = [].concat(bind);
+				bindWithout.splice( bindWithout.indexOf(paramKey), 1);
+				allBound = allBound.concat(bindWithout);
+			}
+		}
+		return allBound;
 	}
 
 }

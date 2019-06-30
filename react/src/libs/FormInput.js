@@ -185,7 +185,12 @@ class FormInput extends Component {
 	}
 	selectChanged( fieldName, value){
 		this.setState({selected : value});
-		FormMain.addValue(fieldName, value);
+		if(this.state.inputData.widget['is_not_multiple']){
+			FormMain.setValue(fieldName, [value]);
+		}
+		else{
+			FormMain.addValue(fieldName, value);
+		}
 		//this.valueChanged( fieldName, value.value);
 	}
 	rangeChanges(  fieldName, key, event){
@@ -305,7 +310,7 @@ class FormInput extends Component {
 			if(currentValue && currentValue.value){
 				currentValue = currentValue.value;
 			}
-			let splitted = currentValue.split('|');
+			let splitted = currentValue ? currentValue.split('|') : [];
 			defaultValue1 = splitted[0]
 			defaultValue2 = splitted[1]
 		}

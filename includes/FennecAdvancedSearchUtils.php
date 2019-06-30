@@ -145,6 +145,24 @@ class Utils{
 		}
 		return $newKeyedArray;
 	}
+	public static function getSearchBinds( $params ) {
+		$binds = [];
+		foreach ($params as $param) {
+			if(isset( $param['bind_to'])){
+				$bind = [
+					'fields' => [$param['field']]
+				];
+				if('before' == $param['bind_to']['my_label_is']){
+					array_push($bind['fields'], $param['bind_to']['field'] );
+				}
+				else{
+					array_unshift($bind['fields'], $param['bind_to']['field'] );
+				}
+				$binds[] = $bind;
+			}
+		}
+		return $binds;
+	}
 	public static function getFeatureSearchStr( $fieldName, $fieldValue ) {
 		$fieldValue = is_array($fieldValue) ? implode("|", $fieldValue) : $fieldValue;
 		$fieldValue = '"' . addslashes($fieldValue) .  '"';

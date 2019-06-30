@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import settingsGetter from './libs/settingsGetter';
 import FormInput from './libs/FormInput';
+import FormMain from './libs/FormMain';
 import EventEmitter from './libs/EventEmitter';
 import translate from './libs/translations'
 import utils from './libs/utils'
@@ -53,16 +54,18 @@ class App extends Component {
       historySearch.setHistoryFromSearch( this.state.inputs );
       this.forceUpdate();
     });
-      settingsGetter.get().then(data => {
-        //console.log(data.templates, data);
-        if( data ){
-          historySearch.setSearchFromHistory( data.params );
-          this.setState({ 
-            inputs: data.params
-          });
-        }
-       }
-      );
+    settingsGetter.get().then(data => {
+      //console.log(data.templates, data);
+      if( data ){
+        historySearch.setSearchFromHistory( data.params );
+        FormMain.setBinds( data.binds );
+        FormMain.setInputsParams( data.params );
+        this.setState({ 
+          inputs: data.params
+        });
+      }
+     }
+    );
       
   }
 
