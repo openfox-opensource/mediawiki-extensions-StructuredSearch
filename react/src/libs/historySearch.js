@@ -31,6 +31,9 @@ class historySearch{
 	}
 	static setSearchFromHistory( paramsSettings ){
 		let searchParams = queryString.parse(window.location.search);
+		if( !window.location.search){
+			return;
+		}
 		//console.log(paramsSettings, "paramsSettings")
 		for( let paramKey in searchParams){
 			let paramValue = searchParams[ paramKey ];
