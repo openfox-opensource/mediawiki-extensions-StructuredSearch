@@ -28,7 +28,7 @@ class Results extends Component {
       else{
         this.setState({
           lastIsError:false,
-          results:results.results,
+          results:results,
           searchReturned:true
         })
       }
@@ -52,12 +52,12 @@ class Results extends Component {
   }
   render(){
   	let results =[]
+    //console.log("Object.keys(this.state.results).length",this.state.results);
   	if(this.state.results){
       for(let resultKey of Object.keys(this.state.results)){
         let result = this.state.results[resultKey];
         results.push(this.getResultJsx( result ) )
       }
-      //console.log("Object.keys(this.state.results).length",Object.keys(this.state.results).length);
       if( this.state.searchReturned && !Object.keys(this.state.results).length){
         if( this.state.lastIsError ){
           results.push( <div className="no-results no-results-error" key={'error'}>{ this.noResultsError }</div>);
