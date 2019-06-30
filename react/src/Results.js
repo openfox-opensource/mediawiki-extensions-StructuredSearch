@@ -27,7 +27,7 @@ class Results extends Component {
       else{
         this.setState({
           lastIsError:false,
-          results:results,
+          results:results.results,
           searchReturned:true
         })
       }
