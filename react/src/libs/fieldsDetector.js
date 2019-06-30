@@ -1,10 +1,14 @@
  const multyFieldsTypes = [
 	'select',
 	'autocomplete',
-	'checkboxes'
+	'checkboxes',
+	'range'
 ];
 
 class fieldsDetector{
+	static isRange( fieldDef ){
+		return 'range' === fieldDef.widget.type;
+	}
 	static isMultiple( fieldDef ){
 		return multyFieldsTypes.includes( fieldDef.widget.type )
 	}
