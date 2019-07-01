@@ -235,7 +235,37 @@ class Hooks{
 			}
 		}
 	}
-
-	
+	static public function onFennecAdvancedSearchResults( &$results ){
+		$params = Utils::getSearchParams();
+		$imagesKeys = [];
+		foreach ($params as $param) {
+			if( isset( $param['type']) && 'image' == $param['type']){
+				$imagesKeys[] = $param['field'];
+			}
+		}
+		
+		foreach ($results as &$result) {
+			foreach ($imagesKeys as $imageKey) {
+				if(isset($result[$imageKey])){
+					$result[$imageKey] = Hooks::fixImageToThumbs( $result[$imageKey]);
+				}
+			}
+		}
+		//die(print_r($imagesKeys));
+	}
+	static public function fixImageToThumbs( $file ){
+		global $wgScriptPath;
+		$repo = \RepoGroup::singleton();
+		$images = $repo->findFiles( [$file] );
+		$fileClass = reset($images);
+		$ts = $fileClass ? $fileClass->getThumbnails(): $file;
+		if(is_array($ts)){
+			array_shift($ts);
+			array_walk($ts, function(&$val) use($wgScriptPath){
+				$val = "$wgScriptPath/img_auth.php/thumb/$val";
+			});
+		}
+		return count($ts) ? $ts : [$file];
+	}
 
 }

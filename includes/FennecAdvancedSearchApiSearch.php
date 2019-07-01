@@ -252,14 +252,15 @@ class ApiSearch extends \ApiBase {
 				foreach ($row as $key => $value) {
 					//echo "$key $value<br/>";
 					$keySplitted = explode('__', $key);
+					$fullField = $tableName . ':' .  $keySplitted[0];
 					if(isset( $keySplitted[1] ) && $keySplitted[1] == 'full'){
 						$subTableName = $tableName . '__' . $keySplitted[0];
 						if(in_array($subTableName, $allSubtablesOfFields)){
-							$addToArr[$keySplitted[0]] = self::getFieldFromSubtable( $subTableName, $row);
+							$addToArr[$fullField] = self::getFieldFromSubtable( $subTableName, $row);
 						}
 					}
-					if(!isset($addToArr[$keySplitted[0]])){
-						$addToArr[$keySplitted[0]] = $value;
+					if(!isset($addToArr[$fullField])){
+						$addToArr[$fullField] = $value;
 					}
 				}
 				//print_r([$row]);
@@ -269,6 +270,7 @@ class ApiSearch extends \ApiBase {
 		}
 		//die($tableName . '  >>  ' . print_r($conditions));
 		//die(print_r([$resultsTitlesForCheck,"ss"]));
+		\Hooks::run( 'FennecAdvancedSearchResults', [ &$resultsTitlesForCheck ] );
 		return $resultsTitlesForCheck;
 	}
 	public static function getFieldFromSubtable( $subtableName, $row ) {

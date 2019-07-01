@@ -29,6 +29,7 @@ class ApiParams extends \ApiBase {
 		if('127.0.0.1' == $_SERVER["REMOTE_ADDR"]){
 			header("Access-Control-Allow-Origin: *");
 		}
+
 		// else{
 		// 	die($_SERVER["REMOTE_ADDR"]);
 		// }

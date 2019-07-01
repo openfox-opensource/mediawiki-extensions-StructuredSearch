@@ -297,13 +297,33 @@ span.label-wrp {
     border: none;
     margin: 0 0 1em;
     transition: all ease .1s;
+    position: relative;
     &:hover{
       box-shadow: #000000ab 0px 4px 4px -4px;
+          }
+    .columns {
+      padding-left: 0;
+      position: static;
+    }
+    .result-type {
+      font-size: 21px;
+    }
+    h4 {
+      margin: 6px 0 0; 
+    }
+    &.with-img{
+      .result-type {
+        position: absolute;
+        left: 7px;
+        top: 7px;
+        color: #fff;
+      }
+    }
     img {
       width: 100%
       height: auto;
       }
-    }
+
 }
 
 /* mobile hide*/
