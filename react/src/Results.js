@@ -40,7 +40,7 @@ class Results extends Component {
           results:[],
           searchReturned:true,
           searchStarted:false,
-          onTop:data.false
+          onTop:false
         })
       }
       else{
@@ -58,7 +58,7 @@ class Results extends Component {
           results:newResults,
           searchReturned:true,
           searchStarted:false,
-          onTop:data.false
+          onTop:false
         })
       }
 
@@ -87,10 +87,10 @@ class Results extends Component {
         searchTop ='', searchBottom = '';
     if(this.state.searchStarted){
       if(this.state.onTop){
-        searchTop = <div className="loading">{this.onSearchText}</div>
+        searchTop = <div className="loading loading-top">{this.onSearchText}</div>
       }
       else{
-        searchBottom = <div className="loading">{this.onSearchText}</div>
+        searchBottom = <div className="loading loading-bottom">{this.onSearchText}</div>
       }
     }
     if(this.state.results){
@@ -115,8 +115,8 @@ class Results extends Component {
             	{searchTop}
               {results}
               {errorHtml}
-              {searchBottom}
               {nextButton}
+              {searchBottom}
      		</div>;
   }
  }
