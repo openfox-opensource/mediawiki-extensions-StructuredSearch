@@ -31,8 +31,14 @@ class Results extends Component {
         })
       }
       else{
-        let newResults = this.state.results || {};
-        newResults = Object.assign(newResults, results);
+        let newResults;
+        if(!data.reset){
+          newResults = this.state.results || {};
+          newResults = Object.assign(newResults, results);
+        }
+        else{
+          newResults = results;
+        }
         this.setState({
           offset: data.continue ? data.continue.sroffset : null,
           lastIsError:false,
@@ -59,7 +65,6 @@ class Results extends Component {
     return <ReactMustache template={template} data={result} />;
   }
   next(){
-    console.log("xcliked");
     FormMain.setNext( this.state.offset );
   }
   render(){

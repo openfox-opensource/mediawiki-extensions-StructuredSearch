@@ -75,7 +75,7 @@ class FormMain{
 		//console.log(next,"next")
 		if( next ){
 			FormMain.offset = next;
-			FormMain.submitData();
+			FormMain.submitData( false );
 		}
 	}
 	static setBinds( binds ){
@@ -85,7 +85,7 @@ class FormMain{
 	static setInputsParams( params ){
 		FormMain.inputsParams = params;
 	}
-	static submitData( filter = true){
+	static submitData( reset = true, filter = true){
 		let params = this.getAllValuesProcessed();
 	    //console.log(params,'params');
 	    params.action = 'fennecadvancedsearchsearch';
@@ -100,7 +100,9 @@ class FormMain{
 	    //console.log("urlSuffix",urlSuffix);
 	    ajaxCall.get(urlSuffix).then(data=>{
 	      //console.log(data, "data");
-	      EventEmitter.emit('dataRecieved', data.data.error ? {error:true} : data.data.FennecAdvancedSearchSearch);
+	      let eventData = data.data.error ? { results: {error:true}} : data.data.FennecAdvancedSearchSearch;
+	      eventData.reset = reset;
+	      EventEmitter.emit('dataRecieved', eventData);
 	    });
 	}
 	static clearField( paramKey, removeByField = null){
