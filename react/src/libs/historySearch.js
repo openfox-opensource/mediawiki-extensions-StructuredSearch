@@ -18,9 +18,9 @@ class historySearch{
 		}
 		else{
 			let state = this.getState(),
-				query = utils.toQueryStr(state);
+				query = utils.toQueryStr(FormMain.filterParams( state) );
 			if( historySearch.isSearchEquleToDefault( paramsSettings, state ) ){
-				return;
+				query = '';
 			}
 			//console.log(state, query);
 			if( historySearch.lastQuery != query){
