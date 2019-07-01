@@ -133,7 +133,7 @@ class TopBar extends Component {
                       break;
                     }
                     else{
-                      newLabels[fieldKey][0].label += allData[boundFieldKey][0].label;
+                      newLabels[fieldKey][0].label += ' ' + allData[boundFieldKey][0].label;
                     }
                     alreadyIcluded.push( boundFieldKey );
                   }
