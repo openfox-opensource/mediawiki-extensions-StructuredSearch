@@ -95,6 +95,7 @@
     cursor: pointer;
     font-size: 21px;
     outline: 0;
+    transition: all ease .2s;
   }
 }
 .autocomplete-item{
@@ -145,7 +146,7 @@
         display: block;
         position: absolute;
         height: 12px;
-        top: 0;
+        top: 2px;
         left: 1px;
         z-index: 0;
         }
@@ -215,6 +216,12 @@
   .advanced .checkbox-wrp label {
     padding: 7px 1px 0px;
     font-size: 15px;
+  }
+  form:focus-within .field-wrp-name-search button, .field-wrp-name-search button:hover {
+        color: #78c043;
+        right: -2px;
+        top: -1px;
+        font-size: 25px;
   }
 }
 
