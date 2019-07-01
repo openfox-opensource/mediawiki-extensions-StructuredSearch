@@ -43,6 +43,7 @@ class FormMain{
 	}
 	static fireChangeEvent(){
 		EventEmitter.emit("FormDataChanged", FormMain.getAllValuesRaw());
+		delete(FormMain.offset);
 	}
 	static standardizeValue( value ){
 		return 'string' === typeof value ? {
@@ -84,13 +85,17 @@ class FormMain{
 	static setInputsParams( params ){
 		FormMain.inputsParams = params;
 	}
-	static submitData(){
+	static submitData( filter = true){
 		let params = this.getAllValuesProcessed();
 	    //console.log(params,'params');
 	    params.action = 'fennecadvancedsearchsearch';
 	    if( FormMain.offset ){
 	    	params.offset = FormMain.offset;
 	    }
+	    if(filter){
+	    	console.log("filter");
+			params = FormMain.filterParams(params);
+		}
 	    let urlSuffix = utils.toQueryStr( params);
 	    //console.log("urlSuffix",urlSuffix);
 	    ajaxCall.get(urlSuffix).then(data=>{
@@ -129,6 +134,21 @@ class FormMain{
 				FormMain.clearField(fieldBound, paramKey);
 			}
 		}
+	}
+	static filterParams( params){
+		for( let key of Object.keys(params)){
+			let bounds = FormMain.getBounds( key ) || [];
+			console.log(key, bounds,"key, bounds");
+			for(let bound of bounds ){
+				console.log(bound,params[bound],"params[bound]");
+				if(!params[bound] || ['[]','{}'].includes(window.JSON.stringify(params[bound])) ){
+					delete(params[key]);
+					console.log("remove", key, bound);
+					break;
+				}
+			}
+		}
+		return params;
 	}
 	static getBounds( paramKey){
 		let allBound = [];

@@ -57,9 +57,9 @@ class App extends Component {
     settingsGetter.get().then(data => {
       //console.log(data.templates, data);
       if( data ){
-        historySearch.setSearchFromHistory( data.params );
         FormMain.setBinds( data.binds );
         FormMain.setInputsParams( data.params );
+        historySearch.setSearchFromHistory( data.params );
         this.setState({ 
           inputs: data.params
         });

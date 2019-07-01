@@ -3,7 +3,7 @@ class utils{
 	static isArray( val ){
 		return 'object' === typeof val && 'undefined' !== typeof val;
 	}
-	static toQueryStr( params ){
+	static toQueryStr( params){
 	    return Object.keys(params).sort().map(key => (params[key] ? key + '=' + params[key]: '')).filter( part => part ).join('&');
 	 }
 	static sortByWeight( item1, item2 ){

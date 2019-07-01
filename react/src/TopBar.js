@@ -125,11 +125,16 @@ class TopBar extends Component {
           if(newLabels[fieldKey] && newLabels[fieldKey].length){
             for(let bind of binds){
               if(bind.includes(fieldKey)){
-                console.log(bind, fieldKey);
                 for(let boundFieldKey of bind){
                   if(boundFieldKey != fieldKey){
-                    console.log(newLabels[fieldKey],allData[boundFieldKey][0],boundFieldKey);
-                    newLabels[fieldKey][0].label += (allData[boundFieldKey] && allData[boundFieldKey].length ? ' ' + allData[boundFieldKey][0].label :'');
+                    //console.log(boundFieldKey,allData[boundFieldKey], "boundFieldKey,allData[boundFieldKey]" );
+                    if( !allData[boundFieldKey] || !allData[boundFieldKey].length ){
+                      delete(newLabels[fieldKey]);
+                      break;
+                    }
+                    else{
+                      newLabels[fieldKey][0].label += allData[boundFieldKey][0].label;
+                    }
                     alreadyIcluded.push( boundFieldKey );
                   }
                 }
