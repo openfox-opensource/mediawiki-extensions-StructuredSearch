@@ -203,6 +203,7 @@ class ApiSearch extends \ApiBase {
 			array( 'cl_from','cl_to', 'page_id','page_title','page_namespace', 'cat_id' ),
 			array(
 				'page_id IN (' . $dbr->makeList( array_column($resultsTitlesForCheck, 'pageid' )) . ')',
+				'cat_pages > 0'
 			),
 			__METHOD__,
 			array(),

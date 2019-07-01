@@ -78,6 +78,7 @@ class Utils{
 			array( 'cat_title', 'cat_id' ),
 			array(
 				"cat_title LIKE " . $dbr->addQuotes( $term . '%') ,
+				'cat_pages > 0',
 			),
 			__METHOD__
 		);
