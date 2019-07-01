@@ -24,12 +24,10 @@ class Results extends Component {
         this.onSearchText = translatedStr;
     });
     EventEmitter.on('searchStarted', data => {
-      if( data.reset ){
-        this.setState({
-          searchStarted:true,
-          onTop:data.reset,
-        });
-      }
+      this.setState({
+        searchStarted:true,
+        onTop:data.reset,
+      });
     });
     EventEmitter.on('dataRecieved', data => {
       let results = data.results;

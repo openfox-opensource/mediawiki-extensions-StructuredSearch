@@ -67,7 +67,6 @@ class ApiSearch extends \ApiBase {
 		});
 		$params['action'] = 'query';
 		$params['list'] = 'search';
-		//die(print_r($params));
 		
 		//die(http_build_query($params));
 		$callApiParams = new \DerivativeRequest(
