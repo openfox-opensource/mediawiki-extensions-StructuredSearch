@@ -12,13 +12,24 @@ class Results extends Component {
     super();
     this.state = {};
     translate('fennecadvancedsearch-no-results').then( translatedStr =>{
-          this.noResults = translatedStr;
-      });
+        this.noResults = translatedStr;
+    });
     translate('fennecadvancedsearch-on-results-error').then( translatedStr =>{
         this.noResultsError = translatedStr;
     });    
     translate('fennecadvancedsearch-next').then( translatedStr =>{
         this.nextText = translatedStr;
+    });
+    translate('fennecadvancedsearch-on-search-text').then( translatedStr =>{
+        this.onSearchText = translatedStr;
+    });
+    EventEmitter.on('searchStarted', data => {
+      if( data.reset ){
+        this.setState({
+          searchStarted:true,
+          onTop:data.reset,
+        });
+      }
     });
     EventEmitter.on('dataRecieved', data => {
       let results = data.results;
@@ -27,7 +38,9 @@ class Results extends Component {
         this.setState({
           lastIsError:true,
           results:[],
-          searchReturned:true
+          searchReturned:true,
+          searchStarted:false,
+          onTop:data.false
         })
       }
       else{
@@ -43,7 +56,9 @@ class Results extends Component {
           offset: data.continue ? data.continue.sroffset : null,
           lastIsError:false,
           results:newResults,
-          searchReturned:true
+          searchReturned:true,
+          searchStarted:false,
+          onTop:data.false
         })
       }
 
@@ -68,9 +83,17 @@ class Results extends Component {
     FormMain.setNext( this.state.offset );
   }
   render(){
-  	let results =[], errorHtml,nextButton;
-    console.log("Object.keys(this.state.results).length",this.state.offset);
-  	if(this.state.results){
+  	let results =[], errorHtml,nextButton, 
+        searchTop ='', searchBottom = '';
+    if(this.state.searchStarted){
+      if(this.state.onTop){
+        searchTop = <div className="loading">{this.onSearchText}</div>
+      }
+      else{
+        searchBottom = <div className="loading">{this.onSearchText}</div>
+      }
+    }
+    if(this.state.results){
       for(let resultKey of Object.keys(this.state.results)){
         let result = this.state.results[resultKey];
         results.push(this.getResultJsx( result ) )
@@ -88,10 +111,11 @@ class Results extends Component {
         nextButton = <button type="button" onClick={this.next.bind(this)}>{this.nextText}</button>
       }
     }
-    console.log("results 87",results);
-  	return <div className='results'>
-            	{results}
+    return <div className='results'>
+            	{searchTop}
+              {results}
               {errorHtml}
+              {searchBottom}
               {nextButton}
      		</div>;
   }

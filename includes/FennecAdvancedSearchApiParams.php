@@ -48,19 +48,11 @@ class ApiParams extends \ApiBase {
 		return $templates;
 	}	
 	public static function getTranslates() {
-		$translateStrs = [
-			"fennecadvancedsearch-from-label",
-			"fennecadvancedsearch-to-label",
-			"fennecadvancedsearch-more-label",
-			"fennecadvancedsearch-less-label",
-			"fennecadvancedsearch-search-label",
-			"fennecadvancedsearch-no-results",
-			"fennecadvancedsearch-on-results-error",
-			"fennecadvancedsearch-show-more",
-			"fennecadvancedsearch-toggle-sidebar",
-			"fennecadvancedsearch-clear",
-			"fennecadvancedsearch-next",
-		];
+		$translateStrs = file_get_contents( __DIR__ .'/../i18n/he.json');
+		$translateStrs = json_decode($translateStrs, TRUE);
+		unset($translateStrs['@metadata']);
+		$translateStrs = array_keys($translateStrs);
+		
 		$translations = [];
 		foreach ($translateStrs as $tStr) {
 			$translations[$tStr] = wfMessage($tStr)->text();
