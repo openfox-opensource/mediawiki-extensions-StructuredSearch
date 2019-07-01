@@ -187,7 +187,7 @@ class TopBar extends Component {
     }
 
     return allInputs.length ? 
-      <div className={'TopBar sticky-top' + (this.state.sticky ? ' sticky-on': '')}>
+      <div className={'TopBar sticky-top' + (this.state.sticky ? ' sticky-on': '') + (labels.length ? ' with-labels' : '')}>
         <header className="App-header">
           <form onSubmit={this.submitClicked.bind(this)}>
             {allInputs}{toggleSidebar}
