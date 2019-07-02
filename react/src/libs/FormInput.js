@@ -185,7 +185,13 @@ class FormInput extends Component {
 	}
 	selectChanged( fieldName, value){
 		this.setState({selected : value});
-		if(this.state.inputData.widget['is_not_multiple']){
+		console.log(value,fieldName);
+		if('<select>' == value.value ){
+			if(this.state.inputData.widget['is_not_multiple']){
+				FormMain.clearField( fieldName );
+			}
+		}
+		else if(this.state.inputData.widget['is_not_multiple']){
 			FormMain.setValue(fieldName, [value]);
 		}
 		else{

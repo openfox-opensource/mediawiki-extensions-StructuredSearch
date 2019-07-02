@@ -228,7 +228,7 @@ class Hooks{
 				if( 'select' === $param['widget']['type'] ){
 					array_unshift($options, [
 						'label' => wfMessage('fennecadvancedsearch-choose'),
-						'value' => '',
+						'value' => '<select>',
 					]);
 				}
 				$param['widget']['options'] = $options;
