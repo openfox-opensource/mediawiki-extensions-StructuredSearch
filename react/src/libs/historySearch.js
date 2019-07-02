@@ -39,6 +39,10 @@ class historySearch{
 		}
 		for( let paramKey in searchParams){
 			let paramValue = searchParams[ paramKey ];
+			if( paramValue === ''){
+				delete( searchParams[paramKey] );
+				continue;
+			}
 			if( 'advanced_search' === paramKey){
 					paramKey = 'search';
 			} 
