@@ -274,7 +274,7 @@ class FormInput extends Component {
 
 		}
 		let moreText = this.state.showAdvanced ? this.state['fennecadvancedsearch-less-label'] : this.state['fennecadvancedsearch-more-label'],
-			moreButton = checkboxesAdvanced.length ? <button data-tip data-for="global" type={'button'} onClick={this.showAdvanced.bind(this)} >{moreText}</button> : '';
+			moreButton = checkboxesAdvanced.length ? <button data-tip data-for="global" type={'button'} onClick={this.showAdvanced.bind(this)}  dangerouslySetInnerHTML={{__html:moreText}}></button> : '';
 		return <div className={wrpClass}>
 					<div className="main">{checkboxesMain}</div>
 					{moreButton}
