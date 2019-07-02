@@ -85,10 +85,10 @@ class Results extends Component {
         searchTop ='', searchBottom = '';
     if(this.state.searchStarted){
       if(this.state.onTop){
-        searchTop = <div className="loading loading-top">{this.onSearchText}</div>
+        searchTop = <div className="loading loading-top"  dangerouslySetInnerHTML={{__html:this.onSearchText}}></div>
       }
       else{
-        searchBottom = <div className="loading loading-bottom">{this.onSearchText}</div>
+        searchBottom = <div className="loading loading-bottom" dangerouslySetInnerHTML={{__html:this.onSearchText}}></div>
       }
     }
     if(this.state.results){
@@ -98,15 +98,15 @@ class Results extends Component {
       }
       if( this.state.searchReturned && !Object.keys(this.state.results).length){
         if( this.state.lastIsError ){
-          errorHtml = <div className="no-results no-results-error" key={'error'}>{ this.noResultsError }</div>
+          errorHtml = <div className="no-results no-results-error" key={'error'}  dangerouslySetInnerHTML={{__html:this.noResultsError}}></div>
         }
         else{
-          errorHtml = <div className="no-results no-results-empty" key={'error'}>{ this.noResults }</div>;
+          errorHtml = <div className="no-results no-results-empty" key={'error'} dangerouslySetInnerHTML={{__html:this.noResults}}></div>;
         }
         
       }
       if(this.state.offset){
-        nextButton = <button type="button" onClick={this.next.bind(this)}>{this.nextText}</button>
+        nextButton = <button type="button" onClick={this.next.bind(this)} dangerouslySetInnerHTML={{__html:this.nextText}}></button>
       }
     }
     return <div className='results'>
