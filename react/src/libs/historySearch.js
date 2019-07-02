@@ -18,7 +18,7 @@ class historySearch{
 		}
 		else{
 			let state = this.getState(),
-				query = utils.toQueryStr(FormMain.filterParams( state) );
+				query = utils.toQueryStr( FormMain.filterParams( state) );
 			if( historySearch.isSearchEquleToDefault( paramsSettings, state ) ){
 				query = '';
 			}
@@ -34,13 +34,14 @@ class historySearch{
 		if( !window.location.search){
 			return;
 		}
-		//console.log(paramsSettings, "paramsSettings")
+		if( !searchParams.namespace ){
+			searchParams.namespace = historySearch.getDefaultSearch( paramsSettings, 'namespace');
+		}
 		for( let paramKey in searchParams){
 			let paramValue = searchParams[ paramKey ];
 			if( 'advanced_search' === paramKey){
 					paramKey = 'search';
-			}
-
+			} 
 			if( fieldsDetector.isMultiple( paramsSettings[paramKey] ) ){
 				let paramValueSplitted = paramValue.split('|');
 				for(let part of paramValueSplitted){
@@ -74,9 +75,13 @@ class historySearch{
 		}
 		return state;
 	}
-	static getDefaultSearch( paramsSettings ){
+	static getDefaultSearch( paramsSettings, paramKeyToGet ){
 		let defaultValues = {};
 		for(let paramKey in paramsSettings){
+			//just one param - 
+			if(paramKeyToGet && paramKeyToGet != paramKey){
+				continue;
+			}
 			let  defaults = [],
 				paramsSettingsPart = paramsSettings[ paramKey ];
 			if( paramsSettingsPart.widget && paramsSettingsPart.widget.options){
@@ -90,7 +95,7 @@ class historySearch{
 				defaultValues[paramKey] = defaults.join('|');
 			}
 		}
-		return defaultValues;
+		return paramKeyToGet ? defaultValues[paramKeyToGet] :  defaultValues;
 	}
 	static isSearchEquleToDefault( paramsSettings, search ){
 		let defaultSearch = historySearch.getDefaultSearch( paramsSettings );
