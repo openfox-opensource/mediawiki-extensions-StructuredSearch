@@ -193,7 +193,7 @@ class TopBar extends Component {
             {allInputs}{toggleSidebar}
             <div className={'lables-wrp'}>{labels}</div>
           </form>
-          <button type="button" onClick={this.clearClicked.bind( this )}>{this.state['fennecadvancedsearch-clear']}</button>
+          <button type="button" onClick={this.clearClicked.bind( this )}  dangerouslySetInnerHTML={{__html:this.state['fennecadvancedsearch-clear']}} ></button>
         </header>
 
     </div> : <div className='TopBar TopBar-loader'></div>;
