@@ -34,6 +34,7 @@ class historySearch{
 		if( !window.location.search){
 			return;
 		}
+		//if no NS we need to add or no results would given
 		if( !searchParams.namespace ){
 			searchParams.namespace = historySearch.getDefaultSearch( paramsSettings, 'namespace');
 		}
@@ -57,8 +58,7 @@ class historySearch{
 					}
 				}
 			}
-			else{
-				
+			else{	
 				FormMain.setValue(paramKey, paramValue);
 			}
 

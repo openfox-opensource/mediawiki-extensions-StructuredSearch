@@ -101,6 +101,7 @@ class TopBar extends Component {
           ){
           //console.log(allData[fieldKey],"allData[fieldKey]");
           newLabels[fieldKey] = [];
+          console.log(allData[fieldKey],"allData[fieldKey]");
           allData[fieldKey] = this.standardizeItem( allData[fieldKey] );
           if( 'range' === this.state.inputs[fieldKey].widget.type ){
             let data = allData[fieldKey];
@@ -143,7 +144,7 @@ class TopBar extends Component {
           }
         }
       }
-      console.log(newLabels,"newLabels");
+      
       this.setState({labels:newLabels});
   }
   clearClicked() {
