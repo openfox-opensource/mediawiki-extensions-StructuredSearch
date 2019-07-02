@@ -170,7 +170,15 @@ class ApiSearch extends \ApiBase {
 					'title_key' => $titleKey,
 			];
 			$resultsTitlesForCheck[$titleKey] = array_merge($resultsTitlesForCheck[$titleKey], $fullResults[$key]);
-			$resultsTitlesAliases[$val] = &$resultsTitlesForCheck[$titleKey]; 
+			$resultsTitlesAliases[$val] = &$resultsTitlesForCheck[$titleKey];
+			$date = strtotime($resultsTitlesAliases[$val]['timestamp']);
+			$resultsTitlesAliases[$val]['year'] = date('Y', $date);
+			$resultsTitlesAliases[$val]['month'] = date('m', $date);
+			$resultsTitlesAliases[$val]['day'] = date('d', $date);
+			if(NS_FILE == $resultsTitlesForCheck[$titleKey]['namespaceId']){
+				
+				$resultsTitlesForCheck[$titleKey]['self_thumb'] = Hooks::fixImageToThumbs($resultsTitlesForCheck[$titleKey]['full_title']);
+			}
 		}
 		if(!count($resultsTitlesForCheck)){
 			return $titles;

@@ -251,21 +251,19 @@ class Hooks{
 				}
 			}
 		}
+		//die();
 		//die(print_r($imagesKeys));
 	}
 	static public function fixImageToThumbs( $file ){
+		//die($file);
 		global $wgScriptPath;
-		$repo = \RepoGroup::singleton();
-		$images = $repo->findFiles( [$file] );
-		$fileClass = reset($images);
-		$ts = $fileClass ? $fileClass->getThumbnails(): $file;
-		if(is_array($ts)){
-			array_shift($ts);
-			array_walk($ts, function(&$val) use($wgScriptPath){
-				$val = "$wgScriptPath/img_auth.php/thumb/$val";
-			});
+		$fileClass = wfFindFile(\Title::newFromText($file));
+		$thumb = $fileClass ? $fileClass->transform( [ 'width' => 120, 'height' => 120 ] ) : NULL;
+		$thumbUrl = NULL;
+		if ( $thumb ) {
+			$thumbUrl = $thumb->getUrl( );
 		}
-		return count($ts) ? $ts : [$file];
+		return $thumbUrl ? $thumbUrl : $file;
 	}
 
 }
