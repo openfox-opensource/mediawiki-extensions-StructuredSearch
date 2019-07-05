@@ -169,6 +169,7 @@ class ApiSearch extends \ApiBase {
 					'namespaceId' => $namespaceIds[$namespace],
 					'title_key' => $titleKey,
 			];
+			
 			$resultsTitlesForCheck[$titleKey] = array_merge($resultsTitlesForCheck[$titleKey], $fullResults[$key]);
 			$resultsTitlesAliases[$val] = &$resultsTitlesForCheck[$titleKey];
 			$date = strtotime($resultsTitlesAliases[$val]['timestamp']);
@@ -191,20 +192,9 @@ class ApiSearch extends \ApiBase {
 		// 	]];
 		// }, $results[1]);
 		$dbr = wfGetDB( DB_REPLICA );
-		//die('page_title IN (' . $dbr->makeList( $results[1] ) . ')');
-		// $res = $dbr->select(
-		// 	array( 'page_props', 'page' ),
-		// 	array( 'pp_value', 'CONCAT(page_namespace,":",page_title) as page_title' ),
-		// 	array(
-		// 		'CONCAT(page_namespace,":",page_title) IN (' . $dbr->makeList( array_keys($resultsTitlesForCheck )) . ')',
-		// 		'pp_propname="page_image"',
-		// 	),
-		// 	__METHOD__,
-		// 	array(),
-		// 	array( 
-		// 		'page' => array( 'INNER JOIN', array( 'page_id=pp_page' ) )
-		// 	)
-		// );
+		
+
+
 		$res = $dbr->select(
 			array( 'categorylinks','page','category' ),
 			array( 'cl_from','cl_to', 'page_id','page_title','page_namespace', 'cat_id' ),
@@ -220,12 +210,46 @@ class ApiSearch extends \ApiBase {
 			)
 		);
 		//die(print_r('page_title IN (' . $dbr->makeList( array_keys($resultsTitlesForCheck )) . ')'));
+		$allCategories = [];
 		while ( $row = $dbr->fetchObject( $res ) ) {
-			$key = $row->page_namespace .  ':' . $row->page_title;
+			$allCategories[] = (array) $row;
+		}
+		//die(print_r($allCategories));
+		$catTitles = array_column( $allCategories, 'cl_to');
+		$categoriesToExclude = [];
+		//die(print_r([$catTitles,$allCategories]));
+		if(count($catTitles)){
+			$res = $dbr->select(
+				array( 'page','page_props' ),
+				array( 'DISTINCT pp_page, page_title' ),
+				array(
+					//'pp_page IN (' . $dbr->makeList( $catTitles) . ')',
+					'pp_propname' => 'hiddencat',
+					'page_title IN (' . $dbr->makeList( $catTitles) . ')',
+				),
+				__METHOD__,
+				[
+					'page_id = pp_page',
+
+				]
+			);
+			while ( $row = $dbr->fetchObject( $res ) ) {
+				//print_r($row);
+				$categoriesToExclude[] = $row->page_title;
+			}
+		}
+		$categoriesToExclude = array_unique($categoriesToExclude);
+		//die(print_r([$allCategories, $categoriesToExclude]));
+		foreach ($allCategories as $row) {
+			$key = $row['page_namespace'] .  ':' . $row['page_title'];
+			
+			if( in_array($row['cl_to'], $categoriesToExclude)){
+				continue;
+			}
 			$resultsTitlesForCheck[$key]['category'][] = [
-				'name' => preg_replace('/_/',' ',$row->cl_to),
-				'key' => $row->cl_to,
-				'id' => $row->cat_id,
+				'name' => preg_replace('/_/',' ',$row['cl_to']),
+				'key' => $row['cl_to'],
+				'id' => $row['cat_id'],
 			] ;
 		}
 		$dbrCargo = \CargoUtils::getDB();

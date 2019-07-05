@@ -17,7 +17,7 @@
 	"fennecadvancedsearch-choose": "בחר",
 	"fennecadvancedsearch-from-label": "מ",
 	"fennecadvancedsearch-to-label": "עד",
-	"fennecadvancedsearch-more-label": "עוד",
+	"fennecadvancedsearch-more-label": "עוד <i class='far fa-search'></i>",
 	"fennecadvancedsearch-less-label": "סגור",
 	"fennecadvancedsearch-no-results": "לא נמצאו תוצאות",
 	"fennecadvancedsearch-search-label": "<i class='far fa-search'></i>",

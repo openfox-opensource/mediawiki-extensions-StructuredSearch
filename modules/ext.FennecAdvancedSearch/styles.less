@@ -6,7 +6,7 @@
     float: left;
     padding: 3em 2em;
     background: #f5f0e0;
-    .select .css-kj6f9i-menu {
+    box-shadow: rgba(0,0,0,0.67) 0px 5px 6px -5px;    .select .css-kj6f9i-menu {
         z-index: 3;
     }
 }
@@ -186,8 +186,9 @@
     background: #f5f0e0;
     top: 47px;
     padding-top: 1em;
-    box-shadow: rgba(0, 0, 0, 0.67) 1px 4px 6px -3px;
-    &.fixed {
+    padding-right: 4em;
+    box-shadow: rgba(0,0,0,0.67) 0px 5px 6px -5px;
+      &.fixed {
       position: fixed;
       top: 47px;
       right: 60px;
@@ -304,6 +305,7 @@ span.label-wrp {
 /*  results */
 .results {
     margin: 0 10px 10px;
+    padding-top: 2em;
     button {
     background: #78c043;
     color: #fff;
@@ -311,24 +313,25 @@ span.label-wrp {
     border: none;
     padding: 8px 1em;
     border-radius: 21px;
-    box-shadow: rgba(0, 0, 0, 0.67) 1px 4px 6px -3px;
-    display: block;
+    box-shadow: rgba(0,0,0,0.67) 0px 5px 6px -5px;    display: block;
     font-size: 18px;
     outline: none;
     transition: all ease .3s;
     &:hover{
           box-shadow: rgba(0,0,0,0.67) 1px 4px 6px -2px;
     }
+    /* @noflip */
     &:focus{
-        background: repeating-linear-gradient(to right, #78c043 0%, #fff 50%, #78c043 100%);
+        background: repeating-linear-gradient(to right, #78c043 0, #fff 50%, #78c043 100%);
         background-size: 200% auto;
         background-position: 0 100%;
-        animation: gradient 2s infinite;
+        animation: gradient 2s 3;
         animation-fill-mode: forwards;
         animation-timing-function: linear;
       }
     }
 }
+/* @no-flip */
 @keyframes gradient {
   0%   { background-position: 0 0; }
   100% { background-position: -200% 0; }
@@ -339,11 +342,10 @@ span.label-wrp {
     padding: 0;
     background: #eee;
     border: none;
-    margin: 0 0 1em;
+    margin: 0 0 2em;
     transition: all ease .1s;
     position: relative;
-    box-shadow: rgba(0, 0, 0, 0.67) 1px 4px 6px -3px;
-    .columns {
+    box-shadow: rgba(0,0,0,0.67) 0px 5px 6px -5px;    .columns {
       padding-left: 0;
       position: static;
     }
@@ -363,13 +365,13 @@ span.label-wrp {
       font-size: 27px;
     }
     &.with-img{
-      .result-type {
+    }
+    .result-type {
         position: absolute;
         left: 7px;
         top: 13px;
         color: #fff;
       }
-    }
     img {
       width: 100%;
       height: auto;
@@ -452,7 +454,6 @@ span.label-wrp {
       width: 100%;
       top: 47px;
       padding-top: 11em;
-      box-shadow: rgba(0, 0, 0, 0.67) 1px 4px 6px -3px;
       &.show {
         left: 0;
       }
