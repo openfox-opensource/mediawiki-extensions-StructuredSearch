@@ -202,7 +202,7 @@ class ApiSearch extends \ApiBase {
 				array( 'categorylinks','page','category' ),
 				array( 'cl_from','cl_to', 'page_id','page_title','page_namespace', 'cat_id' ),
 				array(
-					'page_id IN (' . $dbr->makeList( array_column($resultsTitlesForCheck, 'full_title' )) . ')',
+					'CONCAT(page_namespace,":",page_title) IN (' . $dbr->makeList( array_keys($resultsTitlesForCheck )) . ')',
 					'cat_pages > 0'
 				),
 				__METHOD__,
@@ -212,7 +212,7 @@ class ApiSearch extends \ApiBase {
 					'category' => array( 'INNER JOIN', array( 'cat_title=cl_to' ) ),
 				)
 			);
-			//die(print_r('page_title IN (' . $dbr->makeList( array_keys($resultsTitlesForCheck )) . ')'));
+			//die(print_r('CONCAT(page_namespace,page_title) IN (' . $dbr->makeList( array_keys($resultsTitlesForCheck )) . ')'));
 			$allCategories = [];
 			while ( $row = $dbr->fetchObject( $res ) ) {
 				$allCategories[] = (array) $row;
@@ -231,8 +231,9 @@ class ApiSearch extends \ApiBase {
 						'page_title IN (' . $dbr->makeList( $catTitles) . ')',
 					),
 					__METHOD__,
+					[],
 					[
-						'page_id = pp_page',
+						'page_props' => array( 'INNER JOIN', array( 'page_id=pp_page' ) ),
 
 					]
 				);
@@ -249,11 +250,14 @@ class ApiSearch extends \ApiBase {
 				if( in_array($row['cl_to'], $categoriesToExclude)){
 					continue;
 				}
-				$resultsTitlesForCheck[$key]['category'][] = [
-					'name' => preg_replace('/_/',' ',$row['cl_to']),
-					'key' => $row['cl_to'],
-					'id' => $row['cat_id'],
-				] ;
+				else{
+					print_r(['added', $key, $row]);
+					$resultsTitlesForCheck[$key]['category'][] = [
+						'name' => preg_replace('/_/',' ',$row['cl_to']),
+						'key' => $row['cl_to'],
+						'id' => $row['cat_id'],
+					] ;
+				}
 			}
 			$dbrCargo = \CargoUtils::getDB();
 			$allFieldsByTables = self::getFieldsByTable( );
