@@ -161,7 +161,7 @@ class Hooks{
 	) {
 		
 		$params = Utils::getSearchParams();
-		$vals = ApiSearch::getResultsAdditionalFieldsFromTitles( [$page->getTitle()->getPrefixedText()]);
+		$vals = ApiSearch::getResultsAdditionalFieldsFromTitles( [$page->getTitle()->getPrefixedText()],[[]]);
 		$vals = array_pop( $vals );
 				//print_r($vals);
 		

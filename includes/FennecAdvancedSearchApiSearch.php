@@ -172,10 +172,12 @@ class ApiSearch extends \ApiBase {
 			
 			$resultsTitlesForCheck[$titleKey] = array_merge($resultsTitlesForCheck[$titleKey], $fullResults[$key]);
 			$resultsTitlesAliases[$val] = &$resultsTitlesForCheck[$titleKey];
-			$date = strtotime($resultsTitlesAliases[$val]['timestamp']);
-			$resultsTitlesAliases[$val]['year'] = date('Y', $date);
-			$resultsTitlesAliases[$val]['month'] = date('m', $date);
-			$resultsTitlesAliases[$val]['day'] = date('d', $date);
+			if(isset($resultsTitlesAliases[$val]['timestamp'])){
+				$date = strtotime($resultsTitlesAliases[$val]['timestamp']);
+				$resultsTitlesAliases[$val]['year'] = date('Y', $date);
+				$resultsTitlesAliases[$val]['month'] = date('m', $date);
+				$resultsTitlesAliases[$val]['day'] = date('d', $date);
+			}
 			if(NS_FILE == $resultsTitlesForCheck[$titleKey]['namespaceId']){
 				
 				$resultsTitlesForCheck[$titleKey]['self_thumb'] = Hooks::fixImageToThumbs($resultsTitlesForCheck[$titleKey]['full_title']);
@@ -194,112 +196,115 @@ class ApiSearch extends \ApiBase {
 		$dbr = wfGetDB( DB_REPLICA );
 		
 
+		if(count($resultsTitlesForCheck)){
 
-		$res = $dbr->select(
-			array( 'categorylinks','page','category' ),
-			array( 'cl_from','cl_to', 'page_id','page_title','page_namespace', 'cat_id' ),
-			array(
-				'page_id IN (' . $dbr->makeList( array_column($resultsTitlesForCheck, 'pageid' )) . ')',
-				'cat_pages > 0'
-			),
-			__METHOD__,
-			array(),
-			array( 
-				'page' => array( 'INNER JOIN', array( 'page_id=cl_from' ) ),
-				'category' => array( 'INNER JOIN', array( 'cat_title=cl_to' ) ),
-			)
-		);
-		//die(print_r('page_title IN (' . $dbr->makeList( array_keys($resultsTitlesForCheck )) . ')'));
-		$allCategories = [];
-		while ( $row = $dbr->fetchObject( $res ) ) {
-			$allCategories[] = (array) $row;
-		}
-		//die(print_r($allCategories));
-		$catTitles = array_column( $allCategories, 'cl_to');
-		$categoriesToExclude = [];
-		//die(print_r([$catTitles,$allCategories]));
-		if(count($catTitles)){
 			$res = $dbr->select(
-				array( 'page','page_props' ),
-				array( 'DISTINCT pp_page, page_title' ),
+				array( 'categorylinks','page','category' ),
+				array( 'cl_from','cl_to', 'page_id','page_title','page_namespace', 'cat_id' ),
 				array(
-					//'pp_page IN (' . $dbr->makeList( $catTitles) . ')',
-					'pp_propname' => 'hiddencat',
-					'page_title IN (' . $dbr->makeList( $catTitles) . ')',
+					'page_id IN (' . $dbr->makeList( array_column($resultsTitlesForCheck, 'full_title' )) . ')',
+					'cat_pages > 0'
 				),
 				__METHOD__,
-				[
-					'page_id = pp_page',
-
-				]
+				array(),
+				array( 
+					'page' => array( 'INNER JOIN', array( 'page_id=cl_from' ) ),
+					'category' => array( 'INNER JOIN', array( 'cat_title=cl_to' ) ),
+				)
 			);
+			//die(print_r('page_title IN (' . $dbr->makeList( array_keys($resultsTitlesForCheck )) . ')'));
+			$allCategories = [];
 			while ( $row = $dbr->fetchObject( $res ) ) {
-				//print_r($row);
-				$categoriesToExclude[] = $row->page_title;
+				$allCategories[] = (array) $row;
 			}
-		}
-		$categoriesToExclude = array_unique($categoriesToExclude);
-		//die(print_r([$allCategories, $categoriesToExclude]));
-		foreach ($allCategories as $row) {
-			$key = $row['page_namespace'] .  ':' . $row['page_title'];
-			
-			if( in_array($row['cl_to'], $categoriesToExclude)){
-				continue;
-			}
-			$resultsTitlesForCheck[$key]['category'][] = [
-				'name' => preg_replace('/_/',' ',$row['cl_to']),
-				'key' => $row['cl_to'],
-				'id' => $row['cat_id'],
-			] ;
-		}
-		$dbrCargo = \CargoUtils::getDB();
-		$allFieldsByTables = self::getFieldsByTable( );
-		//die(print_r($allFieldsByTables));
-		//no normal way to find 
-		foreach ($allFieldsByTables as $tableName => $fields) {
-			$allSubtablesOfFields = Utils::getSubtablesOfFields( $tableName );
-			//die(print_r($allSubtablesOfFields));
-			$fieldsDeclared = self::getFieldsNames($dbrCargo, $tableName);
-			//die(in_array('jhkjhj', [0], TRUE));
-			$fields = array_map(function($val) use ($fieldsDeclared){
-				if(!in_array($val, $fieldsDeclared, TRUE)){
-					if(in_array($val . '__full', $fieldsDeclared, TRUE)){
-						$val = $val . '__full';
-					}
-					else if(in_array($val . '__value', $fieldsDeclared, TRUE)){
-						$val = $val . '__value';
-					}
+			//die(print_r($allCategories));
+			$catTitles = array_column( $allCategories, 'cl_to');
+			$categoriesToExclude = [];
+			//die(print_r([$catTitles,$allCategories]));
+			if(count($catTitles)){
+				$res = $dbr->select(
+					array( 'page','page_props' ),
+					array( 'DISTINCT pp_page, page_title' ),
+					array(
+						//'pp_page IN (' . $dbr->makeList( $catTitles) . ')',
+						'pp_propname' => 'hiddencat',
+						'page_title IN (' . $dbr->makeList( $catTitles) . ')',
+					),
+					__METHOD__,
+					[
+						'page_id = pp_page',
+
+					]
+				);
+				while ( $row = $dbr->fetchObject( $res ) ) {
+					//print_r($row);
+					$categoriesToExclude[] = $row->page_title;
 				}
-				return $val;
-			}, $fields);
-			$fields[] = '_pageName';
-			$fields[] = '_ID';
-			$conditions = [];
-			$conditions[] = '_pageName IN (' . $dbr->makeList( array_column( $resultsTitlesForCheck,'title' )) . ')';
-			$res = $dbrCargo->select( $tableName, $fields, $conditions);
-			//print_r($conditions);
-			while ( $row = $dbrCargo->fetchObject( $res ) ) {
-				//print_r([$row,'d']);
-				$addToArr = &$resultsTitlesAliases[$row->_pageName];
-				foreach ($row as $key => $value) {
-					//echo "$key $value<br/>";
-					$keySplitted = explode('__', $key);
-					$fullField = $tableName . ':' .  $keySplitted[0];
-					if(isset( $keySplitted[1] ) && $keySplitted[1] == 'full'){
-						$subTableName = $tableName . '__' . $keySplitted[0];
-						if(in_array($subTableName, $allSubtablesOfFields)){
-							$addToArr[$fullField] = self::getFieldFromSubtable( $subTableName, $row);
+			}
+			$categoriesToExclude = array_unique($categoriesToExclude);
+			//die(print_r([$allCategories, $categoriesToExclude]));
+			foreach ($allCategories as $row) {
+				$key = $row['page_namespace'] .  ':' . $row['page_title'];
+				
+				if( in_array($row['cl_to'], $categoriesToExclude)){
+					continue;
+				}
+				$resultsTitlesForCheck[$key]['category'][] = [
+					'name' => preg_replace('/_/',' ',$row['cl_to']),
+					'key' => $row['cl_to'],
+					'id' => $row['cat_id'],
+				] ;
+			}
+			$dbrCargo = \CargoUtils::getDB();
+			$allFieldsByTables = self::getFieldsByTable( );
+			//die(print_r($allFieldsByTables));
+			//no normal way to find 
+			foreach ($allFieldsByTables as $tableName => $fields) {
+				$allSubtablesOfFields = Utils::getSubtablesOfFields( $tableName );
+				//die(print_r($allSubtablesOfFields));
+				$fieldsDeclared = self::getFieldsNames($dbr, $tableName);
+				//die(in_array('jhkjhj', [0], TRUE));
+				$fields = array_map(function($val) use ($fieldsDeclared){
+					if($fieldsDeclared && !in_array($val, $fieldsDeclared, TRUE)){
+						if($fieldsDeclared && in_array($val . '__full', $fieldsDeclared, TRUE)){
+							$val = $val . '__full';
+						}
+						else if( $fieldsDeclared && in_array($val . '__value', $fieldsDeclared, TRUE)){
+							$val = $val . '__value';
 						}
 					}
-					if(!isset($addToArr[$fullField])){
-						$addToArr[$fullField] = $value;
+					return $val;
+				}, $fields);
+				$fields[] = '_pageName';
+				$fields[] = '_ID';
+				$conditions = [];
+				$conditions[] = '_pageName IN (' . $dbr->makeList( array_column( $resultsTitlesForCheck,'full_title' )) . ')';
+				$res = $dbrCargo->select( $tableName, $fields, $conditions);
+				//print_r($conditions);
+				while ( $row = $dbrCargo->fetchObject( $res ) ) {
+					//print_r([$row,'d']);
+					$addToArr = &$resultsTitlesAliases[$row->_pageName];
+					foreach ($row as $key => $value) {
+						//echo "$key $value<br/>";
+						$keySplitted = explode('__', $key);
+						$fullField = $tableName . ':' .  $keySplitted[0];
+						if(isset( $keySplitted[1] ) && $keySplitted[1] == 'full'){
+							$subTableName = $tableName . '__' . $keySplitted[0];
+							if(in_array($subTableName, $allSubtablesOfFields)){
+								$addToArr[$fullField] = self::getFieldFromSubtable( $subTableName, $row);
+							}
+						}
+						if(!isset($addToArr[$fullField])){
+							$addToArr[$fullField] = $value;
+						}
 					}
+					//print_r([$row]);
+					//unset( $row['_pageName']);
+					//$addToArr = array_merge($addToArr, (array)$row);
 				}
-				//print_r([$row]);
-				//unset( $row['_pageName']);
-				//$addToArr = array_merge($addToArr, (array)$row);
 			}
 		}
+		
 		//die($tableName . '  >>  ' . print_r($conditions));
 		//die(print_r([$resultsTitlesForCheck,"ss"]));
 		\Hooks::run( 'FennecAdvancedSearchResults', [ &$resultsTitlesForCheck ] );
@@ -334,11 +339,20 @@ class ApiSearch extends \ApiBase {
 			'action=fennecadvancedsearchsearch'
 		);
 	}
-	public static function getFieldsNames($dbrCargo, $tableName){
-		$res = $dbrCargo->select($tableName, '*',[],__METHOD__,'limit 1');
-		while ( $row = $dbrCargo->fetchRow( $res ) ) {
-			return array_keys($row);
+	public static function getFieldsNames($dbr, $tableName){
+		$res = $dbr->select( ['cargo_tables'], array( 'table_schema' ),	array( 'main_table' => $tableName ) );
+		$row = $dbr->fetchRow( $res );
+		$fields = $row[0] ? unserialize($row[0]) : [];
+		$fieldsNames = [];
+		foreach ($fields as $fName => &$field) {
+			if( isset($field['isList']) && $field['isList']){
+				$fieldsNames[] = $fName .'__full';
+			}
+			else{
+				$fieldsNames[] = $fName;
+			}
 		}
+		return $fieldsNames;
 
 	}
 	public static function getFieldsByTable(){
