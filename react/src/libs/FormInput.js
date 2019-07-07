@@ -184,8 +184,9 @@ class FormInput extends Component {
 		return fieldsDetector.isSearch(this.state.inputData);
 	}
 	selectChanged( fieldName, value){
+		
 		this.setState({selected : value});
-		console.log(value,fieldName);
+		
 		if('<select>' == value.value ){
 			if(this.state.inputData.widget['is_not_multiple']){
 				FormMain.clearField( fieldName );
@@ -194,7 +195,8 @@ class FormInput extends Component {
 		else if(this.state.inputData.widget['is_not_multiple']){
 			FormMain.setValue(fieldName, [value]);
 		}
-		else{
+		//filter case of empty string but not the number zero
+		else if('' + value.value){
 			FormMain.addValue(fieldName, value);
 		}
 		//this.valueChanged( fieldName, value.value);
