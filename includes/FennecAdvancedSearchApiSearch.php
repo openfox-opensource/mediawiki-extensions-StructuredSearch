@@ -251,10 +251,11 @@ class ApiSearch extends \ApiBase {
 					continue;
 				}
 				else{
-					print_r(['added', $key, $row]);
+					//print_r(['added', $key, $row]);
 					$resultsTitlesForCheck[$key]['category'][] = [
 						'name' => preg_replace('/_/',' ',$row['cl_to']),
 						'key' => $row['cl_to'],
+						'link' => "category:" . $row['cl_to'],
 						'id' => $row['cat_id'],
 					] ;
 				}
