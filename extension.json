@@ -47,6 +47,10 @@
 		"FennecAdvancedSearchNSIncludeTalkPagesType": {
 			"description": "Are talk pages includes in filters",
 			"value": "advanced"
+		},
+		"FennecAdvancedSearchThumbSize": {
+			"description": "Thumns dismensions",
+			"value": "150X150"
 		}
 		
 	},

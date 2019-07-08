@@ -256,9 +256,13 @@ class Hooks{
 	}
 	static public function fixImageToThumbs( $file ){
 		//die($file);
-		global $wgScriptPath;
+		
+		$conf = \MediaWiki\MediaWikiServices::getInstance()->getMainConfig();
+		$wgScriptPath = $conf->get('ScriptPath');
+		$wgFennecAdvancedSearchThumbSize = $conf->get('FennecAdvancedSearchThumbSize');
+		$dismensions = explode('X', $wgFennecAdvancedSearchThumbSize);
 		$fileClass = wfFindFile(\Title::newFromText($file));
-		$thumb = $fileClass ? $fileClass->transform( [ 'width' => 120, 'height' => 120 ] ) : NULL;
+		$thumb = $fileClass ? $fileClass->transform( [ 'width' => $dismensions[0], 'height' => $dismensions[1] ] ) : NULL;
 		$thumbUrl = NULL;
 		if ( $thumb ) {
 			$thumbUrl = $thumb->getUrl( );
