@@ -38,6 +38,7 @@ class historySearch{
 		if( !searchParams.namespace ){
 			searchParams.namespace = historySearch.getDefaultSearch( paramsSettings, 'namespace');
 		}
+		FormMain.freezed = true;
 		for( let paramKey in searchParams){
 			let paramValue = searchParams[ paramKey ];
 			if( paramValue === ''){
@@ -63,9 +64,10 @@ class historySearch{
 			}
 
 		}
-		// if( !historySearch.isSearchEquleToDefault(paramsSettings, searchParams) ){
-		// 	FormMain.submitData();
-		// }
+		FormMain.freezed = false;
+		if( !historySearch.isSearchEquleToDefault(paramsSettings, searchParams) ){
+			FormMain.submitData();
+		}
 		//console.log();
 	}
 	static getState(){

@@ -44,6 +44,9 @@ class FormMain{
 	static fireChangeEvent(){
 		EventEmitter.emit("FormDataChanged", FormMain.getAllValuesRaw());
 		delete(FormMain.offset);
+		if( !FormMain.freezed && !utils.isMobile() ){
+	      FormMain.delayedSubmitData();
+	    }
 	}
 	static standardizeValue( value ){
 		return 'string' === typeof value ? {
@@ -93,6 +96,10 @@ class FormMain{
 	static submitData( reset = true, filter = true){
 		let params = this.getAllValuesProcessed();
 	    //console.log(params,'params');
+	    //saerch not working without search param
+	    if(!params.search){
+	    	return;
+	    }
 	    params.action = 'fennecadvancedsearchsearch';
 	    if( FormMain.offset ){
 	    	params.offset = FormMain.offset;

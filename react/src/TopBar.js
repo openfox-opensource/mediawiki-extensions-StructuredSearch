@@ -16,9 +16,6 @@ class TopBar extends Component {
     this.state = { labels: [], chevronDir:'down'};
     EventEmitter.on("FormDataChanged", allData => {
       this.refreshAllInputsByData( allData );
-      if( !utils.isMobile() ){
-        FormMain.delayedSubmitData();
-      }
     });
 
   }
