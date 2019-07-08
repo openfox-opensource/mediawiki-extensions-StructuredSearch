@@ -80,10 +80,15 @@ class FormMain{
 	}
 	static setBinds( binds ){
 		FormMain.binds = binds.map( val => val.fields);
-		console.log(FormMain,"FormMain");
 	}	
 	static setInputsParams( params ){
 		FormMain.inputsParams = params;
+	}
+	static delayedSubmitData(){
+		clearTimeout( FormMain.delayedSubmitDataTimeout );
+		FormMain.delayedSubmitDataTimeout = setTimeout( function(){
+			FormMain.submitData();
+		}, 1500 );
 	}
 	static submitData( reset = true, filter = true){
 		let params = this.getAllValuesProcessed();

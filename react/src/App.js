@@ -18,6 +18,9 @@ class App extends Component {
     });
     EventEmitter.on("hideSidebar", allData => {
       this.hide( );
+      if( utils.isMobile() ){
+        FormMain.submitData();
+      }
     });    
     EventEmitter.on("showSidebar", allData => {
       this.show( );

@@ -1,5 +1,8 @@
 class utils{
 
+	static isMobile(){
+		return window.innerWidth <= 992;
+	}
 	static isArray( val ){
 		return 'object' === typeof val && 'undefined' !== typeof val;
 	}

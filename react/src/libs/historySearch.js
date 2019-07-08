@@ -63,9 +63,9 @@ class historySearch{
 			}
 
 		}
-		if( !historySearch.isSearchEquleToDefault(paramsSettings, searchParams) ){
-			FormMain.submitData();
-		}
+		// if( !historySearch.isSearchEquleToDefault(paramsSettings, searchParams) ){
+		// 	FormMain.submitData();
+		// }
 		//console.log();
 	}
 	static getState(){
