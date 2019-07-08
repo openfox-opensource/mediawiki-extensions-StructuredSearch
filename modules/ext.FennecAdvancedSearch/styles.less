@@ -44,7 +44,7 @@
       padding-bottom: 5px;
       .advanced{
       visibility: visible;
-      max-height: 10em;
+      max-height: 14em;
       margin: 1em;
       padding: 1em;
       opacity: 1;
@@ -75,8 +75,12 @@
    .main-and-advanced-wrp {
      button {
        max-height: 0;
-       padding: 0 10px;
+       padding: 0 9px;
        overflow: hidden;
+     }
+     .checkbox-wrp.selected {
+       color: transparent;
+       font-size: 1px;
      }
    }
  }
@@ -86,7 +90,8 @@
   }
   input {
     width: 100%;
-    padding: 11px 2em;
+    padding: 7px 1em;
+    font-size: 19px;
     height: auto;
     border-width: 2px;
     border-color: #d1cfc0;
@@ -140,6 +145,7 @@
     display: inline-block;
     font-size: 12px;
     margin-left: 10px;
+      min-width: 7em;
 }
 .side-bar .checkbox-wrp {
     display: inline-block;
@@ -213,7 +219,7 @@
       outline: 0;
       color: #8b8762;
       border: #D1CFC1 solid 2px;
-      right: 5px;
+      right: -58px;
       bottom: 5px;
       opacity: 0;
       visibility: hidden;
@@ -225,10 +231,11 @@
     }
     .main {
       .checkbox-wrp {
+        transition: all ease .3s;
+        display: inline-block;
         label {
           padding: 8px 8px 1px;
         }
-      display: inline-block;
        > label > i {
         display: none;
       }
@@ -236,6 +243,8 @@
             background: #d1cfc0;
             i {
                 font-weight: bold;
+                color: #000;
+                font-size: 1rem;
             }
         }
         .checkbox-label {
@@ -331,6 +340,18 @@ span.label-wrp {
       }
     }
 }
+.loading {
+  i{
+    margin: 3em auto;
+    color: #d1cfc0;
+  }
+}
+
+.no-results.no-results-empty {
+    font-size: 2em;
+    text-align: center;
+    color: #78c043;
+}
 /* @no-flip */
 @keyframes gradient {
   0%   { background-position: 0 0; }
@@ -372,6 +393,7 @@ span.label-wrp {
         left: 7px;
         top: 13px;
         color: #fff;
+        text-shadow: black 1px 1px 7px;
       }
     img {
       width: 100%;
@@ -402,13 +424,14 @@ span.label-wrp {
     .results-meta {
       position: relative;
       padding-bottom: 1em;
-      .subject-links:after {
+      text-align: left;
+    }
+      .subject-links:after, .area-links:after, .seperator:after {
         content: ",";
       }
-      .subject-links:last-child:after {
+      .subject-links:last-child:after, .area-links:last-child:after, .seperator:last-child:after {
           content: "";
         }
-      }
       .results-meta {
           span {
             margin-left: 1em;
@@ -432,7 +455,7 @@ span.label-wrp {
       background-image: url(/w/skins/Spni/includes/images/season.svg?30aff);
       background-size: 29px;
       width: 24px;
-      height: 37px;
+      height: 40px;
       right: 0px;
       top: 13px;
       }
@@ -478,7 +501,7 @@ span.label-wrp {
     padding: 7px 1em;
     }
     .field-wrp-name-search button {
-    height: 37px;
+    height: 40px;
   }
   .form-input.form-input-wrp-namespace {
     margin: 4px 1px;
@@ -526,7 +549,7 @@ span.label-wrp {
         padding: 8px 2px 7px;
         margin-top: 3px;
         cursor: pointer;
-        top: 47px;
+        top: 53px;
         position: absolute;
         outline: 0;
         color: #8b8762;
@@ -539,8 +562,8 @@ span.label-wrp {
       }
       > header > button {
       transition: all ease .3s;
-      padding: 7px 13px 7px 14px;
-      top: 87px;
+      padding: 7px 13px 7px 13px;
+      top: 93px;
       right: 5px;
       height: 36px;
       }
@@ -586,6 +609,7 @@ span.label-wrp {
               font-size: 17px;
               margin: 1em 0;
           }
+
           .results-meta {
             position: static;
             text-align: left;
@@ -604,6 +628,22 @@ span.label-wrp {
           }
         }
       }
+      .fa-sun:before {
+          content: "";
+          display: block;
+          position: relative;
+          background-image: url(http://spni.openfox.co.il/w/skins/Spni/includes/images/season.svg?30aff);
+          background-size: 27px;
+          width: 22px;
+          height: 1.3em;
+          left: -1px;
+          bottom: -4px;
+          background-repeat: no-repeat;
+          background-position: -4px -5px;
+      }
     }
+  }
+  form:focus-within .field-wrp-name-search button, .field-wrp-name-search button:hover {
+        top: 3px !important ;
   }
 }

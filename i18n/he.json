@@ -19,12 +19,12 @@
 	"fennecadvancedsearch-to-label": "עד",
 	"fennecadvancedsearch-more-label": "עוד <i class='fal fa-plus'></i>",
 	"fennecadvancedsearch-less-label": "סגור <i class='fal fa-times'>",
-	"fennecadvancedsearch-no-results": "לא נמצאו תוצאות",
+	"fennecadvancedsearch-no-results": "<i class='fal fa-snowman'></i> לא נמצאו תוצאות",
 	"fennecadvancedsearch-search-label": "<i class='far fa-search'></i>",
-	"fennecadvancedsearch-on-results-error": "שגיאה במהלך החיפוש",
+	"fennecadvancedsearch-on-results-error": "<div class='results-error'>אירעה שגיאה. אנא בדקו את תנאי החיפוש ונסו שוב</div>",
 	"fennecadvancedsearch-clear": "נקה",
 	"fennecadvancedsearch-toggle-sidebar": "סינון",
 	"fennecadvancedsearch-next": "טען עוד תוצאות",
-	"fennecadvancedsearch-on-search-text": "מחפש...",
+	"fennecadvancedsearch-on-search-text": "<i class='fal fa-spinner fa-pulse fa-6x text-center'></i>",
 	"fennecadvancedsearch-show-more": "לחץ כדי להציג אפשרויות נוספות"
 }
