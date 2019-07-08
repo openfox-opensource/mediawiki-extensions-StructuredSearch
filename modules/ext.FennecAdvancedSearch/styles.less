@@ -363,6 +363,7 @@ span.label-wrp {
     h4 {
       margin: 4px 17px 0;
       font-size: 27px;
+      text-align: left;
     }
     &.with-img{
     }
@@ -384,6 +385,7 @@ span.label-wrp {
         background-position: center;
         background-size: cover;
         background-repeat: no-repeat;
+        min-height: 131px;
           &:after {
           content: "";
           background: radial-gradient(circle,rgba(0,0,0,0) 45%,rgba(0,0,0,0.6) 100%);
@@ -480,7 +482,7 @@ span.label-wrp {
   }
   .form-input.form-input-wrp-namespace {
     margin: 4px 1px;
-    max-width: 85%;
+    max-width: 90%;
     overflow: hidden;
     transition: all ease .5s;
     max-height: 5em;
@@ -496,22 +498,26 @@ span.label-wrp {
         margin: 0;
       }
        .main .checkbox-wrp {
+          font-size: 14px;
              label {
             padding: 8px 8px 1px;
             overflow: hidden;
             height: 25px;
           }
-        &.selected label {
-          width: 2em;
-          overflow: hidden;
-        }
-        .selected .checkbox-label {
+        &.selected {
+          font-size: 16px;
+          label {
+            width: 2em;
+            overflow: hidden;
+          }
+          .checkbox-label {
           font-size: 2px;
           color: transparent;
           i {
             font-size: 16px;
             color: #000;
           }
+        }
       }
     }
       button.hide-on-desktop {
@@ -553,6 +559,51 @@ span.label-wrp {
   }
   .results {
     width: auto;
-    margin-top: 7em;
+    margin-top: 2em;
+    .result{
+      .columns{
+        padding-right: 0;
+          &.result-info {
+            padding: 0 6px;
+            h4 {
+              margin: 0;
+              z-index: 1;
+              position: absolute;
+              top: 0;
+              height: 131px;
+              width: 100%;
+              display: table;
+              padding: 0;
+              a {
+                vertical-align: bottom;
+                display: table-cell;
+                padding: 5px;
+                color: #fff;
+                text-shadow: black 0px 0px 7px;
+              }
+            }
+            .snippet {
+              font-size: 17px;
+              margin: 1em 0;
+          }
+          .results-meta {
+            position: static;
+            text-align: left;
+              .subjects {
+                margin: 6px 0;
+              }
+              span{
+                margin-left: 0;
+              }
+              .standard-tag {
+                height: 3em;
+                right: 6px;
+                top: 6px;
+                right: auto;
+            }
+          }
+        }
+      }
+    }
   }
 }

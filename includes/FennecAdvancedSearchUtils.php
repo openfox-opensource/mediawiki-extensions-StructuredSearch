@@ -108,7 +108,7 @@ class Utils{
 		$dbrCargo = \CargoUtils::getDB();
 		$res = $dbr->select( 'cargo_tables', array( 'field_tables' ),
 			array( 'main_table' => $tableName ) );
-		$row = $dbrCargo->fetchRow( $res );
+		$row = $dbr->fetchRow( $res );
 		$tables = unserialize($row[0]);
 		$allDefinedTables = $dbrCargo->query( 'show tables' );
 		$tablesFromShow = [];

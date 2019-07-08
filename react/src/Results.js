@@ -105,7 +105,8 @@ class Results extends Component {
         }
         
       }
-      if(this.state.offset && this.state.results.length){
+      console.log("this.state.offset && results.length",this.state.offset , results.length)
+      if(this.state.offset && results.length){
         nextButton = <button type="button" onClick={this.next.bind(this)} dangerouslySetInnerHTML={{__html:this.nextText}}></button>
       }
     }
