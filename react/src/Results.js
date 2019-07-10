@@ -23,11 +23,19 @@ class Results extends Component {
     translate('fennecadvancedsearch-on-search-text').then( translatedStr =>{
         this.onSearchText = translatedStr;
     });
+    translate('fennecadvancedsearch-results-sum').then( translatedStr =>{
+        this.resultsSumText = translatedStr;
+    });
     EventEmitter.on('searchStarted', data => {
-      this.setState({
+      let paramsToChange = {
         searchStarted:true,
         onTop:data.reset,
-      });
+      };
+      if(data.reset){
+        paramsToChange.results = [];
+        window.scrollTo(0, 0);
+      }
+      this.setState(paramsToChange);
     });
     EventEmitter.on('dataRecieved', data => {
       let results = data.results;
@@ -82,7 +90,7 @@ class Results extends Component {
   }
   render(){
   	let results =[], errorHtml,nextButton, 
-        searchTop ='', searchBottom = '';
+        resultsSum='',searchTop ='', searchBottom = '';
     if(this.state.searchStarted){
       if(this.state.onTop){
         searchTop = <div className="loading loading-top"  dangerouslySetInnerHTML={{__html:this.onSearchText}}></div>
@@ -105,13 +113,18 @@ class Results extends Component {
         }
         
       }
-      console.log("this.state.offset && results.length",this.state.offset , results.length)
+      //console.log("this.state.offset && results.length",this.state.offset , results.length)
       if(this.state.offset && results.length){
         nextButton = <button type="button" onClick={this.next.bind(this)} dangerouslySetInnerHTML={{__html:this.nextText}}></button>
       }
     }
+    if(results && this.resultsSumText){
+      let resultText = this.resultsSumText.replace('$1', results.length)
+      resultsSum = <div className="results-sum-message"  dangerouslySetInnerHTML={{__html:resultText}}></div>;
+    }
     return <div className='results'>
             	{searchTop}
+              {resultsSum}
               {results}
               {errorHtml}
               {nextButton}
