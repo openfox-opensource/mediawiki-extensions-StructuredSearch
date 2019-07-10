@@ -25,5 +25,6 @@
 	"fennecadvancedsearch-clear": "Clear",
 	"fennecadvancedsearch-toggle-sidebar": "Filter",
 	"fennecadvancedsearch-on-search-text": "Searching",
+	"fennecadvancedsearch-results-sum": "Sum $1 results",
 	"fennecadvancedsearch-show-more": "Click to show more options"
 }

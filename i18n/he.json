@@ -26,5 +26,6 @@
 	"fennecadvancedsearch-toggle-sidebar": "סינון",
 	"fennecadvancedsearch-next": "טען עוד תוצאות",
 	"fennecadvancedsearch-on-search-text": "<i class='fal fa-spinner fa-pulse fa-6x text-center'></i>",
+	"fennecadvancedsearch-results-sum": "סה\"כ $1 תוצאות",
 	"fennecadvancedsearch-show-more": "לחץ כדי להציג אפשרויות נוספות"
 }
