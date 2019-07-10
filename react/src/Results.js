@@ -33,7 +33,7 @@ class Results extends Component {
       };
       if(data.reset){
         paramsToChange.results = [];
-        window.scrollTo(0, 0);
+        this.scrollUp();
       }
       this.setState(paramsToChange);
     });
@@ -60,6 +60,7 @@ class Results extends Component {
         }
         this.setState({
           offset: data.continue ? data.continue.sroffset : null,
+          total: data.searchinfo ? data.searchinfo.totalhits : 0,
           lastIsError:false,
           results:newResults,
           searchReturned:true,
@@ -84,6 +85,13 @@ class Results extends Component {
     let template = this.getTempalteByResult( result ); 
     //console.log(template,'template',result);
     return <ReactMustache template={template} data={result} />;
+  }
+  scrollUp(){
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: 'smooth'
+    });
   }
   next(){
     FormMain.setNext( this.state.offset );
@@ -119,7 +127,7 @@ class Results extends Component {
       }
     }
     if(results && this.resultsSumText){
-      let resultText = this.resultsSumText.replace('$1', results.length)
+      let resultText = this.resultsSumText.replace('$1', this.state.total)
       resultsSum = <div className="results-sum-message"  dangerouslySetInnerHTML={{__html:resultText}}></div>;
     }
     return <div className='results'>
