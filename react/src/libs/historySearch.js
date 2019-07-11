@@ -18,14 +18,26 @@ class historySearch{
 		}
 		else{
 			let state = this.getState(),
-				query = utils.toQueryStr( FormMain.filterParams( state) );
+				searchParamsFromLocation = queryString.parse(window.location.search),
+				pathname = window.location.pathname;
+
+			//for case of index.php?title=special:advanced_search
+			if(searchParamsFromLocation.title){
+				pathname = '/' +searchParamsFromLocation.title;
+			}
+			let query = utils.toQueryStr( FormMain.filterParams( state) );
 			if( historySearch.isSearchEquleToDefault( paramsSettings, state ) ){
 				query = '';
 			}
-			//console.log(state, query);
+			if(query){
+				if(searchParamsFromLocation.debug){
+					state.debug = searchParamsFromLocation.debug;
+				}
+				query = utils.toQueryStr( FormMain.filterParams( state) );
+			}
 			if( historySearch.lastQuery != query){
 				historySearch.lastQuery = query;
-				window.history.pushState(state, '', window.location.pathname + '?' + query)
+				window.history.pushState(state, '',  pathname + '?' + query)
 			}
 		}
 	}
@@ -41,7 +53,7 @@ class historySearch{
 		FormMain.freezed = true;
 		for( let paramKey in searchParams){
 			let paramValue = searchParams[ paramKey ];
-			if( paramValue === ''){
+			if( paramValue === '' || !paramsSettings[paramKey]){
 				delete( searchParams[paramKey] );
 				continue;
 			}
@@ -108,7 +120,7 @@ class historySearch{
 		return historySearch.fixQueryStr(utils.toQueryStr(defaultSearch)) ===  historySearch.fixQueryStr(utils.toQueryStr(search));
 	}
 	static fixQueryStr( str ){
-		return str.replace('advanced_search=','search=');
+		return str.replace('advanced_search=','search=').replace(/title=.+(\&|$)/,'');
 	}
 	static freeze(){
 		historySearch.isFreezed = true;

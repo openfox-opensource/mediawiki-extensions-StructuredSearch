@@ -58,14 +58,18 @@ class App extends Component {
       this.forceUpdate();
     });
     settingsGetter.get().then(data => {
-      //console.log(data.templates, data);
+      //console.log(data.templates, data,"data.templates, data");
       if( data ){
         FormMain.setBinds( data.binds );
         FormMain.setInputsParams( data.params );
-        historySearch.setSearchFromHistory( data.params );
+        
         this.setState({ 
           inputs: data.params
+        }, ()=>{
+           
+          historySearch.setSearchFromHistory( data.params );
         });
+        
       }
      }
     );
@@ -76,16 +80,14 @@ class App extends Component {
   render() {
     let allInputs = [];
     if(this.state.inputs){
-      //console.log('this.state.inputs',this.state.inputs);
       let inputsSorted = Object.values(this.state.inputs).sort( utils.sortByWeight );
       for(let inputData of inputsSorted){
-       // console.log(this.state.inputs[inputDataKey],inputDataKey,'this.state.inputs[inputDataKey],inputDataKey');
         if( !['topbar','hide'].includes(inputData.widget.position) ){
           allInputs.push( <FormInput key={inputData.field} inputData={inputData} /> )
         }
       }
     }
-   
+    //console.log("allInputs", allInputs);
     return allInputs.length ?
           <div className={'side-bar' + (this.state.hide ? ' hide' : ' show')}>
             <span className="close-button-wrp">
