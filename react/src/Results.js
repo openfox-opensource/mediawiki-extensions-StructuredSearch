@@ -33,9 +33,14 @@ class Results extends Component {
       };
       if(data.reset){
         paramsToChange.results = [];
-        this.scrollUp();
+        paramsToChange.lastIsError = false;
+        paramsToChange.total = 0;
+        setTimeout(function(){
+          this.scrollUp();
+        },200);
       }
       this.setState(paramsToChange);
+
     });
     EventEmitter.on('dataRecieved', data => {
       let results = data.results;
@@ -126,7 +131,7 @@ class Results extends Component {
         nextButton = <button type="button" onClick={this.next.bind(this)} dangerouslySetInnerHTML={{__html:this.nextText}}></button>
       }
     }
-    if(results && this.resultsSumText){
+    if(results && this.resultsSumText && this.state.total){
       let resultText = this.resultsSumText.replace('$1', this.state.total)
       resultsSum = <div className="results-sum-message"  dangerouslySetInnerHTML={{__html:resultText}}></div>;
     }
