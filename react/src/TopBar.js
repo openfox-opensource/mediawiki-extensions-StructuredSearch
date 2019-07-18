@@ -17,10 +17,15 @@ class TopBar extends Component {
     EventEmitter.on("FormDataChanged", allData => {
       this.refreshAllInputsByData( allData );
     });
+
     EventEmitter.on("autocompleteMenuOpen", isOpen => {
-      console.log("autocompleteMenuOpen", isOpen);
       this.setState({
         searchSuggestionsOpen : isOpen
+      });
+    });
+    EventEmitter.on("autocompleteMenuResults", results => {
+      this.setState({
+        searchSuggestionsNotEmpty : !!results.length
       });
     });
 
@@ -201,9 +206,10 @@ class TopBar extends Component {
       appendedClass += ' with-labels';
     }
     console.log("this.state",this.state);
-    if(this.state.searchSuggestionsOpen){
+    if(this.state.searchSuggestionsOpen && this.state.searchSuggestionsNotEmpty){
       appendedClass += ' search-suggestions-open';
     }
+    console.log("appendedClass",appendedClass);
     return allInputs.length ? 
       <div className={'TopBar sticky-top' + appendedClass}>
         <header className="App-header">

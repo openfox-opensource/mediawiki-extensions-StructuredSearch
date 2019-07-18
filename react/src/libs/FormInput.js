@@ -154,6 +154,7 @@ class FormInput extends Component {
 			this.setState({
 				filteredOptions : filteredOptions
 			});
+			EventEmitter.emit('autocompleteMenuResults', filteredOptions);
 			//console.log(data, "namespaces");
 		});
 	}
