@@ -35,7 +35,7 @@ class Results extends Component {
         paramsToChange.results = [];
         paramsToChange.lastIsError = false;
         paramsToChange.total = 0;
-        setTimeout(function(){
+        setTimeout(()=>{
           this.scrollUp();
         },200);
       }

@@ -360,7 +360,7 @@ class FormInput extends Component {
 						  renderItem={ this.autocompleteRender.bind(this) }
 						  value={this.state.typed}
 						  autoHighlight={false}
-						  inputProps={ {placeholder:placeholder,onKeyDown : this.autocompleteInputKeyDown.bind(this)}}
+						  inputProps={ {placeholder:placeholder,type:'search', onKeyDown : this.autocompleteInputKeyDown.bind(this)}}
 						  onChange={ this.autocompleteChanged.bind(this)}
 						  onSelect={this.autocompleteSelected.bind(this, inputData.field)}
 						/>
