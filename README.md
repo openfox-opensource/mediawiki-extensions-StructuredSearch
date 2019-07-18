@@ -2,7 +2,7 @@
 
 ## Settings  
 
-```FennecAdvancedSearchParams```  
+```$wgFennecAdvancedSearchParams```  
 Main config.  
 Array of details about fields to search/show as inputs in search form/add to results  
 The structure of the array .
@@ -35,7 +35,7 @@ No key needed, the field would be unieqe identifier
 	    'search_callbak' => callable_string,
 ]
 ```  
-```FennecAdvancedSearchResultsTemplates```  
+```$wgFennecAdvancedSearchResultsTemplates```  
 Templates for results  
 Array in the structure  
 ```
@@ -45,17 +45,17 @@ Array in the structure
 'template_100' => 'mustache_string'
 ]
 ```
-```FennecAdvancedSearchDefaultParams```  
+```$wgFennecAdvancedSearchDefaultParams```  
 Array. show or hide predefined fields - for now this is 'namespaces' and 'category'.   
 If defined need to include all predefined fields you want.  
 
-```FennecAdvancedSearchCategoryInclude```  
+```$wgFennecAdvancedSearchCategoryInclude```  
 Include only this categories in categories autocomplete  
 
-```FennecAdvancedSearchCategoryExclude```  
+```$wgFennecAdvancedSearchCategoryExclude```  
 Use all categories in categories autocomplete but exclude those categories  
 
-```FennecAdvancedSearchNSReplace```  
+```$wgFennecAdvancedSearchNSReplace```  
 This option replace completely default NS option. you hove to build array like this  
 ```
 array(
@@ -66,17 +66,23 @@ array(
 )
 ```  
 
-```FennecAdvancedSearchNSOverride```  
+```$wgFennecAdvancedSearchNSOverride```  
 if this var defined, we will take all default NS and override "show" and "defaultChecked" options  
 
-```FennecAdvancedSearchNSDefaultPosition```  
+```$wgFennecAdvancedSearchNSDefaultPosition```  
 What is the default position of NS? Default is main.  
 Would apply to any default NS, before using ```FennecAdvancedSearchNSOverride```
 
-```FennecAdvancedSearchNSIncludeTalkPagesType```  
+```$wgFennecAdvancedSearchNSIncludeTalkPagesType```  
 "show" value for talk page by default. Default value is "advanced"  
 ## Hooks  
 ```
 function FennecAdvancedSearchParams( &FennecAdvancedSearchParams ){ ... }
 ```
-Use it to modify FennecAdvancedSearchParams or create complicated settings.
+Use it to modify $wgFennecAdvancedSearchParams or create complicated settings.
+
+```How to show all namespaces?```
+There's a hidden "more" button that displays all available namespaces. If you want all users to see it you can add the following line to your wiki CSS (i.e. to MediaWiki.Common.css). Alternatively you can add this only to some of the user groups using the user group specific css (i.e. MediaWiki:group-sysop.css):
+```
+.main-and-advanced-wrp button {display: block;}
+```

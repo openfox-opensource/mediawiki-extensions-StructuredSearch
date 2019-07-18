@@ -18,6 +18,7 @@ class TopBar extends Component {
       this.refreshAllInputsByData( allData );
     });
     EventEmitter.on("autocompleteMenuOpen", isOpen => {
+      console.log("autocompleteMenuOpen", isOpen);
       this.setState({
         searchSuggestionsOpen : isOpen
       });
@@ -198,7 +199,8 @@ class TopBar extends Component {
     }
     if(labels.length){
       appendedClass += ' with-labels';
-    }    
+    }
+    console.log("this.state",this.state);
     if(this.state.searchSuggestionsOpen){
       appendedClass += ' search-suggestions-open';
     }
