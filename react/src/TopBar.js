@@ -17,6 +17,11 @@ class TopBar extends Component {
     EventEmitter.on("FormDataChanged", allData => {
       this.refreshAllInputsByData( allData );
     });
+    EventEmitter.on("autocompleteMenuOpen", isOpen => {
+      this.setState({
+        searchSuggestionsOpen : isOpen
+      });
+    });
 
   }
   componentDidMount() {
@@ -187,9 +192,18 @@ class TopBar extends Component {
       }
 
     }
-
+    let appendedClass = '';
+    if(this.state.sticky){
+      appendedClass += ' sticky-on';
+    }
+    if(labels.length){
+      appendedClass += ' with-labels';
+    }    
+    if(this.state.searchSuggestionsOpen){
+      appendedClass += ' search-suggestions-open';
+    }
     return allInputs.length ? 
-      <div className={'TopBar sticky-top' + (this.state.sticky ? ' sticky-on': '') + (labels.length ? ' with-labels' : '')}>
+      <div className={'TopBar sticky-top' + appendedClass}>
         <header className="App-header">
           <form onSubmit={this.submitClicked.bind(this)}>
             {allInputs}{toggleSidebar}

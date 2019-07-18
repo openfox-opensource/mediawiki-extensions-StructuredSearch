@@ -4,6 +4,7 @@ import ajaxCall from './ajaxCall'
 import utils from './utils'
 import translate from './translations'
 import fieldsDetector from './fieldsDetector'
+import EventEmitter from './EventEmitter'
 import Select from 'react-select';
 import Autocomplete from 'react-autocomplete';
 import ReactTooltip from 'react-tooltip'
@@ -179,6 +180,9 @@ class FormInput extends Component {
 				typed:''
 			});
 		}
+	}
+	onAutocompleteMenuVisibilityChange( isOpen ){
+		EventEmitter.emit('autocompleteMenuOpen',isOpen);
 	}
 	isSearchAutomplete( ){
 		return fieldsDetector.isSearch(this.state.inputData);
@@ -361,6 +365,7 @@ class FormInput extends Component {
 						  value={this.state.typed}
 						  autoHighlight={false}
 						  inputProps={ {placeholder:placeholder,type:'search', onKeyDown : this.autocompleteInputKeyDown.bind(this)}}
+						  onMenuVisibilityChange={ this.onAutocompleteMenuVisibilityChange.bind(this)}
 						  onChange={ this.autocompleteChanged.bind(this)}
 						  onSelect={this.autocompleteSelected.bind(this, inputData.field)}
 						/>
