@@ -28,7 +28,7 @@ class TopBar extends Component {
         searchSuggestionsNotEmpty : !!results.length
       });
     });
-
+    this.state = {};
   }
   componentDidMount() {
     for(let key of [
@@ -85,7 +85,7 @@ class TopBar extends Component {
     return item;
   }
   removeLabel( fieldName, valueObj) {
-    if('range' === this.state.inputs[fieldName].widget.type){
+    if('undefined' != typeof this.state.inputs && 'range' === this.state.inputs[fieldName].widget.type){
       FormMain.clearField(fieldName);
     }
     else{
@@ -100,20 +100,14 @@ class TopBar extends Component {
   }
   refreshAllInputsByData( allData ) {
       let newLabels = {}, alreadyIcluded = [],binds = [].concat( FormMain.binds );
-      //console.log("FormDataChanged", allData,this.state.inputs)
       for(let fieldKey of Object.keys(allData)){
         if( alreadyIcluded.includes(fieldKey)){
           continue;
         }
-        ;
-        if(allData[fieldKey] && this.state.inputs && this.state.inputs[fieldKey] &&
-          (
-            ('sidebar' === this.state.inputs[fieldKey].widget.position && 'search' != this.state.inputs[fieldKey].field )
-           || this.state.inputs[fieldKey].withLabels)
-          ){
+        if(allData[fieldKey] && utils.safeGet(['state','inputs'],this) && !this.state.inputs[fieldKey].withoutLabels ){
           //console.log(allData[fieldKey],"allData[fieldKey]");
           newLabels[fieldKey] = [];
-          console.log(allData[fieldKey],"allData[fieldKey]");
+          //console.log(allData[fieldKey],"allData[fieldKey]");
           allData[fieldKey] = this.standardizeItem( allData[fieldKey] );
           if( 'range' === this.state.inputs[fieldKey].widget.type ){
             let data = allData[fieldKey];
@@ -161,10 +155,12 @@ class TopBar extends Component {
   }
   clearClicked() {
     let changed = false;
-    for(let paramKey in this.state.inputs){
-      let paramDef = this.state.inputs[ paramKey ];
-      if( fieldsDetector.isMultiple(paramDef) && !fieldsDetector.isSearchOrNs( paramDef ) ){
-        changed = FormMain.clearField( paramKey ) || changed;
+    if( 'undefined' != typeof this.state.inputs){    
+      for(let paramKey in this.state.inputs){
+        let paramDef = this.state.inputs[ paramKey ];
+        if( fieldsDetector.isMultiple(paramDef) && !fieldsDetector.isSearchOrNs( paramDef ) ){
+          changed = FormMain.clearField( paramKey ) || changed;
+        }
       }
     }
     if(changed){
@@ -179,7 +175,7 @@ class TopBar extends Component {
         labelsKeyed = [],
         labels = [],
         toggleSidebar = <button type="button" className="hide-on-desktop" onClick={this.toggleSidebar.bind(this)}>{this.state['fennecadvancedsearch-toggle-sidebar']}<i className={'fas fa-chevron-' + this.state.chevronDir}></i></button>;
-    if(this.state.inputs){
+    if('undefined' != typeof this.state.inputs){
       let inputsSorted = Object.values(this.state.inputs).sort(utils.sortByWeight);
       for(let inputData of inputsSorted){
       //for(let inputDataKey of Object.keys(this.state.inputs)){
@@ -205,11 +201,9 @@ class TopBar extends Component {
     if(labels.length){
       appendedClass += ' with-labels';
     }
-    console.log("this.state",this.state);
     if(this.state.searchSuggestionsOpen && this.state.searchSuggestionsNotEmpty){
       appendedClass += ' search-suggestions-open';
     }
-    console.log("appendedClass",appendedClass);
     return allInputs.length ? 
       <div className={'TopBar sticky-top' + appendedClass}>
         <header className="App-header">

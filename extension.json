@@ -40,9 +40,17 @@
 			"description": "Override NS list. Usefull to modify full list Each NS can be 'main', 'advanced' or 'disable'",
 			"value": []
 		},
+		"FennecAdvancedSearchUseMWDefaultSearchNS": {
+			"description": "When ns omitted, if to use $wgNamespacesToBeSearchedDefault",
+			"value": false
+		},
 		"FennecAdvancedSearchNSDefaultPosition": {
 			"description": "What is the default position of NS",
 			"value": "main"
+		},
+		"FennecAdvancedSearchNSTopOrSide": {
+			"description": "What is the default position of NS selectors - topbar or sidebar",
+			"value": ""
 		},
 		"FennecAdvancedSearchNSIncludeTalkPagesType": {
 			"description": "Are talk pages includes in filters",

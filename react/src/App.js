@@ -54,8 +54,10 @@ class App extends Component {
   componentDidMount() {
     this.hide();
     EventEmitter.on("FormDataChanged", allData => {
-      historySearch.setHistoryFromSearch( this.state.inputs );
-      this.forceUpdate();
+      if(this.state && 'undefined' != typeof this.state.inputs ){
+        historySearch.setHistoryFromSearch( this.state.inputs );
+        this.forceUpdate();
+      }
     });
     settingsGetter.get().then(data => {
       //console.log(data.templates, data,"data.templates, data");
@@ -79,7 +81,7 @@ class App extends Component {
 
   render() {
     let allInputs = [];
-    if(this.state.inputs){
+    if(this.state && 'undefined' != typeof this.state.inputs ){
       let inputsSorted = Object.values(this.state.inputs).sort( utils.sortByWeight );
       for(let inputData of inputsSorted){
         if( !['topbar','hide'].includes(inputData.widget.position) ){

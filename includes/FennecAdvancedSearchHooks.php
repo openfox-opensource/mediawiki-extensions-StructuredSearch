@@ -52,13 +52,15 @@ class Hooks{
 		return $included && count($included) ? $included : array_values( self::getNamspacesDefaultWithOverrides() );
 	}
 	static public function namespacesExtract( &$params ){
-		
+		$conf = \MediaWiki\MediaWikiServices::getInstance()->getMainConfig();
+		$topOrSide = $conf->get('FennecAdvancedSearchNSTopOrSide');
 		$params['namespace'] = [
 			'label' => '',//wfMessage('fennecadvancedsearch-namespace-label')->text(),
         	'field' => 'namespace',
+        	'withoutLabels' => 1,
 	        'widget' => [
 	            'type' => 'checkboxes',
-	            'position' => 'topbar',
+	            'position' => $topOrSide,
 	            'options' => self::getDefinedNamespaces(),
 	        ],
 	    ];
@@ -190,6 +192,7 @@ class Hooks{
 		$params['search'] = [
 			'label' => '',// wfMessage('fennecadvancedsearch-search-label')->text(),
         	'field' => 'search',
+        	'withoutLabels' => 1,
 	        'widget' => [
 	            'type' => 'autocomplete',
 	            'position' => 'topbar',

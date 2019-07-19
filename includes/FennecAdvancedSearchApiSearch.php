@@ -30,7 +30,7 @@ class ApiSearch extends \ApiBase {
 	public function execute() {
 		
 		if('127.0.0.1' == $_SERVER["REMOTE_ADDR"]){
-		header("Access-Control-Allow-Origin: *");
+			header("Access-Control-Allow-Origin: *");
 		}
 		$result = $this->getResult();
 		
@@ -44,12 +44,23 @@ class ApiSearch extends \ApiBase {
 			
 		$params = $this->extractRequestParams();
 		if(!isset($params['namespace']) || !strlen($params['namespace'])){
-			$namespaces = Hooks::getDefinedNamespaces();
-			$namespaces = array_column($namespaces, 'value');
-			$namespaces = array_filter($namespaces, function($val){
-				return (integer) $val >= 0;
-			});
-			$params['namespace'] = implode('|', array_column($namespaces, 'value'));
+			$conf = \MediaWiki\MediaWikiServices::getInstance()->getMainConfig();
+			$useDefualtNsForSearch = $conf->get('FennecAdvancedSearchUseMWDefaultSearchNS');
+			if( $useDefualtNsForSearch ){
+				$namespaces = $conf->get('NamespacesToBeSearchedDefault');
+				$namespaces = array_filter($namespaces);
+				$namespaces = array_keys($namespaces);
+			}
+			else{			
+				$namespaces = Hooks::getDefinedNamespaces();
+				//NamespacesToBeSearchedDefault
+				$namespaces = array_column($namespaces, 'value');
+				$namespaces = array_filter($namespaces, function($val){
+					return (integer) $val >= 0;
+				});
+				$namespaces = array_column($namespaces, 'value');
+			}
+			$params['namespace'] = implode('|',$namespaces);
 		}
 		$params['namespace'] = $params['namespace'];
 		$params = self::extractSearchStringFromFields($params);

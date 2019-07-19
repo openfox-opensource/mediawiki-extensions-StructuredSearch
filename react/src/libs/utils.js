@@ -16,6 +16,9 @@ class utils{
 	  return ret;
 
 	}
+	static safeGet(propsArray, obj ){
+  		return propsArray.reduce((xs, x) => (xs && xs[x]) ? xs[x] : null, obj);
+	}
 	static stripHtml(str){
 		let tag = document.createElement('div');
 		tag.innerHTML = str;
