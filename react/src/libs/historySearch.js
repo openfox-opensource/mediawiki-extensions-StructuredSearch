@@ -62,7 +62,7 @@ class historySearch{
 				continue;
 			}
 			if( fieldsDetector.isMultiple( paramsSettings[paramKey] ) ){
-				let paramValueSplitted = paramValue.split('|');
+				let paramValueSplitted = paramValue ? paramValue.split('|') : [];
 				for(let part of paramValueSplitted){
 					if( fieldsDetector.isRange( paramsSettings[paramKey] ) ){
 						FormMain.setValue(paramKey, paramValueSplitted);
