@@ -28,6 +28,11 @@ class App extends Component {
     EventEmitter.on("dataRecieved", allData => {
       this.hide( );
     });
+    window.onpopstate = () => {
+      if(this.state.inputs){
+        historySearch.setSearchFromHistory( this.state.inputs );
+      }
+    };
     
 
   }
