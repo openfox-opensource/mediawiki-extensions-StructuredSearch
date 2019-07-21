@@ -51,13 +51,29 @@
     }
    }
  }
-
+ .side-bar {
+   .main-and-advanced-wrp {
+       .advanced{
+         max-height: auto;
+         height: auto;
+         position: fixed;
+          z-index: 4;
+          max-width: 750px;
+          left: 50%;
+          margin-left: -375px;
+          background: #fff;
+          box-shadow: #00000054 1px 1px 1px 100vw, #00000054 1px 1px 70px 2vw;
+          padding: 1em;
+          top: 30%;
+       }
+     }
+   }
 .field-wrp-type-autocomplete > div {
     position: relative;
     max-width: 750px;
     margin: auto;
 }
-.main-and-advanced-wrp {
+.TopBar .main-and-advanced-wrp {
   button {
     background: #d1cfc0;
     border: none;
@@ -71,6 +87,19 @@
     width: 3em;
     display: none;
   }
+}
+
+.side-bar .main-and-advanced-wrp {
+  button {
+    background: #d1cfc0;
+    border: none;
+    padding: 9px;
+    cursor: pointer;
+    outline: 0;
+    float: right;
+    display: none;
+  }
+
 }
  .sticky-on {
    .main-and-advanced-wrp {
@@ -97,12 +126,8 @@
     border-width: 2px;
     border-color: #d1cfc0;
     border-radius: 23px;
-    &:hover, &:focus {
+    &:hover {
       box-shadow: 0 1px 6px 0 rgba(32,33,36,0.28);
-    }
-    &:focus {
-      border-radius: 23px 23px 0 0;
-      border-bottom: none;
     }
   }
    button {
@@ -156,7 +181,7 @@
 .side-bar .checkbox-wrp {
     display: inline-block;
     padding: 0 3px;
-    .far {
+    .fa-square, .fa-check-square {
       position: relative;
         &:before {
         z-index: 1;
@@ -197,8 +222,6 @@
     z-index: 2;
     background: #f5f0e0;
     top: 47px;
-    padding-top: 1em;
-    padding-right: 4em;
     box-shadow: rgba(0,0,0,0.67) 0px 5px 6px -5px;
       &.fixed {
       position: fixed;
@@ -206,7 +229,12 @@
       right: 60px;
     }
 }
-
+.TopBar {
+  padding: 1em 4em;
+  &.with-labels {
+  padding: 1em 4em 0;
+}
+}
 .side-bar .form-input {
     padding: 1em 0 .5em;
 }
@@ -225,7 +253,7 @@
       outline: 0;
       color: #8b8762;
       border: #D1CFC1 solid 2px;
-      right: -58px;
+      right: 5px;
       bottom: 5px;
       opacity: 0;
       visibility: hidden;
@@ -265,15 +293,21 @@
     padding: 7px 1px 0px;
     font-size: 15px;
   }
-  form:focus-within .field-wrp-name-search button, .field-wrp-name-search button:hover {
+  form:focus-within .field-wrp-name-search button, &.search-suggestions-open .field-wrp-name-search button, .field-wrp-name-search button:hover {
         background: #78c043;
         border-color: #d3d1c2;
         color: #fff;
         overflow: hidden;
-        &:suggested {
-          border-radius: 0 23px 0 0;
+    }
+  &.search-suggestions-open .field-wrp-name-search {
+    input {
+          border-radius: 23px 23px 0 0;
           border-bottom: none;
         }
+    button {
+    border-radius: 0 23px 0 0;
+    border-bottom: none;
+    }
   }
 }
 .range-input{
@@ -327,6 +361,13 @@ span.label-wrp {
 .results {
     margin: 0 10px 10px;
     padding-top: 2em;
+    &:empty {
+      min-height: 50em;
+      background: url(/w/extensions/FennecAdvancedSearch/images/search-bg-min.png);
+      background-position: center;
+      background-size: 65%;
+      background-repeat: no-repeat;
+    }
     button {
     background: #78c043;
     color: #fff;
@@ -476,7 +517,7 @@ span.label-wrp {
 }
 
 /* autocomplete */
-.form-input.form-input-wrp-search .autocomplete-wrp > div > div {
+.search-suggestions-open .form-input.form-input-wrp-search .autocomplete-wrp > div > div {
     border-radius: 0 0 23px 23px;
     overflow: hidden;
     box-shadow: 0 1px 6px 0 rgba(32,33,36,0.28);
@@ -506,7 +547,7 @@ span.label-wrp {
       transition: all ease .3s;
       width: 100%;
       top: 47px;
-      padding-top: 11em;
+      padding-top: 6em;
       &.show {
         left: 0;
       }
@@ -525,27 +566,37 @@ span.label-wrp {
     .top-and-results-wrp {
       width: 100%;
     }
-    .field-wrp-name-search input {
-    padding: 7px 1em;
+    .field-wrp-name-search {
+      input {
+      padding: 0px 1em;
+      border-radius: 23px 0 0 23px;
+      }
+      button {
+          background: transparent !important;
+          border: transparent !important;
+          color: #aaa78c !important;
+      }
     }
-    .field-wrp-name-search button {
-  }
-  .form-input.form-input-wrp-namespace {
-    margin: 4px 1px;
-    max-width: 90%;
-    overflow: hidden;
-    transition: all ease .5s;
-    max-height: 5em;
-  }
+
     .TopBar {
       position: fixed;
       top: 47px;
       right: 0;
       left: 0;
       background: #f5f0e0;
-      padding: 8px 5px 0;
+      padding: 8px 3.5em 8px 5px;
+      &.with-labels {
+        padding: 8px 3.5em 2px 5px;
+      }
       .lables-wrp {
         margin: 0;
+      }
+      .form-input.form-input-wrp-namespace {
+        margin: 4px 1px;
+        max-width: 90%;
+        overflow: hidden;
+        transition: all ease .5s;
+        max-height: 5em;
       }
        .main .checkbox-wrp {
           font-size: 14px;
@@ -573,43 +624,46 @@ span.label-wrp {
       button.hide-on-desktop {
         transition: all ease .3s;
         background: #ffffff;
-        padding: 8px 2px 7px;
+        padding: 9px 2px;
         margin-top: 3px;
         cursor: pointer;
-        top: 53px;
+        top: 5px;
         position: absolute;
         outline: 0;
         color: #8b8762;
         border: #D1CFC1 solid 2px;
-        right: 5px;
+        right: 2px;
+        border-radius: 0 23px 23px 0;
         i {
           margin: 0 3px;
           font-weight: 400;
+          font-size: 14px;
         }
       }
       > header > button {
       transition: all ease .3s;
-      padding: 7px 13px 7px 13px;
-      top: 93px;
-      right: 5px;
-      height: 36px;
+      padding: 0 13px 0 11px;
+      top: 50px;
+      right: 2px;
+      height: 26px;
       }
       span.label-wrp {
-      margin: 0px 1px 4px;
+      margin: 2px 1px;
       }
     &.sticky-on {
       .form-input.form-input-wrp-namespace {
           max-height: 0;
           margin-top: 0;
       }
+      /* get buttons out on scroll */
       > header > button, button.hide-on-desktop {
-        right: -80px
+        /* right: -80px */
       }
     }
   }
   .results {
     width: auto;
-    margin-top: 3em;
+    margin-top: 1em;
     .result{
       .columns{
         padding-right: 0;
