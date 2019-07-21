@@ -46,7 +46,7 @@ class historySearch{
 		if( !window.location.search){
 			return;
 		}
-		//console.log(JSON.stringify(searchParams),"searchParams",window.location.search );
+		console.log(JSON.stringify(searchParams),"searchParams",window.location.search );
 		//if no NS we need to add or no results would given
 		if( !searchParams.namespace ){
 			searchParams.namespace = historySearch.getDefaultSearch( paramsSettings, 'namespace');
@@ -62,14 +62,14 @@ class historySearch{
 				continue;
 			}
 			if( fieldsDetector.isMultiple( paramsSettings[paramKey] ) ){
-				let paramValueSplitted = paramValue ? paramValue.split('|') : [];
+				let paramValueSplitted = paramValue ? paramValue.split('|').filter( part => (part || 0 === part)) : [];
+				console.log(paramValueSplitted)
 				if( fieldsDetector.isRange( paramsSettings[paramKey] ) ){
-					console.log("paramKey, paramValueSplitted",paramKey, paramValueSplitted);
 					FormMain.setValue(paramKey, paramValueSplitted);
 				}
 				else{
 					for(let part of paramValueSplitted){
-						part = this.getFullResultFromParams( part,  paramKey, paramsSettings);
+						part = FormMain.getFullResultFromParams( part,  paramKey, paramsSettings);
 						FormMain.addValue(paramKey, part);
 					}
 				}
@@ -84,20 +84,6 @@ class historySearch{
 			FormMain.submitData();
 		}
 		//console.log();
-	}
-	static getFullResultFromParams(val, fieldName, paramsSettings){
-		let foundOption, options = utils.safeGet(paramsSettings, fieldName + '.widget.options');
-		if(fieldsDetector.isMultiple(paramsSettings[fieldName]) ){
-			if(options){
-				for(let option of options){
-					if(option.value == val){
-						foundOption = option;
-						break;
-					}
-				}
-			}
-		}
-		return foundOption ? foundOption : val;
 	}
 	static getState(){
 		let state = FormMain.getAllValuesProcessed();

@@ -9,7 +9,7 @@ class FormMain{
 	static addValue(name, value){
 		FormMain.allData[ name ] = FormMain.allData[ name ] || [];
 		let standardizeValue = FormMain.standardizeValue(value);
-		//console.log(FormMain.allData[ name ], standardizeValue);
+		console.log(FormMain.allData[ name ], standardizeValue);
 		if( !FormMain.allData[ name ].map( item => ('' + item.value)).includes( '' + standardizeValue.value ) ){
 			FormMain.allData[ name ].push( standardizeValue );
 			FormMain.fireChangeEvent();
@@ -50,7 +50,7 @@ class FormMain{
 	    }
 	}
 	static standardizeValue( value ){
-		return 'string' === typeof value ? {
+		return !('object' === typeof value && value.value ) ? {
 			label: value,
 			value: value
 		} : value;
@@ -95,7 +95,8 @@ class FormMain{
 				let options = utils.safeGet(paramSettings,'widget.options') || [];
 				for(let option of options){
 					if( option.defaultChecked ){
-						FormMain.addValue( paramSettings.field, option.value);
+						let value = FormMain.getFullResultFromParams( option.value,  paramSettings.field, params);
+						FormMain.addValue( paramSettings.field, value);
 					}
 				}
 			}
@@ -188,6 +189,24 @@ class FormMain{
 			}
 		}
 		return allBound;
+	}
+	static getFullResultFromParams(val, fieldName, paramsSettings){
+		let foundOption, options = utils.safeGet(paramsSettings, fieldName + '.widget.options');
+		console.log("paramsSettings, fieldName + '.widget.options'",paramsSettings, fieldName + '.widget.options', fieldsDetector.isMultiple(paramsSettings[fieldName]));
+		if(fieldsDetector.isMultiple(paramsSettings[fieldName]) ){
+			if(options){
+				for(let option of options){
+					if(option.value == val){
+						foundOption = option;
+						break;
+					}
+				}
+			}
+		}
+		return foundOption ? foundOption : val;
+	}
+	static reset(){
+		FormMain.allData = [];
 	}
 
 }

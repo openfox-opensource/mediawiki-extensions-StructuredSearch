@@ -30,6 +30,8 @@ class App extends Component {
     });
     window.onpopstate = () => {
       if(this.state.inputs){
+        FormMain.reset();
+        FormMain.setDefaults( this.state.inputs );
         historySearch.setSearchFromHistory( this.state.inputs );
       }
     };
