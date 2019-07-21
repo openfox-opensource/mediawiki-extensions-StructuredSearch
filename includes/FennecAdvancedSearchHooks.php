@@ -54,9 +54,9 @@ class Hooks{
 	static public function namespacesExtract( &$params ){
 		$conf = \MediaWiki\MediaWikiServices::getInstance()->getMainConfig();
 		$topOrSide = $conf->get('FennecAdvancedSearchNSTopOrSide');
-		$params['namespace'] = [
+		$params['namespaces'] = [
 			'label' => '',//wfMessage('fennecadvancedsearch-namespace-label')->text(),
-        	'field' => 'namespace',
+        	'field' => 'namespaces',
         	'withoutLabels' => 1,
 	        'widget' => [
 	            'type' => 'checkboxes',
@@ -205,12 +205,25 @@ class Hooks{
 		if( !count( $defaultParams ) ){
 			$defaultParams = ['namespaces', 'category'];
 		}
-		foreach ($defaultParams as $defaultParam) {
-			switch( $defaultParam ){
+		foreach ($defaultParams as $keyParam => $defaultParam) {
+			//suppot both keyed array (without settings overriding)
+			if(  is_string($defaultParam)  ){
+				$pName = $defaultParam;
+				$pAdditionalSettings = NULL;
+			}
+			//and assoiative param, with settings overriding
+			else{
+				$pName = $keyParam;
+				$pAdditionalSettings = $defaultParam;
+			}
+			switch( $pName ){
 				case 'namespaces':
 				case 'category':
-					$methodName = $defaultParam . "Extract";
+					$methodName = $pName . "Extract";
 					self::$methodName( $params );
+					if( $pAdditionalSettings ){
+						$params[$pName] = array_merge($params[$pName], $pAdditionalSettings);
+					}
 				default:
 					break;
 			}

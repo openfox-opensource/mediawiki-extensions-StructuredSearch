@@ -28,7 +28,6 @@ class TopBar extends Component {
         searchSuggestionsNotEmpty : !!results.length
       });
     });
-    this.state = {};
   }
   componentDidMount() {
     for(let key of [
@@ -104,7 +103,7 @@ class TopBar extends Component {
         if( alreadyIcluded.includes(fieldKey)){
           continue;
         }
-        if(allData[fieldKey] && utils.safeGet(['state','inputs'],this) && !this.state.inputs[fieldKey].withoutLabels ){
+        if(allData[fieldKey] && utils.safeGet(this, 'state.inputs') && !this.state.inputs[fieldKey].withoutLabels ){
           //console.log(allData[fieldKey],"allData[fieldKey]");
           newLabels[fieldKey] = [];
           //console.log(allData[fieldKey],"allData[fieldKey]");
@@ -189,7 +188,8 @@ class TopBar extends Component {
 
       for(let labelKey of Object.keys(this.state.labels)){
         for(let label of this.state.labels[labelKey]){
-          labels.push( <span key={label.field + ':' + label.value} className="label-wrp">{label.label}<button type="button" className='label-remove' onClick={this.removeLabel.bind(this, label.field, label)}><i className="fal fa-times"></i></button></span> )
+          let labelText = utils.stripHtml( label.label );
+          labels.push( <span key={label.field + ':' + label.value} className="label-wrp">{  labelText }<button type="button" className='label-remove' onClick={this.removeLabel.bind(this, label.field, label)}><i className="fal fa-times"></i></button></span> )
         }
       }
 

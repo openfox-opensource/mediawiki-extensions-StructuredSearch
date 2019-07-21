@@ -10,14 +10,17 @@ class utils{
 	    return Object.keys(params).sort().map(key => (params[key] ? key + '=' + params[key]: '')).filter( part => part ).join('&');
 	 }
 	static sortByWeight( item1, item2 ){
-		let firstWeight = item1.weight || 0,
-			secondWeight = item2.weight || 0,
+		let firstWeight = Number(item1.weight) || 0,
+			secondWeight = Number(item2.weight) || 0,
 	  		ret = firstWeight > secondWeight ? 1 : ( firstWeight < secondWeight ? -1 : 0 );
 	  return ret;
 
 	}
-	static safeGet(propsArray, obj ){
-  		return propsArray.reduce((xs, x) => (xs && xs[x]) ? xs[x] : null, obj);
+	static safeGet( objToSearch, propsArray ){
+		if('string' === typeof propsArray){
+			propsArray = propsArray.split(/[\.|\[|\]]/).filter( part => part || part === 0);
+		}
+  		return propsArray.reduce((xs, x) => (xs && xs[x]) ? xs[x] : null, objToSearch);
 	}
 	static stripHtml(str){
 		let tag = document.createElement('div');

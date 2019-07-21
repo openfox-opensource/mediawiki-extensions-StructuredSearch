@@ -255,18 +255,18 @@ class FormInput extends Component {
 		for( let option of inputData.widget.options){
 			let faClass = 'far ',
 				selectedClass = '',
-				defaultChecked = option.defaultChecked;
+				checked = 0;
 			if( FormMain.includes(inputData.field, option.value) ){
 				selectedClass =' selected';
 				faClass += 'fa-check-square';
-				defaultChecked = 1;
+				checked = 1;
 			}
 			else{
 				faClass += 'fa-square';
 			}
 			let uniqe = (inputData.field + '-' + option.value).replace(/\s|:/g,'-'),
 				checkbox = <span key={ inputData.field +'-' + option.value} className={'checkbox-wrp' + selectedClass }>
-					<input id={uniqe} type='checkbox' value={option.value} defaultChecked={defaultChecked} onChange={this.checkboxChanges.bind(this, inputData.field, option)} />
+					<input id={uniqe} type='checkbox' value={option.value} checked={checked} onChange={this.checkboxChanges.bind(this, inputData.field, option)} />
 					<label htmlFor={ uniqe } >
 						<i className={faClass}></i>
 						<span className='checkbox-label' dangerouslySetInnerHTML={{__html: option.label}}></span>
@@ -317,13 +317,13 @@ class FormInput extends Component {
 			defaultValue1, defaultValue2,
 			currentValue = FormMain.getValue( inputData.field );
 		if(currentValue){
-			if( utils.isArray( currentValue ) ){
-				currentValue = currentValue[0];
-			}
+			// if( utils.isArray( currentValue ) ){
+			// 	currentValue = currentValue[0];
+			// }
 			if(currentValue && currentValue.value){
 				currentValue = currentValue.value;
 			}
-			let splitted = currentValue ? currentValue.split('|') : [];
+			let splitted = currentValue && !utils.isArray( currentValue ) ? currentValue.split('|') : ( currentValue ? currentValue : [] );
 			defaultValue1 = splitted[0]
 			defaultValue2 = splitted[1]
 		}

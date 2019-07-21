@@ -4,7 +4,7 @@ import utils from './utils';
 import fieldsDetector from './fieldsDetector';
 
 
-
+window.FormMain=FormMain;
 class historySearch{
 	static setHistoryFromSearch( paramsSettings){
 		clearTimeout( historySearch.timeout );
@@ -35,7 +35,7 @@ class historySearch{
 				}
 				query = utils.toQueryStr( FormMain.filterParams( state) );
 			}
-			if( historySearch.lastQuery != query){
+			if( historySearch.lastQuery !== query){
 				historySearch.lastQuery = query;
 				window.history.pushState(state, '',  pathname + '?' + query)
 			}
@@ -46,7 +46,7 @@ class historySearch{
 		if( !window.location.search){
 			return;
 		}
-		console.log(JSON.stringify(searchParams),"searchParams",window.location.search );
+		//console.log(JSON.stringify(searchParams),"searchParams",window.location.search );
 		//if no NS we need to add or no results would given
 		if( !searchParams.namespace ){
 			searchParams.namespace = historySearch.getDefaultSearch( paramsSettings, 'namespace');
@@ -63,11 +63,13 @@ class historySearch{
 			}
 			if( fieldsDetector.isMultiple( paramsSettings[paramKey] ) ){
 				let paramValueSplitted = paramValue ? paramValue.split('|') : [];
-				for(let part of paramValueSplitted){
-					if( fieldsDetector.isRange( paramsSettings[paramKey] ) ){
-						FormMain.setValue(paramKey, paramValueSplitted);
-					}
-					else{
+				if( fieldsDetector.isRange( paramsSettings[paramKey] ) ){
+					console.log("paramKey, paramValueSplitted",paramKey, paramValueSplitted);
+					FormMain.setValue(paramKey, paramValueSplitted);
+				}
+				else{
+					for(let part of paramValueSplitted){
+						part = this.getFullResultFromParams( part,  paramKey, paramsSettings);
 						FormMain.addValue(paramKey, part);
 					}
 				}
@@ -82,6 +84,20 @@ class historySearch{
 			FormMain.submitData();
 		}
 		//console.log();
+	}
+	static getFullResultFromParams(val, fieldName, paramsSettings){
+		let foundOption, options = utils.safeGet(paramsSettings, fieldName + '.widget.options');
+		if(fieldsDetector.isMultiple(paramsSettings[fieldName]) ){
+			if(options){
+				for(let option of options){
+					if(option.value == val){
+						foundOption = option;
+						break;
+					}
+				}
+			}
+		}
+		return foundOption ? foundOption : val;
 	}
 	static getState(){
 		let state = FormMain.getAllValuesProcessed();

@@ -67,8 +67,7 @@ class App extends Component {
         
         this.setState({ 
           inputs: data.params
-        }, ()=>{
-           
+        }, ()=>{       
           historySearch.setSearchFromHistory( data.params );
         });
         
