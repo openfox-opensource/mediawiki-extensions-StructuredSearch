@@ -175,7 +175,7 @@ class ApiSearch extends \ApiBase {
 					'full_title'=>$val, 
 					'short_title'=> $title, 
 					'title_dash'=> preg_replace('/\s/','_',$val), 
-					'page_link'=> preg_replace('/\$1/',preg_replace('/\s/','_',$val),$wgArticlePath), 
+					'page_link'=> urlencode(preg_replace('/\$1/',preg_replace('/\s/','_',$val),$wgArticlePath)), 
 					'namespace' => isset($namespace) ? $namespace : '', 
 					'namespaceId' => $namespaceIds[$namespace],
 					'title_key' => $titleKey,
