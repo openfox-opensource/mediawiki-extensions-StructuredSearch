@@ -68,6 +68,7 @@ class App extends Component {
         this.setState({ 
           inputs: data.params
         }, ()=>{       
+          FormMain.setDefaults( data.params );
           historySearch.setSearchFromHistory( data.params );
         });
         

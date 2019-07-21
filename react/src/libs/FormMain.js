@@ -1,5 +1,6 @@
 import EventEmitter from './EventEmitter'
 import ajaxCall from './ajaxCall'
+import fieldsDetector from './fieldsDetector'
 import utils from './utils'
 
 class FormMain{
@@ -85,6 +86,20 @@ class FormMain{
 		FormMain.binds = binds.map( val => val.fields);
 	}	
 	static setInputsParams( params ){
+		FormMain.inputsParams = params;
+	}
+	static setDefaults( params ){
+		for(let paramSettingsKey in params){
+			let paramSettings = params[ paramSettingsKey ];
+			if( fieldsDetector.isMultiple(paramSettings) ){
+				let options = utils.safeGet(paramSettings,'widget.options') || [];
+				for(let option of options){
+					if( option.defaultChecked ){
+						FormMain.addValue( paramSettings.field, option.value);
+					}
+				}
+			}
+		}
 		FormMain.inputsParams = params;
 	}
 	static delayedSubmitData(){
