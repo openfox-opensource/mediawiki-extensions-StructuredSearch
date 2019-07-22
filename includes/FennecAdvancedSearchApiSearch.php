@@ -43,7 +43,7 @@ class ApiSearch extends \ApiBase {
 	public function getSearchParams() {
 			
 		$params = $this->extractRequestParams();
-		if(!isset($params['namespace']) || !strlen($params['namespace'])){
+		if(!isset($params['namespaces']) || !strlen($params['namespaces'])){
 			$conf = \MediaWiki\MediaWikiServices::getInstance()->getMainConfig();
 			$useDefualtNsForSearch = $conf->get('FennecAdvancedSearchUseMWDefaultSearchNS');
 			if( $useDefualtNsForSearch ){
@@ -60,9 +60,10 @@ class ApiSearch extends \ApiBase {
 				});
 				$namespaces = array_column($namespaces, 'value');
 			}
-			$params['namespace'] = implode('|',$namespaces);
+			$params['namespaces'] = implode('|',$namespaces);
 		}
-		$params['namespace'] = $params['namespace'];
+		$params['namespace'] = $params['namespaces'];
+		unset($params['namespaces']);
 		$params = self::extractSearchStringFromFields($params);
 		$srParams = [];
 		
@@ -73,13 +74,13 @@ class ApiSearch extends \ApiBase {
 				$srParams['sr' . $pKey ] = $pValue;
 			}
 		}
+		//die(print_r($params));
 		$params = array_filter($srParams, function( $val ){
 			return !is_null($val);
 		});
 		$params['action'] = 'query';
 		$params['list'] = 'search';
 		
-		//die(http_build_query($params));
 		$callApiParams = new \DerivativeRequest(
 		    $this->getRequest(),
 			    $params
@@ -90,7 +91,7 @@ class ApiSearch extends \ApiBase {
 
 		
 		$results = $api->getResult()->getResultData();
-		//die(print_r($results));
+		//die('<pre>' . print_r([$params,$results],1) . '</pre>');
 		//$results = $this->filterResults($results);
 		return $this->getResultsAdditionalFields($results);
 	}	

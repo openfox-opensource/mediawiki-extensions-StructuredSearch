@@ -165,17 +165,19 @@ class Hooks{
 		$params = Utils::getSearchParams();
 		$vals = ApiSearch::getResultsAdditionalFieldsFromTitles( [$page->getTitle()->getPrefixedText()],[[]]);
 		$vals = array_pop( $vals );
-				//print_r($vals);
 		
 		foreach ($params as $param) {
 			if( Utils::isCargoField($param['field']) ){
 				$keyForCirrus = Utils::replaceCargoFieldToElasticField( $param['field']);
-				$fieldName = explode(':',$param['field']);
-				$fields[ $keyForCirrus ] = isset($vals[ $fieldName[1] ]) ? $vals[ $fieldName[1] ] : '';
+				$fieldName = $param['field'];
+				$fields[ $keyForCirrus ] = isset($vals[ $fieldName ]) ? $vals[$fieldName ] : '';
 			}
 		}
-		//print_r($fields);
 
+		// print_r(['title'=>$page->getTitle()->getPrefixedText(),
+		// 	'vals'=>$vals,
+		// 	'fields'=>$fields['meta_table__age']
+		// ]);
 	}
 	public static function onCirrusSearchMappingConfig( array &$config, MappingConfigBuilder $builder ) { 
 		

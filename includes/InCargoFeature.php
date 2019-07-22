@@ -83,7 +83,7 @@ class InCargoFeature extends SimpleKeywordFeature {
 				$key
 			);
 		}
-
+		
 		return [ $filter, false ];
 	}
 
