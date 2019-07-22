@@ -75,15 +75,15 @@ class ApiSearch extends \ApiBase {
 			}
 		}
 		//allow empty search
-		if( !isset( $srParams['srsearch' ] || !$srParams['srsearch' ]) ){
+		if( !isset( $srParams['srsearch' ]) || !$srParams['srsearch' ] ){
 			$srParams['srsearch' ] = '*';
 		}
-		//die(print_r($params));
 		$params = array_filter($srParams, function( $val ){
 			return !is_null($val);
 		});
 		$params['action'] = 'query';
 		$params['list'] = 'search';
+		//die(print_r($params));
 		
 		$callApiParams = new \DerivativeRequest(
 		    $this->getRequest(),
