@@ -43,7 +43,7 @@ class ApiSearch extends \ApiBase {
 	public function getSearchParams() {
 			
 		$params = $this->extractRequestParams();
-		if(!isset($params['namespace']) || !strlen($params['namespace'])){
+		if(!isset($params['namespaces']) || !strlen($params['namespaces'])){
 			$conf = \MediaWiki\MediaWikiServices::getInstance()->getMainConfig();
 			$useDefualtNsForSearch = $conf->get('FennecAdvancedSearchUseMWDefaultSearchNS');
 			if( $useDefualtNsForSearch ){
@@ -60,9 +60,9 @@ class ApiSearch extends \ApiBase {
 				});
 				$namespaces = array_column($namespaces, 'value');
 			}
-			$params['namespace'] = implode('|',$namespaces);
+			$params['namespaces'] = implode('|',$namespaces);
 		}
-		$params['namespace'] = $params['namespace'];
+		$params['namespace'] = $params['namespaces'];
 		$params = self::extractSearchStringFromFields($params);
 		$srParams = [];
 		
