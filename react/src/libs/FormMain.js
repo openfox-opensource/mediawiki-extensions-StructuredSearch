@@ -113,9 +113,9 @@ class FormMain{
 		let params = this.getAllValuesProcessed();
 	    //console.log(params,'params');
 	    //saerch not working without search param
-	    if(!params.search){
-	    	return;
-	    }
+	    // if(!params.search){
+	    // 	return;
+	    // }
 	    params.action = 'fennecadvancedsearchsearch';
 	    if( FormMain.offset ){
 	    	params.offset = FormMain.offset;

@@ -74,6 +74,10 @@ class ApiSearch extends \ApiBase {
 				$srParams['sr' . $pKey ] = $pValue;
 			}
 		}
+		//allow empty search
+		if( !isset( $srParams['srsearch' ] || !$srParams['srsearch' ]) ){
+			$srParams['srsearch' ] = '*';
+		}
 		//die(print_r($params));
 		$params = array_filter($srParams, function( $val ){
 			return !is_null($val);

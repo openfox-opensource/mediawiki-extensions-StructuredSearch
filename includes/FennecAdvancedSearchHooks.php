@@ -174,9 +174,10 @@ class Hooks{
 			}
 		}
 
-		// print_r(['title'=>$page->getTitle()->getPrefixedText(),
+		// print_r([
+		// 	'title'=>$page->getTitle()->getPrefixedText(),
 		// 	'vals'=>$vals,
-		// 	'fields'=>$fields['meta_table__age']
+		// 	'fields'=>$fields
 		// ]);
 	}
 	public static function onCirrusSearchMappingConfig( array &$config, MappingConfigBuilder $builder ) { 
