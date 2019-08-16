@@ -9,7 +9,7 @@ class FormMain{
 	static addValue(name, value){
 		FormMain.allData[ name ] = FormMain.allData[ name ] || [];
 		let standardizeValue = FormMain.standardizeValue(value);
-		console.log(FormMain.allData[ name ], standardizeValue);
+		//console.log(FormMain.allData[ name ], standardizeValue);
 		if( !FormMain.allData[ name ].map( item => ('' + item.value)).includes( '' + standardizeValue.value ) ){
 			FormMain.allData[ name ].push( standardizeValue );
 			FormMain.fireChangeEvent();
