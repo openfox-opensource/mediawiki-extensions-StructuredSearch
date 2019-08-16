@@ -63,6 +63,7 @@ class ApiSearch extends \ApiBase {
 			$params['namespaces'] = implode('|',$namespaces);
 		}
 		$params['namespace'] = $params['namespaces'];
+		unset($params['namespaces']);
 		$params = self::extractSearchStringFromFields($params);
 		$srParams = [];
 		
@@ -76,13 +77,17 @@ class ApiSearch extends \ApiBase {
 				$srParams['sr' . $pKey ] = $pValue;
 			}
 		}
+		//allow empty search
+		if( !isset( $srParams['srsearch' ]) || !$srParams['srsearch' ] ){
+			$srParams['srsearch' ] = '*';
+		}
 		$params = array_filter($srParams, function( $val ){
 			return !is_null($val);
 		});
 		$params['action'] = 'query';
 		$params['list'] = 'search';
+		//die(print_r($params));
 		
-		//die(http_build_query($params));
 		$callApiParams = new \DerivativeRequest(
 		    $this->getRequest(),
 			    $params
@@ -93,7 +98,7 @@ class ApiSearch extends \ApiBase {
 
 		
 		$results = $api->getResult()->getResultData();
-		//die(print_r($results));
+		//die('<pre>' . print_r([$params,$results],1) . '</pre>');
 		//$results = $this->filterResults($results);
 		return $this->getResultsAdditionalFields($results);
 	}	
