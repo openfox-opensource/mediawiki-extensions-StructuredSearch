@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import queryString from 'query-string';
 import EventEmitter from './libs/EventEmitter';
 import translate from './libs/translations';
 import ReactMustache from 'react-mustache'
@@ -9,8 +10,12 @@ import FormMain from './libs/FormMain';
 
 class Results extends Component {
   constructor() {
+    let params = queryString.parse(window.location.search);
     super();
-    this.state = {};
+    this.state = {
+      searchStarted : params.advanced_search ? true : false
+    };
+
     translate('fennecadvancedsearch-no-results').then( translatedStr =>{
         this.noResults = translatedStr;
     });

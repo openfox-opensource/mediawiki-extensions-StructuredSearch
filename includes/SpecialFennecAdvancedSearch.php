@@ -21,8 +21,8 @@ class SpecialFennecAdvancedSearch extends \SpecialPage {
         $out->setPageTitle(wfMessage('fennecadvancedsearch'));
         $out->addModules( ['ext.FennecAdvancedSearch'] );
         $path_from_root = preg_replace('%' . $_SERVER["DOCUMENT_ROOT"] . '%', '', __DIR__);
-        $path_to_static = 'react/dist';
-        //$path_to_static = 'react/build/static/js';
+        //$path_to_static = 'react/dist';
+        $path_to_static = 'react/build/static/js';
 
         $all_files = scandir(__DIR__ .'/../' . $path_to_static);
         $scripts = '';
