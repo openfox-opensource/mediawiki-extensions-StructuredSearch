@@ -146,7 +146,7 @@ class ApiSearch extends \ApiBase {
 		$titles = array_column($results['query']['search'], 'title');
 		//die(print_r($results['query']));
 		return [
-			'continue' => $results['continue'],
+			'continue' => isset( $results['continue'] ) ? $results['continue'] : '',
 			'searchinfo' => $results['query']['searchinfo'],
 			'results' => self::getResultsAdditionalFieldsFromTitles( $titles, $results['query']['search'])
 		];
@@ -248,7 +248,11 @@ class ApiSearch extends \ApiBase {
 		$allFieldsByTables = self::getFieldsByTable( );
 		//die(print_r($allFieldsByTables));
 		//no normal way to find 
+		$allCargoTableExits = self::cargoTableExits( );
 		foreach ($allFieldsByTables as $tableName => $fields) {
+			if(!in_array($tableName, $allCargoTableExits)){
+				continue;
+			}
 			$allSubtablesOfFields = Utils::getSubtablesOfFields( $tableName );
 			//die(print_r($allSubtablesOfFields));
 			$fieldsDeclared = self::getFieldsNames($dbr, $tableName);
@@ -292,6 +296,20 @@ class ApiSearch extends \ApiBase {
 				//$addToArr = array_merge($addToArr, (array)$row);
 			}
 		}
+	}
+	public static function cargoTableExits( ) {
+		$dbr = wfGetDB( DB_REPLICA );
+		$res = $dbr->select(
+			array( 'cargo_tables' ),
+			array( 'main_table' ),
+			"1=1",
+			__METHOD__
+		);
+		$tables = [];
+		while ( $row = $dbr->fetchObject( $res ) ) {
+			$tables[] = $row->main_table;
+		}
+		return $tables;
 	}
 	public static function addCategories( &$resultsTitlesForCheck ) {
 		$dbr = wfGetDB( DB_REPLICA );

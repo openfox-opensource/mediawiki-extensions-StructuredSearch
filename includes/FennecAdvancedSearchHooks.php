@@ -236,7 +236,7 @@ class Hooks{
 	}
 	static public function addOptionsToCargoTable( &$params ){
 		foreach ($params as &$param ) {
-			if( in_array($param['widget']['type'] , ['checkboxes','radios','select']) && !isset($param['widget']['options']) && Utils::isCargoField( $param['field'] ) ){
+			if( isset($param['widget']['type']) && in_array($param['widget']['type'] , ['checkboxes','radios','select']) && !isset($param['widget']['options']) && Utils::isCargoField( $param['field'] ) ){
 				$options = array_values(Utils::cargoAllRows($param['field']));
 				foreach ($options as &$option) {
 					$option = [
