@@ -28,23 +28,11 @@ class Hooks{
 		$conf = \MediaWiki\MediaWikiServices::getInstance()->getMainConfig();
 		$manualNamespaces = $conf->get('FennecAdvancedSearchNSReplace');
 
-		// $fullNsData = [];
-		// if($manualNamespaces && count($manualNamespaces)){
-		// 	$namespaceIds = $wgContLang->getNamespaceIds();
-		// 	$manualNamespacesIds = array_keys($manualNamespace);//array_column($manualNamespaces, 'id')
-		// 	//print_r($namespaceIds);
-		// 	foreach ($namespaceIds as $name => $nsId) {
-		// 		//echo $nsId . '<br/>';
-		// 		if(in_array($nsId, $manualNamespacesIds)){
-		// 			$fullNsData[] = [
-		// 				'label' => $name,
-		// 				'value' => $nsId,
-		// 				'show' => $manualNamespaces[ $nsId ],
-		// 			];
-		// 		}
-		// 	}
-
-		// }
+		foreach ($manualNamespaces as &$manualNamespace) {
+			if( !isset( $manualNamespace['value'] ) ){
+				$manualNamespace['value'] = $manualNamespace['ns'];
+			}
+		}
 		return $manualNamespaces && count($manualNamespaces) ? $manualNamespaces : NULL;
 	}
 	static public function getDefinedNamespaces( ){
@@ -64,8 +52,7 @@ class Hooks{
 	            'options' => self::getDefinedNamespaces(),
 	        ],
 	    ];
-		
-		//die("resa" . print_r([100]));
+
 		
 	}
 	static public function getNamspacesDefaultWithOverrides( ){
