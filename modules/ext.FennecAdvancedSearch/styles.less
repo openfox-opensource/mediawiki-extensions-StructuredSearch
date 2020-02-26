@@ -1,9 +1,13 @@
 .all-app-wrp {
     display: block !important;
+    #side-bar {
+      float: left;
+      max-width: 24.4%;
+      min-width: 250px;
+    }
 }
 .side-bar {
-    width: 25%;
-    float: left;
+    
     padding: 3em 2em;
     background: #f5f0e0;
     box-shadow: rgba(0,0,0,0.67) 0px 5px 6px -5px;    .select .css-kj6f9i-menu {
@@ -14,6 +18,7 @@
 .top-and-results-wrp {
     width: 74.5%;
     float: left;
+    max-width: ~"calc(100% - 250px)";
 }
 
 .label-wrp{
@@ -364,13 +369,7 @@ span.label-wrp {
 .results {
     margin: 0 10px 10px;
     padding-top: 2em;
-    &:empty {
-      min-height: 50em;
-      background: url(/w/extensions/FennecAdvancedSearch/images/search-bg-min.png);
-      background-position: center;
-      background-size: 65%;
-      background-repeat: no-repeat;
-    }
+    
     button {
     background: #78c043;
     color: #fff;
@@ -509,17 +508,7 @@ span.label-wrp {
         left: -4.5em;
         bottom: 50%;
         }
-      .fal.fa-sun:before {
-      content: "";
-      display: inline-block;
-      position: relative;
-      background-image: url(/w/skins/Spni/includes/images/season.svg?30aff);
-      background-size: 29px;
-      width: 24px;
-      height: 40px;
-      right: 0px;
-      top: 13px;
-      }
+      
 
 }
 
