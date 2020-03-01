@@ -21,9 +21,7 @@ class InCargoFeature extends SimpleKeywordFeature {
 	 */
 	public function __construct(  ) {
 	}
-	// public function _getKeywords() {
-	// 	return $this->getKeywords();
-	// }
+	
 
 	/**
 	 * @return string[]
@@ -39,7 +37,6 @@ class InCargoFeature extends SimpleKeywordFeature {
 				$keywords[] = 'in_' . Utils::replaceCargoFieldToElasticField( $fieldName);
 			}
 		}
-		//die(print_r($keywords));
 		return $keywords;
 	}
 
@@ -55,17 +52,14 @@ class InCargoFeature extends SimpleKeywordFeature {
 	 *  string.
 	 */
 	protected function doApply( SearchContext $context, $key, $value, $quotedValue, $negated ) {
-		//die($key . $value);
-		//$cargoParts = explode( '__', $key );
 		$tableDef = preg_replace('/in_/', '', $key); //cargoParts[0];
-		//list( $tableName, $fieldName)
+		
 		$values = explode( '|',$value);
-		//die(print_r($categories));
 		$params = Utils::getSearchParams();
 		$paramKey = Utils::replaceElasticFieldToCargoField( $tableDef );
 		$param = isset( $params[ $paramKey ]) ? $params[ $paramKey ]: null;
 		$paramQueryType = $param && isset( $param['widget']['type'] ) ? $param['widget']['type'] : '';
-		//die($paramQueryType . 'fff'. $paramKey. print_r($params));
+		
 		switch ( $paramQueryType ) {
 			case 'range':
 				$filter = $this->matchCargoRange($tableDef, $values );
@@ -100,25 +94,18 @@ class InCargoFeature extends SimpleKeywordFeature {
 		
 		
 		foreach ( $values as $value ) {
-			//die($tableDef . '.lowercase_keyword >> ' . $value);
 			$match = new \Elastica\Query\Match();
 			$match->setFieldQuery( $tableDef , $value );
-			//die(print_r($match));
 			$filter->addShould( $match );
 		}
 
 		return $filter;
 	}
 	private function matchCargoRange(string $tableDef, array $rangeArgs ) {
-		// $rangeArgs = array_map(function( $val ){
-		// 	return (integer) $val;
-		// },$rangeArgs);
 		$rangeArgs = [
 			'gte' =>(integer) $rangeArgs[0],
 			'lte' => (integer)$rangeArgs[1],
 		];
-		// var_dump([$rangeArgs,$tableDef]);
-		// die();
 		$filter = new \Elastica\Query\BoolQuery();
 		$range = new \Elastica\Query\Range($tableDef, $rangeArgs);
 		$filter->addShould( $range );

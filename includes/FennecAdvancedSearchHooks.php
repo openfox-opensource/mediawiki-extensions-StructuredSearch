@@ -85,7 +85,7 @@ class Hooks{
 		$weightCount = 1;
 		foreach ($NSOverride as $NSData) {
 			$NSKey = $NSData['ns'];
-			foreach( ['show', 'defaultChecked', 'label'] as $key){
+			foreach( ['show', 'defaultChecked', 'label','weight'] as $key){
 				if( isset( $NSData[ $key ] ) ){
 					$returnedNamespaces[ $NSKey ][ $key ] = $NSData[ $key ];
 				}
@@ -161,11 +161,6 @@ class Hooks{
 			}
 		}
 
-		// print_r([
-		// 	'title'=>$page->getTitle()->getPrefixedText(),
-		// 	'vals'=>$vals,
-		// 	'fields'=>$fields
-		// ]);
 	}
 	public static function onCirrusSearchMappingConfig( array &$config, MappingConfigBuilder $builder ) { 
 		

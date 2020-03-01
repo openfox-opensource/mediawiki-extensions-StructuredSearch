@@ -7,14 +7,24 @@ This extension have three goals
 2. Customizing search UI
 3. Add filters to search by custom fields ( for now, mainly by cargo, but it's generic)  
 
+## dependies
+This extension depend on CirrusSearch extension.  
+Default page design depends on font awesome. You should include it by yourself or override design by css.  
+
+## installation  
+```git clone URL_OF REPO ./FennecAdvancedSearch.```  
+```wfLoadExtension( 'FennecAdvancedSearch' );```  
+If you want to connect this page to default search add: ```$wgSearchForwardUrl = "$wgServer/special:FennecAdvancedSearch?advanced_search=$1";```
+
+
 ## Settings  
 
 ### $wgFennecAdvancedSearchParams  
 This is main config of search  
 
-Add detailsabout fields to:
-1. search by (show as inputs in search form)  
-2. add to results  
+Add details about fields to:
+1. Search by (show as inputs in search form)  
+2. Add to results  
 
 The structure of the array 
 No key needed, the field would be unieqe identifier
@@ -40,13 +50,20 @@ No key needed, the field would be unieqe identifier
 
 ```field``` must be unique. If contains ':', automaticlly treated as cargo field in structure of TABLENAME:FIELDNAME  
 ```label``` shown on search UI as label of search input. Can contain HTML.
-```widget``` is array defined the search widget.  
+```widget``` is array defines the search widget.  
 ```widget.type``` Possible values are: text|select|autocomplete|radios|checkboxes|range.  
 ```widget.position``` Where the widget would be rendered: 
 ```topbar``` - on main box, below the main search input.
 ```sidebar``` - on sidebar.  
 ```hide``` - dont show widget.  
-```widget.options``` -  for select, autocomplete, radios or checkboes you should give array of strings or objects with 'label', 'value' and 'defaultChecked' entries. If ommited and this is cargo field, all table values would be the options.  
+```widget.options``` -  for select, autocomplete, radios or checkboes you should give array of strings or objects.
+
+```widget.options[key].value``` - value of option.
+```widget.options[key].label``` - label of option (shown in UI).
+```widget.options[key].show``` - Where to show the option. Could be 'main', 'advanced' or 'disabled'.
+```widget.options[key].defaultChecked``` -  If to check this option by default (for checkboxes field).
+
+On cargo field, if ```widget.options``` ommited all table's field values would be the options.  
 
 ##### Detailed main config values - advanced
 
@@ -82,6 +99,18 @@ function convert_duration_type_to_cargo_fields(&$params, $pKey){
 
 ### templates  
 
+```$wgFennecAdvancedSearchResultsTemplates```  
+
+Templates for results  
+Array in the structure of  
+```
+[
+'default' => 'mustache_string',
+// ('template_' . NS_FILE)
+'template_100' => 'mustache_string'
+]
+```
+
 This is the way to conrol the results appearance.
 Each template is mustache string.
 Default fields you can use:
@@ -106,59 +135,74 @@ Default fields you can use:
 
 Any custom field added in ```$wgFennecAdvancedSearchParams``` would appear here.  
 
-```$wgFennecAdvancedSearchResultsTemplates```  
-
-Templates for results  
-Array in the structure of  
-```
-[
-'default' => 'mustache_string',
-// ('template_' . NS_FILE)
-'template_100' => 'mustache_string'
-]
-```
-
+### Predefined fields  
 
 ```$wgFennecAdvancedSearchDefaultParams```  
-Array. show or hide predefined fields - for now this is 'namespaces' and 'category'.   
-If defined need to include all predefined fields you want.  
+The extension provide out of the box predefined fields - for now there are 'namespaces' and 'category'.  
+This options controls which of this fields would be shown. Default value is both 'namespaces' and 'category'.  
+If this configuration defined need, you need to include all predefined fields you want.  
+
+### Predefined fields - category field configuration 
 
 ```$wgFennecAdvancedSearchCategoryInclude```  
-Include only this categories in categories autocomplete  
+Include only this categories in categories autocomplete.  
 
 ```$wgFennecAdvancedSearchCategoryExclude```  
-Use all categories in categories autocomplete but exclude those categories  
+Use all categories in categories autocomplete but exclude those categories.  
+
+### Predefined fields - namespace field configuration 
+
 
 ```$wgFennecAdvancedSearchNSReplace```  
-This option replace completely default NS option. you hove to build array like this  
+This option replace completely default NS option. You have to build array like this. (see ```widget.options``` defination):   
 ```
 array(
     'label' => 'main',//ns readable name,
     'value' => 0,// NS number,
-    'show' => 'main;',// main|advanced|disabled
-    'defaultChecked' => 0,//0|1
+    'show' => 'main;',
+    'defaultChecked' => 0,
 )
 ```  
 
 ```$wgFennecAdvancedSearchNSOverride```  
-if this var defined, we will take all default NS and override "show" and "defaultChecked" options  
+if this var defined, we will take all default NS and overriding 'show', 'defaultChecked', 'label' and 'weight' options.  
+```
+array(
+    'ns' => 0,// NS number, to let the extesion know what you are overriding
+    'show' => 'advanced,
+    'defaultChecked' => 0
+)
+```  
 
 ```$wgFennecAdvancedSearchNSDefaultPosition```  
-What is the default position of NS? Default is main.  
-Would apply to any default NS, before using ```FennecAdvancedSearchNSOverride```
+What is the default position of NS option? Default is main. (see ```widget.options[key].show```)  
+Would apply to any default NS, before using ```FennecAdvancedSearchNSOverride```.  
 
 ```$wgFennecAdvancedSearchNSIncludeTalkPagesType```  
-"show" value for talk page by default. Default value is "advanced"  
+Same as ```$wgFennecAdvancedSearchNSDefaultPosition```, but for talk pages. Default value is "advanced".  
 
 ```$wgFennecAdvancedSearchUseMWDefaultSearchNS```
+If true and ```$wgFennecAdvancedSearchNSReplace``` ommited, use [default MW list of NS for search](https://www.mediawiki.org/wiki/Manual:$wgNamespacesToBeSearchedDefault) as base.  
+
 ```$wgFennecAdvancedSearchThumbSize```
+Files pages result getting special field which calls 'self_thumb'. This configuration defined the dimensions of this thumb. Default is 150X150.   
 
 
 ## Hooks  
 ```
-function FennecAdvancedSearchParams( &FennecAdvancedSearchParams ){ ... }
+function FennecAdvancedSearchParams( &$FennecAdvancedSearchParams ){ ... }
 ```
 Use it to modify $wgFennecAdvancedSearchParams or create complicated settings.
+
+```
+function 'FennecAdvancedSearchResults',( &$resultsTitlesForCheck ){ ... }
+```
+Use it to modify the results fields after search.
+
+### FAQ
+
+#### My configuration update not affected the search?  
+You should rebuild elasticsearch index.  
 
 #### How to show field on results without add it to index or showing widget in UI?  
 Set ```widget.position``` to 'hide'.  
@@ -174,3 +218,16 @@ There's a hidden "more" button that displays all available namespaces. If you wa
 ```
 .main-and-advanced-wrp button {display: block;}
 ```
+#### How to create custom field?
+
+If you want just to add field to results, use ```FennecAdvancedSearchResults``` hook.  
+
+If you want to add field for indexing, you need some coding.  
+
+Steps:  
+
+1. Add your field to elastic indexing defination - use SearchIndexFields hook (see MediaWiki\Extension\FennecAdvancedSearch\hooks::onSearchIndexFields for inspiration).  
+2. Add your field data to elastic indexing - use SearchDataForIndex hook (see MediaWiki\Extension\FennecAdvancedSearch\hooks::onSearchDataForIndex for inspiration).  
+3. Add UI defintion by ```FennecAdvancedSearchParams``` or add straight to ```$wgFennecAdvancedSearchParams```.  
+4. In this defination, add the search to elasticsearch string by using ```search_callbak``` option for field.  
+5. Add your field to results by ```FennecAdvancedSearchResults``` hook.  

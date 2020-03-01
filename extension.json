@@ -10,6 +10,14 @@
 	"type": "other",
 	"requires": {
 		"MediaWiki": ">= 1.31.0"
+		
+	},
+	"_requires": {
+		"MediaWiki": ">= 1.31.0",
+		"extensions": {
+			"CirrusSearch": ">= 0.2"
+		}
+		
 	},
 	"config": {
 		"FennecAdvancedSearchParams": {
