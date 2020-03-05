@@ -1,5 +1,1 @@
-[gerrit]
-host=gerrit.wikimedia.org
-port=29418
-project=mediawiki/extensions/fennecadvancedsearchs.git
-track=1
+

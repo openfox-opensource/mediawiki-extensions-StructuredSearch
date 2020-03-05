@@ -12,7 +12,7 @@ This extension depend on CirrusSearch extension.
 Default page design depends on font awesome. You should include it by yourself or override design by css.  
 
 ## installation  
-```git clone URL_OF REPO ./FennecAdvancedSearch.```  
+```git clone https://github.com/openfox-opensource/mediawiki-extensions-FennecAdvancedSearch.git ./FennecAdvancedSearch.```  
 ```wfLoadExtension( 'FennecAdvancedSearch' );```  
 If you want to connect this page to default search add: ```$wgSearchForwardUrl = "$wgServer/special:FennecAdvancedSearch?advanced_search=$1";```
 
