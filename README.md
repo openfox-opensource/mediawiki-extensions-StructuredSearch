@@ -26,7 +26,7 @@ Add details about fields to:
 1. Search by (show as inputs in search form)  
 2. Add to results  
 
-The structure of the array 
+The structure of the array.  
 No key needed, the field would be unieqe identifier
 ```
 [
