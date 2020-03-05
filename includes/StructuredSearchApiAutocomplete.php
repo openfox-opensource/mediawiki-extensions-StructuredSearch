@@ -17,7 +17,7 @@
  * @file
  */
 
-namespace MediaWiki\Extension\FennecAdvancedSearch;
+namespace MediaWiki\Extension\StructuredSearch;
 
 class ApiAutocomplete extends \ApiBase {
 		public function __construct( $query, $moduleName ) {
@@ -66,7 +66,7 @@ class ApiAutocomplete extends \ApiBase {
 	protected function getParamDescription() {
 		return array(
 			'search' => 'search term',
-			'field' => 'Field key as defined in FennecAdvancedSearchParams',
+			'field' => 'Field key as defined in StructuredSearchParams',
 		);
 	}
 
@@ -76,7 +76,7 @@ class ApiAutocomplete extends \ApiBase {
 
 	protected function getExamples() {
 		return array(
-			'action=fennecadvancedsearchautocomplete&field=category&search=a',
+			'action=structuredsearchautocomplete&field=category&search=a',
 		);
 	}
 

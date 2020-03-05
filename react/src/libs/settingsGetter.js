@@ -17,7 +17,7 @@ class settingsGetter{
 	static getFromRemote(){
 		return new Promise( (resolve) => {
 			settingsGetter.onCall = true;
-			ajaxCall.get('action=fennecadvancedsearchparams').then(data => {
+			ajaxCall.get('action=structuredsearchparams').then(data => {
 				settingsGetter.onCall = false;
 				resolve( data ? data.data : null );
 			});

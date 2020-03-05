@@ -1,4 +1,4 @@
-# FennecAdvancedSearch extension for MediaWiki  
+# StructuredSearch extension for MediaWiki  
 
 ## Goals  
 This extension have three goals
@@ -12,14 +12,14 @@ This extension depend on CirrusSearch extension.
 Default page design depends on font awesome. You should include it by yourself or override design by css.  
 
 ## installation  
-```git clone https://github.com/openfox-opensource/mediawiki-extensions-FennecAdvancedSearch.git ./FennecAdvancedSearch.```  
-```wfLoadExtension( 'FennecAdvancedSearch' );```  
-If you want to connect this page to default search add: ```$wgSearchForwardUrl = "$wgServer/special:FennecAdvancedSearch?advanced_search=$1";```
+```git clone https://github.com/openfox-opensource/mediawiki-extensions-StructuredSearch.git ./StructuredSearch.```  
+```wfLoadExtension( 'StructuredSearch' );```  
+If you want to connect this page to default search add: ```$wgSearchForwardUrl = "$wgServer/special:StructuredSearch?advanced_search=$1";```
 
 
 ## Settings  
 
-### $wgFennecAdvancedSearchParams  
+### $wgStructuredSearchParams  
 This is main config of search  
 
 Add details about fields to:
@@ -69,7 +69,7 @@ On cargo field, if ```widget.options``` ommited all table's field values would b
 
 ```autocomplete_callback``` - If you want a autocomplete field with custom autocomplete by API call (php function), register it with this option. The function gets as arguments $term, $fieldname and returns data in the same strcture of ```widget.options```.  
 For example see:  
-```MediaWiki\Extension\FennecAdvancedSearch\Utils::categoryAutocomplete```
+```MediaWiki\Extension\StructuredSearch\Utils::categoryAutocomplete```
 
 
 ```search_callbak``` -  The search is by string sended to elasticsearch server. If you want to proccess by yourself this param and how it would send to search api, use this function.  
@@ -81,14 +81,14 @@ function convert_duration_type_to_cargo_fields(&$params, $pKey){
     if( in_array('time_table:duration_type', array_keys($params)) && $params['time_table:duration'] ){
         switch ($params['time_table:duration_type']) {
             case 'days':
-                $params['search'] .= \MediaWiki\Extension\FennecAdvancedSearch\Utils::getFeatureSearchStr('time_table:duration_day',$params['time_table:duration']);
+                $params['search'] .= \MediaWiki\Extension\StructuredSearch\Utils::getFeatureSearchStr('time_table:duration_day',$params['time_table:duration']);
                 break;
             case 'hours':
-                $params['search'] .= \MediaWiki\Extension\FennecAdvancedSearch\Utils::getFeatureSearchStr('time_table:duration_hour',$params['time_table:duration']);
+                $params['search'] .= \MediaWiki\Extension\StructuredSearch\Utils::getFeatureSearchStr('time_table:duration_hour',$params['time_table:duration']);
                 break;
 
             default:
-                $params['search'] .= \MediaWiki\Extension\FennecAdvancedSearch\Utils::getFeatureSearchStr('time_table:duration',$params['time_table:duration']);
+                $params['search'] .= \MediaWiki\Extension\StructuredSearch\Utils::getFeatureSearchStr('time_table:duration',$params['time_table:duration']);
                 break;
         }
         unset($params['time_table:duration_type']);
@@ -99,7 +99,7 @@ function convert_duration_type_to_cargo_fields(&$params, $pKey){
 
 ### templates  
 
-```$wgFennecAdvancedSearchResultsTemplates```  
+```$wgStructuredSearchResultsTemplates```  
 
 Templates for results  
 Array in the structure of  
@@ -133,27 +133,27 @@ Default fields you can use:
 * self_thumb - for images results (NS_FILE)
 * page_image_ext (if PageImages extension installed)
 
-Any custom field added in ```$wgFennecAdvancedSearchParams``` would appear here.  
+Any custom field added in ```$wgStructuredSearchParams``` would appear here.  
 
 ### Predefined fields  
 
-```$wgFennecAdvancedSearchDefaultParams```  
+```$wgStructuredSearchDefaultParams```  
 The extension provide out of the box predefined fields - for now there are 'namespaces' and 'category'.  
 This options controls which of this fields would be shown. Default value is both 'namespaces' and 'category'.  
 If this configuration defined need, you need to include all predefined fields you want.  
 
 ### Predefined fields - category field configuration 
 
-```$wgFennecAdvancedSearchCategoryInclude```  
+```$wgStructuredSearchCategoryInclude```  
 Include only this categories in categories autocomplete.  
 
-```$wgFennecAdvancedSearchCategoryExclude```  
+```$wgStructuredSearchCategoryExclude```  
 Use all categories in categories autocomplete but exclude those categories.  
 
 ### Predefined fields - namespace field configuration 
 
 
-```$wgFennecAdvancedSearchNSReplace```  
+```$wgStructuredSearchNSReplace```  
 This option replace completely default NS option. You have to build array like this. (see ```widget.options``` defination):   
 ```
 array(
@@ -164,7 +164,7 @@ array(
 )
 ```  
 
-```$wgFennecAdvancedSearchNSOverride```  
+```$wgStructuredSearchNSOverride```  
 if this var defined, we will take all default NS and overriding 'show', 'defaultChecked', 'label' and 'weight' options.  
 ```
 array(
@@ -174,28 +174,28 @@ array(
 )
 ```  
 
-```$wgFennecAdvancedSearchNSDefaultPosition```  
+```$wgStructuredSearchNSDefaultPosition```  
 What is the default position of NS option? Default is main. (see ```widget.options[key].show```)  
-Would apply to any default NS, before using ```FennecAdvancedSearchNSOverride```.  
+Would apply to any default NS, before using ```StructuredSearchNSOverride```.  
 
-```$wgFennecAdvancedSearchNSIncludeTalkPagesType```  
-Same as ```$wgFennecAdvancedSearchNSDefaultPosition```, but for talk pages. Default value is "advanced".  
+```$wgStructuredSearchNSIncludeTalkPagesType```  
+Same as ```$wgStructuredSearchNSDefaultPosition```, but for talk pages. Default value is "advanced".  
 
-```$wgFennecAdvancedSearchUseMWDefaultSearchNS```
-If true and ```$wgFennecAdvancedSearchNSReplace``` ommited, use [default MW list of NS for search](https://www.mediawiki.org/wiki/Manual:$wgNamespacesToBeSearchedDefault) as base.  
+```$wgStructuredSearchUseMWDefaultSearchNS```
+If true and ```$wgStructuredSearchNSReplace``` ommited, use [default MW list of NS for search](https://www.mediawiki.org/wiki/Manual:$wgNamespacesToBeSearchedDefault) as base.  
 
-```$wgFennecAdvancedSearchThumbSize```
+```$wgStructuredSearchThumbSize```
 Files pages result getting special field which calls 'self_thumb'. This configuration defined the dimensions of this thumb. Default is 150X150.   
 
 
 ## Hooks  
 ```
-function FennecAdvancedSearchParams( &$FennecAdvancedSearchParams ){ ... }
+function StructuredSearchParams( &$StructuredSearchParams ){ ... }
 ```
-Use it to modify $wgFennecAdvancedSearchParams or create complicated settings.
+Use it to modify $wgStructuredSearchParams or create complicated settings.
 
 ```
-function 'FennecAdvancedSearchResults',( &$resultsTitlesForCheck ){ ... }
+function 'StructuredSearchResults',( &$resultsTitlesForCheck ){ ... }
 ```
 Use it to modify the results fields after search.
 
@@ -220,14 +220,14 @@ There's a hidden "more" button that displays all available namespaces. If you wa
 ```
 #### How to create custom field?
 
-If you want just to add field to results, use ```FennecAdvancedSearchResults``` hook.  
+If you want just to add field to results, use ```StructuredSearchResults``` hook.  
 
 If you want to add field for indexing, you need some coding.  
 
 Steps:  
 
-1. Add your field to elastic indexing defination - use SearchIndexFields hook (see MediaWiki\Extension\FennecAdvancedSearch\hooks::onSearchIndexFields for inspiration).  
-2. Add your field data to elastic indexing - use SearchDataForIndex hook (see MediaWiki\Extension\FennecAdvancedSearch\hooks::onSearchDataForIndex for inspiration).  
-3. Add UI defintion by ```FennecAdvancedSearchParams``` or add straight to ```$wgFennecAdvancedSearchParams```.  
+1. Add your field to elastic indexing defination - use SearchIndexFields hook (see MediaWiki\Extension\StructuredSearch\hooks::onSearchIndexFields for inspiration).  
+2. Add your field data to elastic indexing - use SearchDataForIndex hook (see MediaWiki\Extension\StructuredSearch\hooks::onSearchDataForIndex for inspiration).  
+3. Add UI defintion by ```StructuredSearchParams``` or add straight to ```$wgStructuredSearchParams```.  
 4. In this defination, add the search to elasticsearch string by using ```search_callbak``` option for field.  
-5. Add your field to results by ```FennecAdvancedSearchResults``` hook.  
+5. Add your field to results by ```StructuredSearchResults``` hook.  

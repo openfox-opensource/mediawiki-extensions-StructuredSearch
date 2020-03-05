@@ -17,7 +17,7 @@
  * @file
  */
 
-namespace MediaWiki\Extension\FennecAdvancedSearch;
+namespace MediaWiki\Extension\StructuredSearch;
 
 class ApiParams extends \ApiBase {
 		public function __construct( $query, $moduleName ) {
@@ -45,7 +45,7 @@ class ApiParams extends \ApiBase {
 	
 	public static function getResultsTemplates() {
 		$conf = \MediaWiki\MediaWikiServices::getInstance()->getMainConfig();
-		$templates = $conf->get('FennecAdvancedSearchResultsTemplates');
+		$templates = $conf->get('StructuredSearchResultsTemplates');
 		return $templates;
 	}	
 	public static function getTranslates() {
@@ -76,7 +76,7 @@ class ApiParams extends \ApiBase {
 
 	protected function getExamples() {
 		return array(
-			'action=fennecadvancedsearchparams'
+			'action=structuredsearchparams'
 		);
 	}
 

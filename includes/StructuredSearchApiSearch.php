@@ -17,7 +17,7 @@
  * @file
  */
 
-namespace MediaWiki\Extension\FennecAdvancedSearch;
+namespace MediaWiki\Extension\StructuredSearch;
 use MediaWiki\MediaWikiServices;
 
 class ApiSearch extends \ApiBase {
@@ -34,7 +34,7 @@ class ApiSearch extends \ApiBase {
 		}
 		$result = $this->getResult();
 		
-		$result->addValue( NULL, 'FennecAdvancedSearchSearch', $this->getSearchParams() );
+		$result->addValue( NULL, 'StructuredSearchSearch', $this->getSearchParams() );
 	}
 	public static function getNamespaces(){
 		global $wgContLang;
@@ -45,7 +45,7 @@ class ApiSearch extends \ApiBase {
 		$params = $this->extractRequestParams();
 		if(!isset($params['namespaces']) || !strlen($params['namespaces'])){
 			$conf = \MediaWiki\MediaWikiServices::getInstance()->getMainConfig();
-			$useDefualtNsForSearch = $conf->get('FennecAdvancedSearchUseMWDefaultSearchNS');
+			$useDefualtNsForSearch = $conf->get('StructuredSearchUseMWDefaultSearchNS');
 			if( $useDefualtNsForSearch ){
 				$namespaces = $conf->get('NamespacesToBeSearchedDefault');
 				$namespaces = array_filter($namespaces);
@@ -220,7 +220,7 @@ class ApiSearch extends \ApiBase {
 		
 		//die($tableName . '  >>  ' . print_r($conditions));
 		//die(print_r([$resultsTitlesForCheck,"ss"]));
-		\Hooks::run( 'FennecAdvancedSearchResults', [ &$resultsTitlesForCheck ] );
+		\Hooks::run( 'StructuredSearchResults', [ &$resultsTitlesForCheck ] );
 		return $resultsTitlesForCheck;
 	}
 	public static function addPageImage( &$resultsTitlesForCheck ) {
@@ -403,7 +403,7 @@ class ApiSearch extends \ApiBase {
 
 	protected function getExamples() {
 		return array(
-			'action=fennecadvancedsearchsearch'
+			'action=structuredsearchsearch'
 		);
 	}
 	public static function getFieldsNames($dbr, $tableName){

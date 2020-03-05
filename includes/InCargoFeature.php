@@ -1,6 +1,6 @@
 <?php
 
-namespace MediaWiki\Extension\FennecAdvancedSearch;
+namespace MediaWiki\Extension\StructuredSearch;
 
 use Config;
 use CirrusSearch\Search\SearchContext;
@@ -73,7 +73,7 @@ class InCargoFeature extends SimpleKeywordFeature {
 		if ( $filter === null ) {
 			$context->setResultsPossible( false );
 			$context->addWarning(
-				'fennec-advanced-search-incargo-feature-no-valid-categories',
+				'structured-search-incargo-feature-no-valid-categories',
 				$key
 			);
 		}

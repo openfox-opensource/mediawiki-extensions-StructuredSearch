@@ -16,19 +16,19 @@ class Results extends Component {
       searchStarted : params.advanced_search ? true : false
     };
 
-    translate('fennecadvancedsearch-no-results').then( translatedStr =>{
+    translate('structuredsearch-no-results').then( translatedStr =>{
         this.noResults = translatedStr;
     });
-    translate('fennecadvancedsearch-on-results-error').then( translatedStr =>{
+    translate('structuredsearch-on-results-error').then( translatedStr =>{
         this.noResultsError = translatedStr;
     });    
-    translate('fennecadvancedsearch-next').then( translatedStr =>{
+    translate('structuredsearch-next').then( translatedStr =>{
         this.nextText = translatedStr;
     });
-    translate('fennecadvancedsearch-on-search-text').then( translatedStr =>{
+    translate('structuredsearch-on-search-text').then( translatedStr =>{
         this.onSearchText = translatedStr;
     });
-    translate('fennecadvancedsearch-results-sum').then( translatedStr =>{
+    translate('structuredsearch-results-sum').then( translatedStr =>{
         this.resultsSumText = translatedStr;
     });
     EventEmitter.on('searchStarted', data => {

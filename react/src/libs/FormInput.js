@@ -36,12 +36,12 @@ class FormInput extends Component {
 	}
 	componentDidMount() {
 		for(let key of [
-			'fennecadvancedsearch-to-label',
-			'fennecadvancedsearch-from-label',
-			'fennecadvancedsearch-search-label',
-			'fennecadvancedsearch-more-label',
-			'fennecadvancedsearch-less-label',
-			'fennecadvancedsearch-show-more'
+			'structuredsearch-to-label',
+			'structuredsearch-from-label',
+			'structuredsearch-search-label',
+			'structuredsearch-more-label',
+			'structuredsearch-less-label',
+			'structuredsearch-show-more'
 			]){
 			translate(key).then( val => {
 				let stateToChange = {};
@@ -109,7 +109,7 @@ class FormInput extends Component {
 			this.searchAutocomplete(typed);
 		}
 		else{
-			ajaxCall.get(`action=fennecadvancedsearchautocomplete&field=${this.state.inputData.field}&search=${typed}`).then(data => {
+			ajaxCall.get(`action=structuredsearchautocomplete&field=${this.state.inputData.field}&search=${typed}`).then(data => {
 				if(data.data.values){
 					let valuesAsArray = [],
 						vals = data.data.values;
@@ -280,13 +280,13 @@ class FormInput extends Component {
 			}
 
 		}
-		let moreText = this.state.showAdvanced ? this.state['fennecadvancedsearch-less-label'] : this.state['fennecadvancedsearch-more-label'],
+		let moreText = this.state.showAdvanced ? this.state['structuredsearch-less-label'] : this.state['structuredsearch-more-label'],
 			moreButton = checkboxesAdvanced.length ? <button data-tip data-for="global" type={'button'} onClick={this.showAdvanced.bind(this)}  dangerouslySetInnerHTML={{__html:moreText}}></button> : '';
 		return <div className={wrpClass}>
 					<div className="main">{checkboxesMain}</div>
 					{moreButton}
 					<ReactTooltip id='global' aria-haspopup='true' role='example'>
-						 {this.state['fennecadvancedsearch-show-more']}
+						 {this.state['structuredsearch-show-more']}
 					</ReactTooltip>
 					<div className="advanced">{checkboxesAdvanced}</div>
 				</div>;
@@ -312,8 +312,8 @@ class FormInput extends Component {
 	      />
 	}
 	rangeBuild (inputData){
-		let fennecadvancedsearch_from_label = this.state['fennecadvancedsearch-from-label'],
-			fennecadvancedsearch_to_label = this.state['fennecadvancedsearch-to-label'],
+		let structuredsearch_from_label = this.state['structuredsearch-from-label'],
+			structuredsearch_to_label = this.state['structuredsearch-to-label'],
 			defaultValue1, defaultValue2,
 			currentValue = FormMain.getValue( inputData.field );
 		if(currentValue){
@@ -328,14 +328,14 @@ class FormInput extends Component {
 			defaultValue2 = splitted[1]
 		}
 		return   <span>
-					<span>{fennecadvancedsearch_from_label}</span>
+					<span>{structuredsearch_from_label}</span>
 					<input 
 						type="number" 
 						className="range-input range-input-from"
 						name={inputData.field} 
 						defaultValue={defaultValue1}
 						onChange={this.rangeChanges.bind(this, inputData.field,0)} />
-					<span>{fennecadvancedsearch_to_label}</span>
+					<span>{structuredsearch_to_label}</span>
 					<input 
 						type="number" 
 						className="range-input range-input-to"
@@ -356,7 +356,7 @@ class FormInput extends Component {
 					onChange={this.inputChanges.bind(this, inputData.field)} />;
 	}
 	autocompleteBuild (inputData){
-			let submitButton = this.isSearchAutomplete() ? <button type='button' onClick={this.submitClicked.bind(this)} dangerouslySetInnerHTML={{__html:this.state['fennecadvancedsearch-search-label']}}></button> : '',
+			let submitButton = this.isSearchAutomplete() ? <button type='button' onClick={this.submitClicked.bind(this)} dangerouslySetInnerHTML={{__html:this.state['structuredsearch-search-label']}}></button> : '',
 				placeholder = this.getPlaceholder( inputData );
 			return   <div className="autocomplete-wrp"><Autocomplete
 						  getItemValue={(item) => item.label}

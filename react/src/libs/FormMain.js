@@ -116,7 +116,7 @@ class FormMain{
 	    // if(!params.search){
 	    // 	return;
 	    // }
-	    params.action = 'fennecadvancedsearchsearch';
+	    params.action = 'structuredsearchsearch';
 	    if( FormMain.offset ){
 	    	params.offset = FormMain.offset;
 	    }
@@ -131,7 +131,7 @@ class FormMain{
 	    });
 	    ajaxCall.get(urlSuffix).then(data=>{
 	      //console.log(data, "data");
-	      let eventData = data.data.error ? { results: {error:true}} : data.data.FennecAdvancedSearchSearch;
+	      let eventData = data.data.error ? { results: {error:true}} : data.data.StructuredSearchSearch;
 	      eventData.reset = reset;
 	      EventEmitter.emit('dataRecieved', eventData);
 	    });

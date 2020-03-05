@@ -1,11 +1,11 @@
 {
-	"name": "fennecadvancedsearchs",
+	"name": "structuredsearchs",
 	"author": [
 		"[[mw:user:Anysite|Anysite]]",
 		"[[mw:user:Yacohen|Yacohen]]"
 	],
-	"url": "https://www.mediawiki.org/wiki/Extension:FennecAdvancedSearch",
-	"descriptionmsg": "fennecadvancedsearch-desc",
+	"url": "https://www.mediawiki.org/wiki/Extension:StructuredSearch",
+	"descriptionmsg": "structuredsearch-desc",
 	"license-name": "GPL-2.0-or-later",
 	"type": "other",
 	"requires": {
@@ -20,117 +20,117 @@
 		
 	},
 	"config": {
-		"FennecAdvancedSearchParams": {
+		"StructuredSearchParams": {
 			"description": "Search and view params",
 			"value": []
 		},
-		"FennecAdvancedSearchResultsTemplates": {
+		"StructuredSearchResultsTemplates": {
 			"description": "Template by NS ids. Default is fallback",
 			"value": []
 		},
-		"FennecAdvancedSearchDefaultParams": {
+		"StructuredSearchDefaultParams": {
 			"description": "Default are namesapces and category inputs",
 			"value": []
 		},
-		"FennecAdvancedSearchCategoryInclude": {
+		"StructuredSearchCategoryInclude": {
 			"description": "White list of categories to filter with",
 			"value": []
 		},
-		"FennecAdvancedSearchCategoryExclude": {
-			"description": "Black list of categories to filter with. ignored if FennecAdvancedSearchCategoryInclude set",
+		"StructuredSearchCategoryExclude": {
+			"description": "Black list of categories to filter with. ignored if StructuredSearchCategoryInclude set",
 			"value": []
 		},
-		"FennecAdvancedSearchNSReplace": {
+		"StructuredSearchNSReplace": {
 			"description": "Replace NS list. Usefull if you want to start from scratch. Each NS can be 'main', 'advanced' or 'disable'",
 			"value": []
 		},
-		"FennecAdvancedSearchNSOverride": {
+		"StructuredSearchNSOverride": {
 			"description": "Override NS list. Usefull to modify full list Each NS can be 'main', 'advanced' or 'disable'",
 			"value": []
 		},
-		"FennecAdvancedSearchUseMWDefaultSearchNS": {
+		"StructuredSearchUseMWDefaultSearchNS": {
 			"description": "When ns omitted, if to use $wgNamespacesToBeSearchedDefault",
 			"value": false
 		},
-		"FennecAdvancedSearchNSDefaultPosition": {
+		"StructuredSearchNSDefaultPosition": {
 			"description": "What is the default position of NS",
 			"value": "main"
 		},
-		"FennecAdvancedSearchNSTopOrSide": {
+		"StructuredSearchNSTopOrSide": {
 			"description": "What is the default position of NS selectors - topbar or sidebar",
 			"value": ""
 		},
-		"FennecAdvancedSearchNSIncludeTalkPagesType": {
+		"StructuredSearchNSIncludeTalkPagesType": {
 			"description": "Are talk pages includes in filters",
 			"value": "advanced"
 		},
-		"FennecAdvancedSearchThumbSize": {
+		"StructuredSearchThumbSize": {
 			"description": "Thumns dismensions",
 			"value": "150X150"
 		}
 		
 	},
 	"MessagesDirs": {
-		"FennecAdvancedSearch": [
+		"StructuredSearch": [
 			"i18n",
 			"i18n/api"
 		]
 	},
 	"Hooks": {
-		"FennecAdvancedSearchParams": [
-        	"MediaWiki\\Extension\\FennecAdvancedSearch\\Hooks::onFennecAdvancedSearchParams"
+		"StructuredSearchParams": [
+        	"MediaWiki\\Extension\\StructuredSearch\\Hooks::onStructuredSearchParams"
     	],
     	"SearchIndexFields": [
-        	"MediaWiki\\Extension\\FennecAdvancedSearch\\Hooks::onSearchIndexFields"
+        	"MediaWiki\\Extension\\StructuredSearch\\Hooks::onSearchIndexFields"
     	],
-    	"FennecAdvancedSearchResults": [
-            "MediaWiki\\Extension\\FennecAdvancedSearch\\Hooks::onFennecAdvancedSearchResults"
+    	"StructuredSearchResults": [
+            "MediaWiki\\Extension\\StructuredSearch\\Hooks::onStructuredSearchResults"
         ],
         "CirrusSearchAddQueryFeatures": [
-            "MediaWiki\\Extension\\FennecAdvancedSearch\\Hooks::onCirrusSearchAddQueryFeatures"
+            "MediaWiki\\Extension\\StructuredSearch\\Hooks::onCirrusSearchAddQueryFeatures"
         ],
     	"SearchDataForIndex": [
-        	"MediaWiki\\Extension\\FennecAdvancedSearch\\Hooks::onSearchDataForIndex"
+        	"MediaWiki\\Extension\\StructuredSearch\\Hooks::onSearchDataForIndex"
     	]
 	},
 	"ExtensionMessagesFiles": {
-		"FennecAdvancedSearchAlias" : "FennecAdvancedSearch.i18n.alias.php",
-		"FennecAdvancedSearchMagic" : "FennecAdvancedSearch.i18n.magic.php"
+		"StructuredSearchAlias" : "StructuredSearch.i18n.alias.php",
+		"StructuredSearchMagic" : "StructuredSearch.i18n.magic.php"
 	},
 	"AutoloadClasses": {
-		"MediaWiki\\Extension\\FennecAdvancedSearch\\Utils": "includes/FennecAdvancedSearchUtils.php",
-		"MediaWiki\\Extension\\FennecAdvancedSearch\\ApiParams": "includes/FennecAdvancedSearchApiParams.php",
-		"MediaWiki\\Extension\\FennecAdvancedSearch\\ApiSearch": "includes/FennecAdvancedSearchApiSearch.php",
-		"MediaWiki\\Extension\\FennecAdvancedSearch\\SpecialFennecAdvancedSearch": "includes/SpecialFennecAdvancedSearch.php",
-		"MediaWiki\\Extension\\FennecAdvancedSearch\\ApiAutocomplete": "includes/FennecAdvancedSearchApiAutocomplete.php",
-		"MediaWiki\\Extension\\FennecAdvancedSearch\\Hooks": "includes/FennecAdvancedSearchHooks.php",
-		"MediaWiki\\Extension\\FennecAdvancedSearch\\InCargoFeature": "includes/InCargoFeature.php"
+		"MediaWiki\\Extension\\StructuredSearch\\Utils": "includes/StructuredSearchUtils.php",
+		"MediaWiki\\Extension\\StructuredSearch\\ApiParams": "includes/StructuredSearchApiParams.php",
+		"MediaWiki\\Extension\\StructuredSearch\\ApiSearch": "includes/StructuredSearchApiSearch.php",
+		"MediaWiki\\Extension\\StructuredSearch\\SpecialStructuredSearch": "includes/SpecialStructuredSearch.php",
+		"MediaWiki\\Extension\\StructuredSearch\\ApiAutocomplete": "includes/StructuredSearchApiAutocomplete.php",
+		"MediaWiki\\Extension\\StructuredSearch\\Hooks": "includes/StructuredSearchHooks.php",
+		"MediaWiki\\Extension\\StructuredSearch\\InCargoFeature": "includes/InCargoFeature.php"
 	},
 	"AutoloadNamespaces": {
-		"MediaWiki\\Extension\\FennecAdvancedSearch\\": "includes/"
+		"MediaWiki\\Extension\\StructuredSearch\\": "includes/"
 	},
 	"APIModules": {
-		"fennecadvancedsearchparams": "MediaWiki\\Extension\\FennecAdvancedSearch\\ApiParams",
-		"fennecadvancedsearchautocomplete": "MediaWiki\\Extension\\FennecAdvancedSearch\\ApiAutocomplete",
-		"fennecadvancedsearchsearch": "MediaWiki\\Extension\\FennecAdvancedSearch\\ApiSearch"
+		"structuredsearchparams": "MediaWiki\\Extension\\StructuredSearch\\ApiParams",
+		"structuredsearchautocomplete": "MediaWiki\\Extension\\StructuredSearch\\ApiAutocomplete",
+		"structuredsearchsearch": "MediaWiki\\Extension\\StructuredSearch\\ApiSearch"
 	},
 	"_ContentHandlers": {
-		"xmldata": "MediaWiki\\Extension\\FennecAdvancedSearch\\XmlContentHandler"
+		"xmldata": "MediaWiki\\Extension\\StructuredSearch\\XmlContentHandler"
 	},
 	"SpecialPages": {
-		"FennecAdvancedSearch": "MediaWiki\\Extension\\FennecAdvancedSearch\\SpecialFennecAdvancedSearch"
+		"StructuredSearch": "MediaWiki\\Extension\\StructuredSearch\\SpecialStructuredSearch"
 	},
 	"ResourceFileModulePaths": {
 		"localBasePath": "modules/"
 	},
 	"ResourceModules": {
-		"ext.FennecAdvancedSearch": {
+		"ext.StructuredSearch": {
 			"styles": [
-				"ext.FennecAdvancedSearch/styles.less"
+				"ext.StructuredSearch/styles.less"
 			],
 			"messages" : [
-				"fennecadvancedsearch-from-label",
-				"fennecadvancedsearch-to-label"
+				"structuredsearch-from-label",
+				"structuredsearch-to-label"
 			]
 			
 		}

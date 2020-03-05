@@ -1,11 +1,11 @@
 <?php
 
-namespace MediaWiki\Extension\FennecAdvancedSearch; 
+namespace MediaWiki\Extension\StructuredSearch; 
 
 class Utils{
 	static public function categoryAutocomplete( $term ){
 		$conf = \MediaWiki\MediaWikiServices::getInstance()->getMainConfig();
-		$categoryInclude = $conf->get('FennecAdvancedSearchCategoryInclude');
+		$categoryInclude = $conf->get('StructuredSearchCategoryInclude');
 		return  $categoryInclude ? self::preccessDefaultCategories( $categoryInclude, $term ) : self::getCategiresFromDb($term);
 	}
 	static public function cargoAllRows( $fieldName ){
@@ -56,7 +56,7 @@ class Utils{
 	}
 	// static public function onBeforePageDisplay(\OutputPage $out, \Skin $skin ){
 	// 	$title = $out->getTitle();
-	// 	//FennecAdvancedSearchApiSearch::getResultsAdditionalFieldsFromTitles([$title]);
+	// 	//StructuredSearchApiSearch::getResultsAdditionalFieldsFromTitles([$title]);
 	// 	// $b = new InCargoFeature();
 	// 	// print_r($b->_getKeywords());
 	// }
@@ -64,7 +64,7 @@ class Utils{
 	static public function getCategiresFromDb( $term ){
 		$dbr = wfGetDB( DB_REPLICA );
 		$conf = \MediaWiki\MediaWikiServices::getInstance()->getMainConfig();
-		$categoryExclude = $conf->get('FennecAdvancedSearchCategoryExclude');
+		$categoryExclude = $conf->get('StructuredSearchCategoryExclude');
 		foreach ($categoryExclude as &$cat) {
 			$catTitle = \Title::newFromText($cat);
 			if($catTitle){
@@ -122,12 +122,12 @@ class Utils{
 	}
 	public static function getSearchParams() {
 		$conf = \MediaWiki\MediaWikiServices::getInstance()->getMainConfig();
-		$params = $conf->get('FennecAdvancedSearchParams');
+		$params = $conf->get('StructuredSearchParams');
 		$newKeyedArray = [];
 		foreach ($params as $param) {
 			$newKeyedArray[$param['field']] = $param;
 		}
-		\Hooks::run( 'FennecAdvancedSearchParams', [ &$newKeyedArray ] );
+		\Hooks::run( 'StructuredSearchParams', [ &$newKeyedArray ] );
 		//die(print_r($params,1));
 		return self::fixSearchParams( $newKeyedArray );
 	}

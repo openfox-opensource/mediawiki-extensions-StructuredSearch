@@ -31,8 +31,8 @@ class TopBar extends Component {
   }
   componentDidMount() {
     for(let key of [
-      'fennecadvancedsearch-clear',
-      'fennecadvancedsearch-toggle-sidebar'
+      'structuredsearch-clear',
+      'structuredsearch-toggle-sidebar'
       ]){
       translate(key).then( val => {
         let stateToChange = {};
@@ -173,7 +173,7 @@ class TopBar extends Component {
     let allInputs = [],
         labelsKeyed = [],
         labels = [],
-        toggleSidebar = <button type="button" className="hide-on-desktop" onClick={this.toggleSidebar.bind(this)}>{this.state['fennecadvancedsearch-toggle-sidebar']}<i className={'fas fa-chevron-' + this.state.chevronDir}></i></button>;
+        toggleSidebar = <button type="button" className="hide-on-desktop" onClick={this.toggleSidebar.bind(this)}>{this.state['structuredsearch-toggle-sidebar']}<i className={'fas fa-chevron-' + this.state.chevronDir}></i></button>;
     if('undefined' != typeof this.state.inputs){
       let inputsSorted = Object.values(this.state.inputs).sort(utils.sortByWeight);
       for(let inputData of inputsSorted){
@@ -211,7 +211,7 @@ class TopBar extends Component {
             {allInputs}{toggleSidebar}
             <div className={'lables-wrp'}>{labels}</div>
           </form>
-          <button type="button" onClick={this.clearClicked.bind( this )}  dangerouslySetInnerHTML={{__html:this.state['fennecadvancedsearch-clear']}} ></button>
+          <button type="button" onClick={this.clearClicked.bind( this )}  dangerouslySetInnerHTML={{__html:this.state['structuredsearch-clear']}} ></button>
         </header>
 
     </div> : <div className='TopBar TopBar-loader'></div>;

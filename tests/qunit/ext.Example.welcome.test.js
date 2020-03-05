@@ -1,11 +1,11 @@
-// QUnit.module( 'ext.FennecAdvancedSearch.welcome', {
+// QUnit.module( 'ext.StructuredSearch.welcome', {
 // 	beforeEach: function () {
 // 		this.conf = mw.config.values;
 // 		mw.config.values = {
-// 			wgFennecAdvancedSearchWelcomeColorDays: {
+// 			wgStructuredSearchWelcomeColorDays: {
 // 				tuesday: 'pink'
 // 			},
-// 			wgFennecAdvancedSearchWelcomeColorDefault: '#ccc'
+// 			wgStructuredSearchWelcomeColorDefault: '#ccc'
 // 		};
 // 	},
 // 	afterEach: function () {
@@ -14,7 +14,7 @@
 // } );
 
 // QUnit.test( 'getColorByDate()', function ( assert ) {
-// 	var welcome = require( 'exat.FennecAdvancedSearch.welcome' );
+// 	var welcome = require( 'exat.StructuredSearch.welcome' );
 // 	assert.strictEqual( welcome.getColorByDate( 'monday' ), '#ccc', 'default' );
 // 	assert.strictEqual( welcome.getColorByDate( 'tuesday' ), 'pink', 'custom' );
 // } );

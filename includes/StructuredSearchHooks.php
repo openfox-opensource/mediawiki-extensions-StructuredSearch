@@ -1,6 +1,6 @@
 <?php
 
-namespace MediaWiki\Extension\FennecAdvancedSearch; 
+namespace MediaWiki\Extension\StructuredSearch; 
 
 use CirrusSearch\Search\ShortTextIndexField;
 use CirrusSearch\Search\CirrusSearchIndexFieldFactory;
@@ -13,20 +13,20 @@ use ContentHandler;
 class Hooks{
 	static public function categoryExtract( &$params ){
 		$params['category'] = [
-			'label' => wfMessage('fennecadvancedsearch-category-label')->text(),
+			'label' => wfMessage('structuredsearch-category-label')->text(),
         	'field' => 'category',
         	'weight' =>0,
 	        'widget' => [
 	            'type' => 'autocomplete',
 	            'position' => 'sidebar',
-	            'autocomplete_callback' => "\\MediaWiki\\Extension\\FennecAdvancedSearch\\Utils::categoryAutocomplete",
+	            'autocomplete_callback' => "\\MediaWiki\\Extension\\StructuredSearch\\Utils::categoryAutocomplete",
 	        ],
 	    ];
 	}
 	static public function tryGetNSReplace( ){
 		global $wgContLang;
 		$conf = \MediaWiki\MediaWikiServices::getInstance()->getMainConfig();
-		$manualNamespaces = $conf->get('FennecAdvancedSearchNSReplace');
+		$manualNamespaces = $conf->get('StructuredSearchNSReplace');
 
 		foreach ($manualNamespaces as &$manualNamespace) {
 			if( !isset( $manualNamespace['value'] ) ){
@@ -41,9 +41,9 @@ class Hooks{
 	}
 	static public function namespacesExtract( &$params ){
 		$conf = \MediaWiki\MediaWikiServices::getInstance()->getMainConfig();
-		$topOrSide = $conf->get('FennecAdvancedSearchNSTopOrSide');
+		$topOrSide = $conf->get('StructuredSearchNSTopOrSide');
 		$params['namespaces'] = [
-			'label' => '',//wfMessage('fennecadvancedsearch-namespace-label')->text(),
+			'label' => '',//wfMessage('structuredsearch-namespace-label')->text(),
         	'field' => 'namespaces',
         	'withoutLabels' => 1,
 	        'widget' => [
@@ -63,8 +63,8 @@ class Hooks{
 	}
 	static public function namespacesProccess( $namespaces ){
 		$conf = \MediaWiki\MediaWikiServices::getInstance()->getMainConfig();
-		$includeTalkPagesType = $conf->get('FennecAdvancedSearchNSIncludeTalkPagesType');
-		$showDefault = $conf->get('FennecAdvancedSearchNSDefaultPosition');
+		$includeTalkPagesType = $conf->get('StructuredSearchNSIncludeTalkPagesType');
+		$showDefault = $conf->get('StructuredSearchNSDefaultPosition');
 		$returnedNamespaces = [];
 		foreach ($namespaces as $nsName => $namespaceId) {
 			
@@ -76,12 +76,12 @@ class Hooks{
 				$show = 'advanced';
 			}
 			$returnedNamespaces[$namespaceId] = [
-				'label' => $nsName ? preg_replace('/_/',' ', $nsName) : wfMessage('fennecadvancedsearch-main-namesapce')->text(),
+				'label' => $nsName ? preg_replace('/_/',' ', $nsName) : wfMessage('structuredsearch-main-namesapce')->text(),
 				'value' => $namespaceId,
 				'show' => $show,
 			];
 		}
-		$NSOverride = $conf->get('FennecAdvancedSearchNSOverride');
+		$NSOverride = $conf->get('StructuredSearchNSOverride');
 		$weightCount = 1;
 		foreach ($NSOverride as $NSData) {
 			$NSKey = $NSData['ns'];
@@ -173,20 +173,20 @@ class Hooks{
 	public static function onCirrusSearchAddQueryFeatures( SearchConfig $config, array &$features ) {
 		$features[] = new InCargoFeature();
 	}
-	static public function onFennecAdvancedSearchParams( &$params ){
+	static public function onStructuredSearchParams( &$params ){
 		$params['search'] = [
-			'label' => '',// wfMessage('fennecadvancedsearch-search-label')->text(),
+			'label' => '',// wfMessage('structuredsearch-search-label')->text(),
         	'field' => 'search',
         	'withoutLabels' => 1,
 	        'widget' => [
 	            'type' => 'autocomplete',
 	            'position' => 'topbar',
-	            'placeholder' => wfMessage( "fennecadvancedsearch-search-placeholder" ),
+	            'placeholder' => wfMessage( "structuredsearch-search-placeholder" ),
 	        ],
 		];
 		
 		$conf = \MediaWiki\MediaWikiServices::getInstance()->getMainConfig();
-		$defaultParams = $conf->get('FennecAdvancedSearchDefaultParams');
+		$defaultParams = $conf->get('StructuredSearchDefaultParams');
 		if( !count( $defaultParams ) ){
 			$defaultParams = ['namespaces', 'category'];
 		}
@@ -228,7 +228,7 @@ class Hooks{
 				}
 				if( 'select' === $param['widget']['type'] ){
 					array_unshift($options, [
-						'label' => wfMessage('fennecadvancedsearch-choose'),
+						'label' => wfMessage('structuredsearch-choose'),
 						'value' => '<select>',
 					]);
 				}
@@ -236,7 +236,7 @@ class Hooks{
 			}
 		}
 	}
-	static public function onFennecAdvancedSearchResults( &$results ){
+	static public function onStructuredSearchResults( &$results ){
 		$params = Utils::getSearchParams();
 		$imagesKeys = [];
 		foreach ($params as $param) {
@@ -260,8 +260,8 @@ class Hooks{
 		
 		$conf = \MediaWiki\MediaWikiServices::getInstance()->getMainConfig();
 		$wgScriptPath = $conf->get('ScriptPath');
-		$wgFennecAdvancedSearchThumbSize = $conf->get('FennecAdvancedSearchThumbSize');
-		$dismensions = explode('X', $wgFennecAdvancedSearchThumbSize);
+		$wgStructuredSearchThumbSize = $conf->get('StructuredSearchThumbSize');
+		$dismensions = explode('X', $wgStructuredSearchThumbSize);
 		$fileClass = wfFindFile(\Title::newFromText($file));
 		$thumb = $fileClass ? $fileClass->transform( [ 'width' => $dismensions[0], 'height' => $dismensions[1] ] ) : NULL;
 		$thumbUrl = NULL;

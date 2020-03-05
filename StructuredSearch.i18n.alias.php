@@ -9,10 +9,10 @@ $specialPageAliases = [];
 
 /** English (English) */
 $specialPageAliases['en'] = [
-	'FennecAdvancedSearch' => [ 'Advanced search' ]
+	'StructuredSearch' => [ 'Advanced search' ]
 ];
 
 /** Dutch (Nederlands) */
 $specialPageAliases['he'] = [
-	'FennecAdvancedSearch' => [ 'חיפוש מתקדם' ],
+	'StructuredSearch' => [ 'חיפוש מתקדם' ],
 ];
