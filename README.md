@@ -49,10 +49,10 @@ No key needed, the field would be unieqe identifier
 ##### Detailed main config values
 
 ```field``` must be unique. If contains ':', automaticlly treated as cargo field in structure of TABLENAME:FIELDNAME  
-```label``` shown on search UI as label of search input. Can contain HTML.
+```label``` shown on search UI as label of search input. Can contain HTML.  
 ```widget``` is array defines the search widget.  
 ```widget.type``` Possible values are: text|select|autocomplete|radios|checkboxes|range.  
-```widget.position``` Where the widget would be rendered: 
+```widget.position``` Where the widget would be rendered:  
 ```topbar``` - on main box, below the main search input.
 ```sidebar``` - on sidebar.  
 ```hide``` - dont show widget.  
@@ -131,7 +131,7 @@ Default fields you can use:
 * month
 * category - array of categories, each have name, key, link and id
 * self_thumb - for images results (NS_FILE)
-* page_image_ext (if PageImages extension installed)
+* page_image_ext (if [PageImages](https://www.mediawiki.org/wiki/Extension:PageImages) extension installed)
 
 Any custom field added in ```$wgStructuredSearchParams``` would appear here.  
 
@@ -169,7 +169,7 @@ if this var defined, we will take all default NS and overriding 'show', 'default
 ```
 array(
     'ns' => 0,// NS number, to let the extesion know what you are overriding
-    'show' => 'advanced,
+    'show' => 'advanced',
     'defaultChecked' => 0
 )
 ```  
@@ -201,7 +201,7 @@ Use it to modify the results fields after search.
 
 ### FAQ
 
-#### My configuration update not affected the search?  
+#### My configuration update not affected the search.  
 You should rebuild elasticsearch index.  
 
 #### How to show field on results without add it to index or showing widget in UI?  
