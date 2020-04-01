@@ -77,9 +77,7 @@
 		]
 	},
 	"Hooks": {
-		"StructuredSearchParams": [
-        	"MediaWiki\\Extension\\StructuredSearch\\Hooks::onStructuredSearchParams"
-    	],
+		
     	"SearchIndexFields": [
         	"MediaWiki\\Extension\\StructuredSearch\\Hooks::onSearchIndexFields"
     	],

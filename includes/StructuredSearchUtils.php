@@ -127,6 +127,8 @@ class Utils{
 		foreach ($params as $param) {
 			$newKeyedArray[$param['field']] = $param;
 		}
+		//run this before all hooks to let others modify predefined fields
+		Hooks::onStructuredSearchParams($newKeyedArray);
 		\Hooks::run( 'StructuredSearchParams', [ &$newKeyedArray ] );
 		//die(print_r($params,1));
 		return self::fixSearchParams( $newKeyedArray );
