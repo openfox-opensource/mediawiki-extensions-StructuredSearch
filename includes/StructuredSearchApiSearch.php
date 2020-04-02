@@ -86,7 +86,9 @@ class ApiSearch extends \ApiBase {
 		});
 		$params['action'] = 'query';
 		$params['list'] = 'search';
-		//die(print_r($params));
+		if(isset($_GET['ggg'])){
+			die(print_r($params));
+		}
 		
 		$callApiParams = new \DerivativeRequest(
 		    $this->getRequest(),
@@ -246,16 +248,21 @@ class ApiSearch extends \ApiBase {
 		$dbr = wfGetDB( DB_REPLICA );
 		$dbrCargo = \CargoUtils::getDB();
 		$allFieldsByTables = self::getFieldsByTable( );
-		//die(print_r($allFieldsByTables));
+		
 		//no normal way to find 
 		$allCargoTableExits = self::cargoTableExits( );
+		$allCargoTableExitsNames = array_keys( $allCargoTableExits );
+
 		foreach ($allFieldsByTables as $tableName => $fields) {
-			if(!in_array($tableName, $allCargoTableExits)){
+			if(!in_array($tableName, $allCargoTableExitsNames)){
 				continue;
 			}
 			$allSubtablesOfFields = Utils::getSubtablesOfFields( $tableName );
+			if(isset($_GET['fff'])){
+				print_r([$allSubtablesOfFields,$tableName]);
+			}
 			//die(print_r($allSubtablesOfFields));
-			$fieldsDeclared = self::getFieldsNames($dbr, $tableName);
+			$fieldsDeclared = self::getFieldsNames($allCargoTableExits, $tableName);
 			//die(in_array('jhkjhj', [0], TRUE));
 			$fields = array_map(function($val) use ($fieldsDeclared){
 				if($fieldsDeclared && !in_array($val, $fieldsDeclared, TRUE)){
@@ -296,18 +303,19 @@ class ApiSearch extends \ApiBase {
 				//$addToArr = array_merge($addToArr, (array)$row);
 			}
 		}
+			
 	}
 	public static function cargoTableExits( ) {
 		$dbr = wfGetDB( DB_REPLICA );
 		$res = $dbr->select(
 			array( 'cargo_tables' ),
-			array( 'main_table' ),
+			array( 'main_table','table_schema' ),
 			"1=1",
 			__METHOD__
 		);
 		$tables = [];
 		while ( $row = $dbr->fetchObject( $res ) ) {
-			$tables[] = $row->main_table;
+			$tables[$row->main_table] = unserialize($row->table_schema);
 		}
 		return $tables;
 	}
@@ -406,20 +414,22 @@ class ApiSearch extends \ApiBase {
 			'action=structuredsearchsearch'
 		);
 	}
-	public static function getFieldsNames($dbr, $tableName){
-		$res = $dbr->select( ['cargo_tables'], array( 'table_schema' ),	array( 'main_table' => $tableName ) );
-		$row = $dbr->fetchRow( $res );
-		$fields = $row[0] ? unserialize($row[0]) : [];
-		$fieldsNames = [];
-		foreach ($fields as $fName => &$field) {
-			if( isset($field['isList']) && $field['isList']){
-				$fieldsNames[] = $fName .'__full';
-			}
-			else{
-				$fieldsNames[] = $fName;
-			}
-		}
-		return $fieldsNames;
+	public static function getFieldsNames($allCargoTableExits, $tableName){
+		
+		return array_keys($allCargoTableExits[$tableName]) ;
+		// $res = $dbr->query('Describe ');
+		// $row = $dbr->fetchRow( $res );
+		// $fields = $row[0] ? unserialize($row[0]) : [];
+		// $fieldsNames = [];
+		// foreach ($fields as $fName => &$field) {
+		// 	if( isset($field['isList']) && $field['isList']){
+		// 		$fieldsNames[] = $fName .'__full';
+		// 	}
+		// 	else{
+		// 		$fieldsNames[] = $fName;
+		// 	}
+		// }
+		// return $fieldsNames;
 
 	}
 	public static function getFieldsByTable(){
