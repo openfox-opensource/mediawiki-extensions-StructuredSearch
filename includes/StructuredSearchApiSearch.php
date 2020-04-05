@@ -162,30 +162,17 @@ class ApiSearch extends \ApiBase {
 		$namespaceIds = self::getNamespaces();
 		//die(print_r($namespaceIds));
 		foreach ($titles as $key => $val) {
-			$dashed_val = preg_replace('/\s/','_',$val);
-			if( $dashed_val === $val && strpos('_', $val)){
-				$val = preg_replace('/_/',' ',$val);
-			}
-			$valSplitted = explode(':', $val);
-			if( count($valSplitted) > 1 ){
-				$namespace = array_shift($valSplitted);
-				$title = implode(':',$valSplitted);
-				$namespace = preg_replace('/\s/','_',$namespace);
-				array_unshift($valSplitted, $namespaceIds[$namespace]);
-			} 
-			else{
-				//for main
-				$title  = implode(':',$valSplitted);
-				array_unshift($valSplitted,NS_MAIN);
-			}
-			$titleKey = preg_replace('/\s/','_', implode(':', $valSplitted));
+			$titleClass = \Title::newFromText( $val );
+			
+			$namespace = $titleClass->getNamespace();
+			$titleKey = ($namespace ? $namespace : '0' ) . ':' . preg_replace('/\s/', '_', $titleClass->getText());
 			$resultsTitlesForCheck[$titleKey] = [
-					'full_title'=>$val, 
-					'short_title'=> $title, 
-					'title_dash'=> preg_replace('/\s/','_',$val), 
-					'page_link'=> preg_replace('/\$1/',urlencode(preg_replace('/\s/','_',$val)),$wgArticlePath), 
-					'namespace' => isset($namespace) ? $namespace : '', 
-					'namespaceId' => $namespaceIds[$namespace],
+					'full_title'=> $titleClass->getFullText(), 
+					'short_title'=> $titleClass->getText(), 
+					'title_dash'=> $titleClass->getPrefixedDBkey(), 
+					'page_link'=> $titleClass->getLinkURL(), 
+					'namespace' => $titleClass->getNsText(), 
+					'namespaceId' => $titleClass->getNamespace(),
 					'title_key' => $titleKey,
 			];
 			
