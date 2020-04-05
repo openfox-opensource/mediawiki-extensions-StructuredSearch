@@ -244,7 +244,6 @@ class Hooks{
 				$imagesKeys[] = $param['field'];
 			}
 		}
-		
 		foreach ($results as &$result) {
 			foreach ($imagesKeys as $imageKey) {
 				if(isset($result[$imageKey])){
@@ -256,8 +255,6 @@ class Hooks{
 		//die(print_r($imagesKeys));
 	}
 	static public function fixImageToThumbs( $file ){
-		//die($file);
-		
 		$conf = \MediaWiki\MediaWikiServices::getInstance()->getMainConfig();
 		$wgScriptPath = $conf->get('ScriptPath');
 		$wgStructuredSearchThumbSize = $conf->get('StructuredSearchThumbSize');
