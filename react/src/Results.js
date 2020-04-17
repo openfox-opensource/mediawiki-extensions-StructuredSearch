@@ -87,8 +87,8 @@ class Results extends Component {
         }
     });
   }
-  resultClicked( title ){
-    console.log("resultClicked StructuredSearchResultclicked", title);
+  resultClicked( title, event ){
+    console.log("resultClicked StructuredSearchResultclicked", title, event);
     FormMain.fireGlobalEvent( {title:title}, 'StructuredSearchResultclicked');
   }
   getTempalteByResult( result ){
