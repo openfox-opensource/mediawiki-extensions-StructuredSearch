@@ -173,6 +173,7 @@ class FormInput extends Component {
 	}
 	autocompleteSelected( fieldName, itemLabel, autocompleteItem){
 		if( this.isSearchAutomplete() ){
+			FormMain.fireGlobalEvent( {title:autocompleteItem.value}, "StructuredSearchPageClicked" );
 			window.location.href = autocompleteItem.value;
 		}
 		else{
