@@ -46,7 +46,6 @@ class historySearch{
 		if( !window.location.search){
 			return;
 		}
-		console.log(JSON.stringify(searchParams),"searchParams",window.location.search );
 		//if no NS we need to add or no results would given
 		if( !searchParams.namespace ){
 			searchParams.namespace = historySearch.getDefaultSearch( paramsSettings, 'namespace');
@@ -63,7 +62,7 @@ class historySearch{
 			}
 			if( fieldsDetector.isMultiple( paramsSettings[paramKey] ) ){
 				let paramValueSplitted = paramValue ? paramValue.split('|').filter( part => (part || 0 === part)) : [];
-				console.log(paramValueSplitted)
+				//console.log(paramValueSplitted)
 				if( fieldsDetector.isRange( paramsSettings[paramKey] ) ){
 					FormMain.setValue(paramKey, paramValueSplitted);
 				}

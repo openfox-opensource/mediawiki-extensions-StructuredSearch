@@ -154,7 +154,7 @@ class FormMain{
 		let currentVal =  FormMain.allData[paramKey],
 			newVal = null;
 			//if('category' == paramKey)
-		console.log(paramKey,currentVal,"currentVal,pa")
+		//console.log(paramKey,currentVal,"currentVal,pa")
 		if(!currentVal){
 			return false;
 		}
@@ -206,7 +206,7 @@ class FormMain{
 	}
 	static getFullResultFromParams(val, fieldName, paramsSettings){
 		let foundOption, options = utils.safeGet(paramsSettings, fieldName + '.widget.options');
-		console.log("paramsSettings, fieldName + '.widget.options'",paramsSettings, fieldName + '.widget.options', fieldsDetector.isMultiple(paramsSettings[fieldName]));
+		//console.log("paramsSettings, fieldName + '.widget.options'",paramsSettings, fieldName + '.widget.options', fieldsDetector.isMultiple(paramsSettings[fieldName]));
 		if(fieldsDetector.isMultiple(paramsSettings[fieldName]) ){
 			if(options){
 				for(let option of options){
