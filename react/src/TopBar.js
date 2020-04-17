@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import settingsGetter from './libs/settingsGetter';
 import FormInput from './libs/FormInput';
 import FormMain from './libs/FormMain';
-import ajaxCall from './libs/ajaxCall';
 import EventEmitter from './libs/EventEmitter';
 import utils from './libs/utils';
 import translate from './libs/translations';
@@ -84,7 +83,7 @@ class TopBar extends Component {
     return item;
   }
   removeLabel( fieldName, valueObj) {
-    if('undefined' != typeof this.state.inputs && 'range' === this.state.inputs[fieldName].widget.type){
+    if('undefined' !== typeof this.state.inputs && 'range' === this.state.inputs[fieldName].widget.type){
       FormMain.clearField(fieldName);
     }
     else{
@@ -132,7 +131,7 @@ class TopBar extends Component {
             for(let bind of binds){
               if(bind.includes(fieldKey)){
                 for(let boundFieldKey of bind){
-                  if(boundFieldKey != fieldKey){
+                  if(boundFieldKey !== fieldKey){
                     //console.log(boundFieldKey,allData[boundFieldKey], "boundFieldKey,allData[boundFieldKey]" );
                     if( !allData[boundFieldKey] || !allData[boundFieldKey].length ){
                       delete(newLabels[fieldKey]);
@@ -171,10 +170,10 @@ class TopBar extends Component {
   }
   render() {
     let allInputs = [],
-        labelsKeyed = [],
+        //labelsKeyed = [],
         labels = [],
         toggleSidebar = <button type="button" className="hide-on-desktop" onClick={this.toggleSidebar.bind(this)}>{this.state['structuredsearch-toggle-sidebar']}<i className={'fas fa-chevron-' + this.state.chevronDir}></i></button>;
-    if('undefined' != typeof this.state.inputs){
+    if('undefined' !== typeof this.state.inputs){
       let inputsSorted = Object.values(this.state.inputs).sort(utils.sortByWeight);
       for(let inputData of inputsSorted){
       //for(let inputDataKey of Object.keys(this.state.inputs)){

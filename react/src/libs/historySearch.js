@@ -100,7 +100,7 @@ class historySearch{
 		let defaultValues = {};
 		for(let paramKey in paramsSettings){
 			//just one param - 
-			if(paramKeyToGet && paramKeyToGet != paramKey){
+			if(paramKeyToGet && paramKeyToGet !== paramKey){
 				continue;
 			}
 			let  defaults = [],
@@ -123,7 +123,7 @@ class historySearch{
 		return historySearch.fixQueryStr(utils.toQueryStr(defaultSearch)) ===  historySearch.fixQueryStr(utils.toQueryStr(search));
 	}
 	static fixQueryStr( str ){
-		return str.replace('advanced_search=','search=').replace(/title=.+(\&|$)/,'');
+		return str.replace('advanced_search=','search=').replace(/title=.+(&|$)/,'');
 	}
 	static freeze(){
 		historySearch.isFreezed = true;

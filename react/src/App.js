@@ -3,7 +3,7 @@ import settingsGetter from './libs/settingsGetter';
 import FormInput from './libs/FormInput';
 import FormMain from './libs/FormMain';
 import EventEmitter from './libs/EventEmitter';
-import translate from './libs/translations'
+//import translate from './libs/translations'
 import utils from './libs/utils'
 import historySearch from './libs/historySearch'
 

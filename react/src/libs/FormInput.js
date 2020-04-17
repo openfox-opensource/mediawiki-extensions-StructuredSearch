@@ -24,7 +24,7 @@ class FormInput extends Component {
 		};
 		if( "select" === props.inputData.widget.type ){
 			let selected = props.inputData.widget.default || initOptions[0];
-			if('string' == typeof selected){
+			if('string' === typeof selected){
 				selected = [{
 					value:selected,
 					label:selected
@@ -61,7 +61,7 @@ class FormInput extends Component {
 	extractOptions( options){
 		let optionsStructured = [];
 		for(let option of options){
-			if( 'string' == typeof option){
+			if( 'string' === typeof option){
 				optionsStructured.push({
 					value: option, 
 					label: option
@@ -162,7 +162,7 @@ class FormInput extends Component {
 		FormMain.submitData();
 	}
 	autocompleteInputKeyDown( event){
-		if( 13 == event.keyCode){
+		if( 13 === event.keyCode){
 			setTimeout( ()=>{
 				let searchInput = document.querySelector('.field-wrp-name-search input'),
 					inputVal = searchInput.value,
@@ -192,7 +192,7 @@ class FormInput extends Component {
 		
 		this.setState({selected : value});
 		
-		if('<select>' == value.value ){
+		if('<select>' === value.value ){
 			if(this.state.inputData.widget['is_not_multiple']){
 				FormMain.clearField( fieldName );
 			}
@@ -356,7 +356,7 @@ class FormInput extends Component {
 					onChange={this.inputChanges.bind(this, inputData.field)} />;
 	}
 	autocompleteBuild (inputData){
-			let submitButton = this.isSearchAutomplete() ? <button type='button' onClick={this.submitClicked.bind(this)} dangerouslySetInnerHTML={{__html:this.state['structuredsearch-search-label']}}></button> : '',
+			let submitButton = this.isSearchAutomplete() ? <button type='button' onClick={this.submitClicked.bind(this)} dangerouslySetInnerHTML={{__html:this.state['structuredsearch-search-label']}}></button> : '',///
 				placeholder = this.getPlaceholder( inputData );
 			return   <div className="autocomplete-wrp"><Autocomplete
 						  getItemValue={(item) => item.label}
@@ -371,12 +371,13 @@ class FormInput extends Component {
 						  onSelect={this.autocompleteSelected.bind(this, inputData.field)}
 						/>
 					{submitButton}
-					</div>
+					</div>;
+					///
 	}
 	autocompleteRender (item, isHighlighted){
 
-		let nsWrapper = this.isSearchAutomplete() && item.ns ? <span className="ns-wrapper">{item.ns}</span> : '',
-			innerHtml = item.label;//this.isSearchAutomplete() ? <a href={item.href}>{nsWrapper}<span className="label-wrapper">{item.label}</span></a> : item.label;
+		///let nsWrapper = this.isSearchAutomplete() && item.ns ? <span className="ns-wrapper">{item.ns}</span> : '',*/
+		let	innerHtml = item.label;//this.isSearchAutomplete() ? <a href={item.href}>{nsWrapper}<span className="label-wrapper">{item.label}</span></a> : item.label;
 		return <div className={ 'autocomplete-item ' + (isHighlighted ? 'highlighted' : 'regular') } key={item.label}>
 				     {innerHtml}
 				</div>;

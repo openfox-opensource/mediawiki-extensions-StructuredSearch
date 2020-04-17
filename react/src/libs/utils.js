@@ -18,6 +18,7 @@ class utils{
 	}
 	static safeGet( objToSearch, propsArray ){
 		if('string' === typeof propsArray){
+			// eslint-disable-next-line
 			propsArray = propsArray.split(/[\.|\[|\]]/).filter( part => part || part === 0);
 		}
   		return propsArray.reduce((xs, x) => (xs && xs[x]) ? xs[x] : null, objToSearch);

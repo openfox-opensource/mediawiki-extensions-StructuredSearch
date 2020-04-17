@@ -87,6 +87,9 @@ class Results extends Component {
         }
     });
   }
+  resultClicked( title ){
+    FormMain.fireGlobalEvent( {title:title}, 'StructuredSearchResultclicked');
+  }
   getTempalteByResult( result ){
     let ns = result.namespaceId;
     return this.templates['template_' + ns] || this.templates['default'];
@@ -94,7 +97,7 @@ class Results extends Component {
   getResultJsx( result ){
     let template = this.getTempalteByResult( result ); 
     //console.log(template,'template',result);
-    return <ReactMustache template={template} data={result} />;
+    return <ReactMustache template={template} data={result} onClick={this.resultClicked.bind(result.full_title, this)}/>;
   }
   scrollUp(){
     window.scrollTo({

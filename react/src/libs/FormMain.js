@@ -3,6 +3,7 @@ import ajaxCall from './ajaxCall'
 import fieldsDetector from './fieldsDetector'
 import utils from './utils'
 
+
 class FormMain{
 	static allData = {}
 	static binds = []
@@ -129,12 +130,25 @@ class FormMain{
 	    	reset:reset,
 	    	params:params
 	    });
+	    FormMain.fireGlobalEvent( params );
+
 	    ajaxCall.get(urlSuffix).then(data=>{
 	      //console.log(data, "data");
 	      let eventData = data.data.error ? { results: {error:true}} : data.data.StructuredSearchSearch;
 	      eventData.reset = reset;
 	      EventEmitter.emit('dataRecieved', eventData);
 	    });
+	}
+	static fireGlobalEvent( params, name = 'StructuredSearch' ){
+		var event;
+		if(typeof(Event) === 'function') {
+		  event = new Event( name );
+		}else{
+		  event = document.createEvent('Event');
+		  event.initEvent( name , false, false);
+		}
+		event.params = params;
+		document.dispatchEvent(event);
 	}
 	static clearField( paramKey, removeByField = null){
 		let currentVal =  FormMain.allData[paramKey],
@@ -162,7 +176,7 @@ class FormMain{
 	static removeBoundFields( paramKey, removeByField){
 		let fieldsBounds = FormMain.getBounds( paramKey );
 		for(let fieldBound of fieldsBounds){
-			if( fieldBound != removeByField ){
+			if( fieldBound !== removeByField ){
 				FormMain.clearField(fieldBound, paramKey);
 			}
 		}
@@ -196,7 +210,7 @@ class FormMain{
 		if(fieldsDetector.isMultiple(paramsSettings[fieldName]) ){
 			if(options){
 				for(let option of options){
-					if(option.value == val){
+					if(option.value === val){
 						foundOption = option;
 						break;
 					}
@@ -210,5 +224,8 @@ class FormMain{
 	}
 
 }
+
+
+
 
 export default FormMain;
