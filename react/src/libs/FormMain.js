@@ -51,7 +51,7 @@ class FormMain{
 	    }
 	}
 	static standardizeValue( value ){
-		return !('object' === typeof value && value.value ) ? {
+		return !('object' === typeof value && (value.value  || 0 === value.value ) )? {
 			label: value,
 			value: value
 		} : value;
