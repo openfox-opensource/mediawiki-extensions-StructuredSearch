@@ -242,9 +242,7 @@ class ApiSearch extends \ApiBase {
 				continue;
 			}
 			$allSubtablesOfFields = Utils::getSubtablesOfFields( $tableName );
-			if(isset($_GET['fff'])){
-				print_r([$allSubtablesOfFields,$tableName]);
-			}
+		
 			//die(print_r($allSubtablesOfFields));
 			$fieldsDeclared = self::getFieldsNames($allCargoTableExits, $tableName);
 			//die(in_array('jhkjhj', [0], TRUE));
@@ -298,8 +296,26 @@ class ApiSearch extends \ApiBase {
 			__METHOD__
 		);
 		$tables = [];
+		$excludeFields = [
+			"_ID",
+			// "_pageID",
+			// "_pageTitle",
+			"_pageName",
+			"_pageNamespace",
+		];
 		while ( $row = $dbr->fetchObject( $res ) ) {
-			$tables[$row->main_table] = unserialize($row->table_schema);
+			if(php_sapi_name() == "cli" ){
+				$dbrCargo = \CargoUtils::getDB();
+				$res = $dbrCargo->query( "DESCRIBE ". $dbrCargo->tablePrefix() . $row->main_table );
+				$r = [];
+				foreach( $res as $row2 ) {
+					if(!in_array($row2->Field , $excludeFields)){
+			        	$r[] = $row2->Field;
+					}
+				}
+
+			}
+			$tables[$row->main_table] = $r;//unserialize($r);
 		}
 		return $tables;
 	}
