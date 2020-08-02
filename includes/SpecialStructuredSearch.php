@@ -17,9 +17,24 @@ class SpecialStructuredSearch extends \SpecialPage {
      */
     function execute( $par ) {
         $out = $this->getOutput();
+        global $wgScriptPath;
         $this->setHeaders();
         $out->setPageTitle(wfMessage('structuredsearch'));
         $out->addModules( ['ext.StructuredSearch'] );
+        //redirect old IE to simplae search
+        $out->addHeadItem( "ie-polyfill", '<script type="text/javascript">
+            if( /MSIE \d|Trident.*rv:/.test(navigator.userAgent) ){
+                var newLocationString = location.search.match(/advanced_search=([^&]*)/);
+
+                console.log(newLocationString,"newLocationString", location.search);
+                if( newLocationString.length > 1){
+                    newLocationString = "?search=" + newLocationString[1];
+                    newLocationString = location.protocol + "//" + location.hostname + "' . $wgScriptPath . '/index.php" + newLocationString;
+                    location.href = newLocationString;
+                }
+            }
+        </script>' );
+
         $path_from_root = preg_replace('%' . $_SERVER["DOCUMENT_ROOT"] . '%', '', __DIR__);
         $path_to_static = 'react/dist';
         //$path_to_static = 'react/build/static/js';

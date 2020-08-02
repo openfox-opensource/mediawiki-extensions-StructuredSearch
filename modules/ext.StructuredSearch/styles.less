@@ -625,16 +625,17 @@ span.label-wrp {
       button.hide-on-desktop {
         transition: all ease .3s;
         background: #ffffff;
-        padding: 9px 2px;
+        padding: 3px 2px;
         margin-top: 3px;
         cursor: pointer;
         top: 5px;
         position: absolute;
         outline: 0;
-        color: #8b8762;
-        border: #D1CFC1 solid 2px;
-        right: 2px;
+        color: #A5A5A5;
+        border: #8ec0e5 solid 2px;
+	right: 4px;
         border-radius: 0 23px 23px 0;
+	display:block;
         i {
           margin: 0 3px;
           font-weight: 400;
@@ -677,14 +678,22 @@ span.label-wrp {
               top: 0;
               height: 131px;
               width: 100%;
-              display: table;
+              /*display: table;*/
               padding: 0;
+	      font-size: 16px;
+		font-weight:normal;
+		color:#fff;
               a {
-                vertical-align: bottom;
+                vertical-align: middle;
                 display: table-cell;
                 padding: 5px;
                 color: #fff;
                 text-shadow: black 0px 0px 7px;
+		text-align: center;
+		width: 95%;
+		display: inline-block;
+		padding: 13% 0 0;
+		font-weight: bold;
               }
             }
             .snippet {
@@ -789,6 +798,9 @@ td[class*="mw-search-ns"], #mw-searchoptions h4,
     color: @main-color-light;
       &:hover {
         color: #fff;
+	i {
+	color: #A5A5A5;
+	}
       }
     }
   }
