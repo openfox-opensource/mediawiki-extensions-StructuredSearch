@@ -97,8 +97,7 @@ class ApiSearch extends \ApiBase {
 
 		
 		$results = $api->getResult()->getResultData();
-		//die('<pre>' . print_r([$params,$results],1) . '</pre>');
-		//$results = $this->filterResults($results);
+		
 		return $this->getResultsAdditionalFields($results);
 	}	
 	public static function extractSearchStringFromFields( $params ) {
@@ -144,10 +143,12 @@ class ApiSearch extends \ApiBase {
 	protected function getResultsAdditionalFields( $results) {
 		$titles = array_column($results['query']['search'], 'title');
 		//die(print_r($results['query']));
+		$results = self::getResultsAdditionalFieldsFromTitles( $titles, $results['query']['search']);
+		\Hooks::run( 'StructuredSearchResultsView', [ &$resultsTitlesForCheck ] );
 		return [
 			'continue' => isset( $results['continue'] ) ? $results['continue'] : '',
 			'searchinfo' => $results['query']['searchinfo'],
-			'results' => self::getResultsAdditionalFieldsFromTitles( $titles, $results['query']['search'])
+			'results' => $results
 		];
 	}
 	public static function getResultsAdditionalFieldsFromTitles( $titles, $fullResults ) {
@@ -159,7 +160,6 @@ class ApiSearch extends \ApiBase {
 		$resultsTitlesForCheck = [];
 		$resultsTitlesAliases = [];
 		$namespaceIds = self::getNamespaces();
-		//die(print_r($namespaceIds));
 		foreach ($titles as $key => $val) {
 			$titleClass = \Title::newFromText( $val );
 			
@@ -204,8 +204,6 @@ class ApiSearch extends \ApiBase {
 			}
 		}
 		
-		//die($tableName . '  >>  ' . print_r($conditions));
-		//die(print_r([$resultsTitlesForCheck,"ss"]));
 		\Hooks::run( 'StructuredSearchResults', [ &$resultsTitlesForCheck ] );
 		return $resultsTitlesForCheck;
 	}
@@ -236,16 +234,16 @@ class ApiSearch extends \ApiBase {
 		//no normal way to find 
 		$allCargoTableExits = self::cargoTableExits( );
 		$allCargoTableExitsNames = array_keys( $allCargoTableExits );
-
+		
 		foreach ($allFieldsByTables as $tableName => $fields) {
 			if(!in_array($tableName, $allCargoTableExitsNames)){
+				
 				continue;
 			}
 			$allSubtablesOfFields = Utils::getSubtablesOfFields( $tableName );
+			
 		
-			//die(print_r($allSubtablesOfFields));
 			$fieldsDeclared = self::getFieldsNames($allCargoTableExits, $tableName);
-			//die(in_array('jhkjhj', [0], TRUE));
 			$fields = array_map(function($val) use ($fieldsDeclared){
 				if($fieldsDeclared && !in_array($val, $fieldsDeclared, TRUE)){
 					if($fieldsDeclared && in_array($val . '__full', $fieldsDeclared, TRUE)){
@@ -262,6 +260,7 @@ class ApiSearch extends \ApiBase {
 			$conditions = [];
 			$conditions[] = '_pageName IN (' . $dbr->makeList( array_column( $resultsTitlesForCheck,'full_title' )) . ')';
 			$res = $dbrCargo->select( $tableName, $fields, $conditions);
+			
 			//print_r($conditions);
 			while ( $row = $dbrCargo->fetchObject( $res ) ) {
 				//print_r([$row,'d']);
@@ -304,19 +303,18 @@ class ApiSearch extends \ApiBase {
 			"_pageNamespace",
 		];
 		while ( $row = $dbr->fetchObject( $res ) ) {
-			if(php_sapi_name() == "cli" ){
-				$dbrCargo = \CargoUtils::getDB();
-				$res = $dbrCargo->query( "DESCRIBE ". $dbrCargo->tablePrefix() . $row->main_table );
-				$r = [];
-				foreach( $res as $row2 ) {
-					if(!in_array($row2->Field , $excludeFields)){
-			        	$r[] = $row2->Field;
-					}
+			$dbrCargo = \CargoUtils::getDB();
+			$res2 = $dbrCargo->query( "DESCRIBE ". $dbrCargo->tablePrefix() . $row->main_table );
+			$r = [];
+			foreach( $res2 as $row2 ) {
+				if(!in_array($row2->Field , $excludeFields)){
+		        	$r[] = $row2->Field;
 				}
-
 			}
 			$tables[$row->main_table] = $r;//unserialize($r);
 		}
+
+
 		return $tables;
 	}
 	public static function addCategories( &$resultsTitlesForCheck ) {
@@ -335,15 +333,12 @@ class ApiSearch extends \ApiBase {
 				'category' => array( 'INNER JOIN', array( 'cat_title=cl_to' ) ),
 			)
 		);
-		//die(print_r('CONCAT(page_namespace,page_title) IN (' . $dbr->makeList( array_keys($resultsTitlesForCheck )) . ')'));
 		$allCategories = [];
 		while ( $row = $dbr->fetchObject( $res ) ) {
 			$allCategories[] = (array) $row;
 		}
-		//die(print_r($allCategories));
 		$catTitles = array_column( $allCategories, 'cl_to');
 		$categoriesToExclude = [];
-		//die(print_r([$catTitles,$allCategories]));
 		if(count($catTitles)){
 			$res = $dbr->select(
 				array( 'page','page_props' ),
@@ -366,7 +361,6 @@ class ApiSearch extends \ApiBase {
 			}
 		}
 		$categoriesToExclude = array_unique($categoriesToExclude);
-		//die(print_r([$allCategories, $categoriesToExclude]));
 		foreach ($allCategories as $row) {
 			$key = $row['page_namespace'] .  ':' . $row['page_title'];
 			
@@ -374,7 +368,6 @@ class ApiSearch extends \ApiBase {
 				continue;
 			}
 			else{
-				//print_r(['added', $key, $row]);
 				$resultsTitlesForCheck[$key]['category'][] = [
 					'name' => preg_replace('/_/',' ',$row['cl_to']),
 					'key' => $row['cl_to'],
@@ -416,7 +409,7 @@ class ApiSearch extends \ApiBase {
 	}
 	public static function getFieldsNames($allCargoTableExits, $tableName){
 		
-		return array_keys($allCargoTableExits[$tableName]) ;
+		return $allCargoTableExits[$tableName] ;
 		// $res = $dbr->query('Describe ');
 		// $row = $dbr->fetchRow( $res );
 		// $fields = $row[0] ? unserialize($row[0]) : [];
