@@ -199,6 +199,7 @@ function StructuredSearchResults( &$resultsTitlesForCheck ){ ... }
 ```
 Use it to modify the results fields after search - both for indexing and viewing
 
+```
 function StructuredSearchResultsView( &$resultsTitlesForCheck ){ ... }
 ```
 Use it to modify the results fields after search - for view only
