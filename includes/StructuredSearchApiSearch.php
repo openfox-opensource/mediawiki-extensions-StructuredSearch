@@ -143,12 +143,13 @@ class ApiSearch extends \ApiBase {
 	protected function getResultsAdditionalFields( $results) {
 		$titles = array_column($results['query']['search'], 'title');
 		//die(print_r($results['query']));
-		$results = self::getResultsAdditionalFieldsFromTitles( $titles, $results['query']['search']);
-		\Hooks::run( 'StructuredSearchResultsView', [ &$resultsTitlesForCheck ] );
+		$resultsData = self::getResultsAdditionalFieldsFromTitles( $titles, $results['query']['search']);
+		\Hooks::run( 'StructuredSearchResultsView', [ &$resultsData ] );
+	
 		return [
 			'continue' => isset( $results['continue'] ) ? $results['continue'] : '',
 			'searchinfo' => $results['query']['searchinfo'],
-			'results' => $results
+			'results' => $resultsData
 		];
 	}
 	public static function getResultsAdditionalFieldsFromTitles( $titles, $fullResults ) {
