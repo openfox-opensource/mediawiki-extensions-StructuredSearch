@@ -97,7 +97,9 @@ class ApiSearch extends \ApiBase {
 
 		
 		$results = $api->getResult()->getResultData();
-		//die('<pre>' . print_r([$params,$results],1) . '</pre>');
+		// if( isset($_GET['try'])){
+		// 	die('<pre>' . print_r([$params,$results],1) . '</pre>');
+		// }
 		//$results = $this->filterResults($results);
 		return $this->getResultsAdditionalFields($results);
 	}	
@@ -236,16 +238,17 @@ class ApiSearch extends \ApiBase {
 		//no normal way to find 
 		$allCargoTableExits = self::cargoTableExits( );
 		$allCargoTableExitsNames = array_keys( $allCargoTableExits );
-
+		
 		foreach ($allFieldsByTables as $tableName => $fields) {
 			if(!in_array($tableName, $allCargoTableExitsNames)){
+				
 				continue;
 			}
 			$allSubtablesOfFields = Utils::getSubtablesOfFields( $tableName );
+			
 		
 			//die(print_r($allSubtablesOfFields));
 			$fieldsDeclared = self::getFieldsNames($allCargoTableExits, $tableName);
-			//die(in_array('jhkjhj', [0], TRUE));
 			$fields = array_map(function($val) use ($fieldsDeclared){
 				if($fieldsDeclared && !in_array($val, $fieldsDeclared, TRUE)){
 					if($fieldsDeclared && in_array($val . '__full', $fieldsDeclared, TRUE)){
@@ -262,6 +265,7 @@ class ApiSearch extends \ApiBase {
 			$conditions = [];
 			$conditions[] = '_pageName IN (' . $dbr->makeList( array_column( $resultsTitlesForCheck,'full_title' )) . ')';
 			$res = $dbrCargo->select( $tableName, $fields, $conditions);
+			
 			//print_r($conditions);
 			while ( $row = $dbrCargo->fetchObject( $res ) ) {
 				//print_r([$row,'d']);
@@ -304,19 +308,20 @@ class ApiSearch extends \ApiBase {
 			"_pageNamespace",
 		];
 		while ( $row = $dbr->fetchObject( $res ) ) {
-			if(php_sapi_name() == "cli" ){
-				$dbrCargo = \CargoUtils::getDB();
-				$res = $dbrCargo->query( "DESCRIBE ". $dbrCargo->tablePrefix() . $row->main_table );
-				$r = [];
-				foreach( $res as $row2 ) {
-					if(!in_array($row2->Field , $excludeFields)){
-			        	$r[] = $row2->Field;
-					}
+			$dbrCargo = \CargoUtils::getDB();
+			$res2 = $dbrCargo->query( "DESCRIBE ". $dbrCargo->tablePrefix() . $row->main_table );
+			$r = [];
+			foreach( $res2 as $row2 ) {
+				if(!in_array($row2->Field , $excludeFields)){
+		        	$r[] = $row2->Field;
 				}
-
 			}
 			$tables[$row->main_table] = $r;//unserialize($r);
 		}
+		// if( isset( $_GET['try'])){
+		// 	die(print_r($tables));
+		// }
+
 		return $tables;
 	}
 	public static function addCategories( &$resultsTitlesForCheck ) {
@@ -416,7 +421,7 @@ class ApiSearch extends \ApiBase {
 	}
 	public static function getFieldsNames($allCargoTableExits, $tableName){
 		
-		return array_keys($allCargoTableExits[$tableName]) ;
+		return $allCargoTableExits[$tableName] ;
 		// $res = $dbr->query('Describe ');
 		// $row = $dbr->fetchRow( $res );
 		// $fields = $row[0] ? unserialize($row[0]) : [];
