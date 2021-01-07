@@ -97,7 +97,7 @@ class ApiSearch extends \ApiBase {
 
 		
 		$results = $api->getResult()->getResultData();
-		
+
 		return $this->getResultsAdditionalFields($results);
 	}	
 	public static function extractSearchStringFromFields( $params ) {
