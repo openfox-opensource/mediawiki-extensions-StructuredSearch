@@ -150,6 +150,7 @@ class ApiSearch extends \ApiBase {
 			'continue' => isset( $results['continue'] ) ? $results['continue'] : '',
 			'searchinfo' => $results['query']['searchinfo'],
 			'results' => $resultsData
+
 		];
 	}
 	public static function getResultsAdditionalFieldsFromTitles( $titles, $fullResults ) {
