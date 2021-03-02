@@ -29,17 +29,15 @@ Add details about fields to:
 The structure of the array.  
 No key needed, the field would be unieqe identifier
 ```
-[
+'namespace'=>[
     'field' => 'namespace',
     'label' => "Text showed on form as input's label",
 	'widget' => [
 	    'type' => 'checkboxes',
 	    'position' => 'sidebar',    
 	    'options' => [
-	        {
-	            label:"text of label",
-	            value:"value"
-	        }
+	            "label"=>"text of label",
+	            "value"=>"value"
 	    ],
 	    'autocomplete_callback' => callable_string,
 	    'search_callbak' => callable_string,
