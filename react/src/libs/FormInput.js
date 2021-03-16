@@ -351,24 +351,27 @@ class FormInput extends Component {
 			defaultValue2 = splitted[1] ? parse(splitted[1], baseDateFormat, new Date()) : null;
 			//console.log("currentValue splitted",splitted[1],defaultValue2,splitted[0],defaultValue1);
 		}
-		return   <span>
-					<span>{structuredsearch_from_label}</span>
-					<DatePicker 
-						className="range-input range-input-from"
-						name={inputData.field} 
-						selectsStart={true}
-						selected={defaultValue1}
-						dateFormat={baseDateFormat}
-						onChange={this.dateRangeChanges.bind(this, inputData.field,0)} />
-					<span>{structuredsearch_to_label}</span>
-					<DatePicker 
-						className="range-input range-input-to"
-						selected={defaultValue2}
-						selectsEnd={true}
-						name={inputData.field} 
-						dateFormat={baseDateFormat}
-						onChange={this.dateRangeChanges.bind(this, inputData.field,1)} />
-					</span>;
+		return   <>
+					<div>
+						<span>{structuredsearch_from_label}</span>
+						<DatePicker 
+							className="date-range-input range-input-from"
+							name={inputData.field} 
+							selectsStart={true}
+							selected={defaultValue1}
+							dateFormat={baseDateFormat}
+							onChange={this.dateRangeChanges.bind(this, inputData.field,0)} />
+						</div>
+						<div><span>{structuredsearch_to_label}</span>
+						<DatePicker 
+							className="date-range-input range-input-to"
+							selected={defaultValue2}
+							selectsEnd={true}
+							name={inputData.field} 
+							dateFormat={baseDateFormat}
+							onChange={this.dateRangeChanges.bind(this, inputData.field,1)} />
+						</div>
+						</>;
 	}
 	rangeBuild (inputData){
 		let structuredsearch_from_label = this.state['structuredsearch-from-label'],
