@@ -6,9 +6,14 @@ import translate from './translations'
 import fieldsDetector from './fieldsDetector'
 import EventEmitter from './EventEmitter'
 import Select from 'react-select';
+import DatePicker from 'react-datepicker';
 import Autocomplete from 'react-autocomplete';
+//import Moment from 'moment';
 import ReactTooltip from 'react-tooltip'
-
+import {format, parse} from 'date-fns'
+import "react-datepicker/dist/react-datepicker.css";
+const baseDateFormat = 'dd/MM/yyyy';
+//Moment.locale('he-IL');
 class FormInput extends Component {
 	constructor(props) {
 		super(props);
@@ -59,6 +64,7 @@ class FormInput extends Component {
 		}
 	}
 	extractOptions( options){
+		options = utils.fixObjectToArray( options );
 		let optionsStructured = [];
 		for(let option of options){
 			if( 'string' === typeof option){
@@ -207,6 +213,13 @@ class FormInput extends Component {
 		}
 		//this.valueChanged( fieldName, value.value);
 	}
+	dateRangeChanges(  fieldName, key, dateSelected){
+		let formatStr = baseDateFormat,
+			dateFormatted = format(dateSelected, formatStr);
+			//dateFormatted = Moment(dateSelected).format(format);
+		console.log(dateSelected,dateFormatted,"dateFormatted");
+		FormMain.ChangeValueByKey( fieldName, key, dateFormatted );
+	}
 	rangeChanges(  fieldName, key, event){
 		FormMain.ChangeValueByKey( fieldName, key, event.target.value );
 	}
@@ -232,9 +245,16 @@ class FormInput extends Component {
 				case 'checkboxes':
 				case 'autocomplete':
 				case 'radios':
-				case 'range':
-					//console.log(inputData,'inputData');
 					html = this[inputData.widget.type + 'Build']( this.state.inputData );
+					break;
+				case 'range':
+					if('date' == inputData.type){
+						html = this['dateRangeBuild']( this.state.inputData );
+					}
+					else{
+						html = this[inputData.widget.type + 'Build']( this.state.inputData );
+					}
+					//console.log(inputData,'inputData');
 					break;
 				default:
 					break;
@@ -253,7 +273,8 @@ class FormInput extends Component {
 			checkboxesAdvanced = [],
 			wrpClass = 'main-and-advanced-wrp' + 
 				( this.state.showAdvanced ? ' opened' : '');
-		for( let option of inputData.widget.options){
+		
+		for( let option of utils.fixObjectToArray(inputData.widget.options)){
 			let faClass = 'far ',
 				selectedClass = '',
 				checked = 0;
@@ -311,6 +332,43 @@ class FormInput extends Component {
 	        onChange={this.selectChanged.bind(this, inputData.field)}
 	        options={options}
 	      />
+	}
+	dateRangeBuild (inputData){
+		let structuredsearch_from_label = this.state['structuredsearch-from-label'],
+			structuredsearch_to_label = this.state['structuredsearch-to-label'],
+			defaultValue1, defaultValue2,
+			currentValue = FormMain.getValue( inputData.field );
+		console.log("currentValue dateRangeBuild",currentValue);
+		if(currentValue){
+			// if( utils.isArray( currentValue ) ){
+				// 	currentValue = currentValue[0];
+				// }
+				// if(currentValue && currentValue.value){
+					// 	currentValue = currentValue.value;
+					// }
+			let splitted = currentValue && !utils.isArray( currentValue ) ? currentValue.split('|') : ( currentValue ? currentValue : [] );
+			defaultValue1 = splitted[0] ? parse(splitted[0],baseDateFormat, new Date()) : null;
+			defaultValue2 = splitted[1] ? parse(splitted[1], baseDateFormat, new Date()) : null;
+			//console.log("currentValue splitted",splitted[1],defaultValue2,splitted[0],defaultValue1);
+		}
+		return   <span>
+					<span>{structuredsearch_from_label}</span>
+					<DatePicker 
+						className="range-input range-input-from"
+						name={inputData.field} 
+						selectsStart={true}
+						selected={defaultValue1}
+						dateFormat={baseDateFormat}
+						onChange={this.dateRangeChanges.bind(this, inputData.field,0)} />
+					<span>{structuredsearch_to_label}</span>
+					<DatePicker 
+						className="range-input range-input-to"
+						selected={defaultValue2}
+						selectsEnd={true}
+						name={inputData.field} 
+						dateFormat={baseDateFormat}
+						onChange={this.dateRangeChanges.bind(this, inputData.field,1)} />
+					</span>;
 	}
 	rangeBuild (inputData){
 		let structuredsearch_from_label = this.state['structuredsearch-from-label'],

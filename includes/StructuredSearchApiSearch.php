@@ -28,8 +28,8 @@ class ApiSearch extends \ApiBase {
 	}
 
 	public function execute() {
-		
-		if('127.0.0.1' == $_SERVER["REMOTE_ADDR"]){
+		global $fennecLocal;
+		if($fennecLocal || '127.0.0.1' == $_SERVER["REMOTE_ADDR"]){
 			header("Access-Control-Allow-Origin: *");
 		}
 		$result = $this->getResult();
@@ -111,13 +111,13 @@ class ApiSearch extends \ApiBase {
 					//print_r($params);
 				}
 		}
-		//print_r($searchParamsKeys);
+		//print_r($params);
 		foreach ($params as $pKey => $pValue) {
 			//print_r([in_array($pKey, $searchParamsKeys), self::isSearchableField( $pKey )]);
 			if( in_array($pKey, $searchParamsKeys) ){
 				
 				if(  Utils::isSearchableField( $pKey ) && $pValue){
-					$params['search'] .= Utils::getFeatureSearchStr( $pKey, $pValue);
+					$params['search'] .= Utils::getFeatureSearchStr( $pKey, $pValue, $searchParams[$pKey]);
 					unset($params[$pKey]);
 				}
 				else if( !$pValue ){
@@ -126,7 +126,7 @@ class ApiSearch extends \ApiBase {
 				}
 			}
 		}
-		//die();
+		//die( print_r([$params,$searchParamsKeys]));
 		return $params;
 	}
 	

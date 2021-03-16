@@ -7,6 +7,7 @@
     "query-string": "^6.8.1",
     "react": "^16.8.6",
     "react-autocomplete": "^1.8.1",
+    "react-datepicker": "^3.6.0",
     "react-dom": "^16.8.6",
     "react-mustache": "^0.1.5",
     "react-scripts": "3.0.1",

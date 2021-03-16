@@ -166,7 +166,14 @@ class Utils{
 		}
 		return $binds;
 	}
-	public static function getFeatureSearchStr( $fieldName, $fieldValue ) {
+	public static function getFeatureSearchStr( $fieldName, $fieldValue, $fieldDef ) {
+		if( 'section_24447:560t5r' == $fieldName ){
+			print_r([__LINE__,$fieldValue]);
+		}
+		$fieldValue = self::getFieldValueForIndex($fieldValue, $fieldDef);
+		if( 'section_24447:560t5r' == $fieldName ){
+			print_r([__LINE__,$fieldValue]);
+		}
 		$fieldValue = is_array($fieldValue) ? implode("|", $fieldValue) : $fieldValue;
 		$fieldValue = '"' . addcslashes($fieldValue,'"') .  '"';
 		return ' ' . Utils::getFeatureKey( $fieldName) . ':' . $fieldValue;
@@ -183,6 +190,29 @@ class Utils{
 	public static function isCargoField( $key ) {
 		return strpos($key, ':');
 	}
+	public static function getFieldValueForIndex( $val, $paramDef ) {
+		$type = isset( $paramDef['type'] ) ? $paramDef['type'] : 'default';
+		$val = is_array($val) ? $val : explode( '|', $val);
+		
+		switch( $type ){
+			case 'date':
+				$cb = function ($p){
+					if(preg_match('%\d{4}/\d{1,2}/\d{1,2}%', $p )){
+						$p = implode('-', array_reverse(explode('/', $p)));
+					}
+					return strtotime($p);
+				};
+				break;
+			default:
+				$cb = function ($p){
+					return $p;
+				};
+				break;
+		}
+		$val = array_map($cb, $val);
+		
+		return $val;
+	} 
 	public static function isNumericField( $param ) {
 		$isRange = isset($param['widget']['type']) && 'range' == $param['widget']['type'];
 		$isNumber = isset($param['filed_type']) && 'number' == $param['filed_type'];

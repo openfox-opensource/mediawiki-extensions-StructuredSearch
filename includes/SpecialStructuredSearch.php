@@ -47,6 +47,11 @@ class SpecialStructuredSearch extends \SpecialPage {
         		//$file_content = file_get_contents(__DIR__ .'/../' . $path_to_static . '/' . $file);
         		$scripts .= "<script src='$path_for_file'></script>";
         	}
+        	else if('css' == pathinfo($file, PATHINFO_EXTENSION)){
+                $path_for_file = $path_from_root . '/../' . $path_to_static . '/'. $file;
+        		//$file_content = file_get_contents(__DIR__ .'/../' . $path_to_static . '/' . $file);
+        		$scripts .= "<link rel='stylesheet' href='$path_for_file'></link>";
+        	}
         }
         $out->addHTML( file_get_contents(__DIR__ . '/../templates/search-page.html') . $scripts);   
     }

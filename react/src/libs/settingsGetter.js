@@ -1,11 +1,22 @@
 import ajaxCall from './ajaxCall';
+import utils from './utils';
 
 class settingsGetter{
+	static fixData( data ){
+		for( let fieldName of Object.keys(data.params)){
+			if(data.params[fieldName].widget && data.params[fieldName].widget.options){
+				data.params[fieldName].widget.options = utils.fixObjectToArray(data.params[fieldName].widget.options);
+			}
+		}
+		return data;
+		//console.log("data.params",data.params)
+		//console.log("data",data);
+	}
 	static get(){
 		return new Promise( (resolve) => {
 			if(!settingsGetter.onCall){
 					settingsGetter.getFromRemote().then(data => {
-						settingsGetter.data = data;
+						settingsGetter.data = settingsGetter.fixData(data);
 						resolve(settingsGetter.data)
 					});
 			}

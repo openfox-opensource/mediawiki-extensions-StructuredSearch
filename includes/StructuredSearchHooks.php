@@ -115,14 +115,18 @@ class Hooks{
 	 */
 	public static function onSearchIndexFields( array &$fields, SearchEngine $engine ) {
 		
-		if ( $engine instanceof \CirrusSearch ) {
+		//die(print_r(get_class($engine)));
+		if ( $engine instanceof \CirrusSearch\CirrusSearch ) {
 			/**
 			 * @var \CirrusSearch $engine
 			 */
+			
 			$params = Utils::getSearchParams();
+			
 			foreach ($params as $param) {
 				if( Utils::isCargoField($param['field']) ){
 					$keyForCirrus = Utils::replaceCargoFieldToElasticField( $param['field']);
+					
 					$builder = new CirrusSearchIndexFieldFactory($engine->getConfig());
 
 					$fields[$keyForCirrus] = Utils::isNumericField($param) ? $builder->newLongField($keyForCirrus) : $builder->newStringField($keyForCirrus);
@@ -130,6 +134,7 @@ class Hooks{
 			}
 			//$fields['tryToText'] = CoordinatesIndexField::build( 'coordinates', $engine->getConfig(), $engine );
 		} 
+		
 	}
 
 	/**
@@ -152,16 +157,17 @@ class Hooks{
 		$params = Utils::getSearchParams();
 		$vals = ApiSearch::getResultsAdditionalFieldsFromTitles( [$page->getTitle()->getPrefixedText()],[[]]);
 		$vals = array_pop( $vals );
-		
 		foreach ($params as $param) {
 			if( Utils::isCargoField($param['field']) ){
 				$keyForCirrus = Utils::replaceCargoFieldToElasticField( $param['field']);
 				$fieldName = $param['field'];
-				$fields[ $keyForCirrus ] = isset($vals[ $fieldName ]) ? $vals[$fieldName ] : '';
+				print_r([__LINE__,$vals[$fieldName ]]);
+				$fields[ $keyForCirrus ] = isset($vals[ $fieldName ]) ? Utils::getFieldValueForIndex($vals[$fieldName ], $param) : '';
 			}
 		}
-
+		print_r($fields);
 	}
+	
 	public static function onCirrusSearchMappingConfig( array &$config, MappingConfigBuilder $builder ) { 
 		
 	}

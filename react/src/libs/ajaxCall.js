@@ -22,7 +22,7 @@ class ajaxCall{
 		return new Promise( (resolve) => {
 			if(window.document.body.classList.contains('mediawiki')){
 				let waitForMw = setInterval( function(){
-					if(window.mw && window.mw.config){
+					if(window.mw && window.mw.config && window.mw.config.get('wgScriptPath')){
 						clearInterval( waitForMw );
 						resolve( window.mw.config.get('wgServer') + window.mw.config.get('wgScriptPath') + '/' + ajaxCall.addApiEndpoint(dontAddApi) );
 					}

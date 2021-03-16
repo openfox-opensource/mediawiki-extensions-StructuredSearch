@@ -4,7 +4,7 @@ class utils{
 		return window.innerWidth <= 992;
 	}
 	static isArray( val ){
-		return 'object' === typeof val && 'undefined' !== typeof val;
+		return 'object' === typeof val && 'undefined' !== typeof val.length;
 	}
 	static toQueryStr( params){
 	    return Object.keys(params).sort().map(key => (params[key] ? key + '=' + params[key]: '')).filter( part => part ).join('&');
@@ -15,6 +15,19 @@ class utils{
 	  		ret = firstWeight > secondWeight ? 1 : ( firstWeight < secondWeight ? -1 : 0 );
 	  return ret;
 
+	}
+	
+	static fixObjectToArray( maybeObject ){
+		if( !utils.isArray( maybeObject ) ){
+			let toArr = [];
+			for(let val in maybeObject ){
+				toArr.push(val);
+			}
+			return toArr;
+		}
+		else{
+			return maybeObject;
+		}
 	}
 	static safeGet( objToSearch, propsArray ){
 		if('string' === typeof propsArray){
