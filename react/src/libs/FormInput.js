@@ -68,6 +68,12 @@ class FormInput extends Component {
 		let optionsStructured = [];
 		for(let option of options){
 			if( 'string' === typeof option){
+				try {
+			
+					throw new Error(option)
+				} catch (error) {
+					console.log(error)
+				}
 				optionsStructured.push({
 					value: option, 
 					label: option
@@ -213,11 +219,16 @@ class FormInput extends Component {
 		}
 		//this.valueChanged( fieldName, value.value);
 	}
+	datepickerChanges(  fieldName, dateSelected){
+		let formatStr = baseDateFormat,
+			dateFormatted = format(dateSelected, formatStr);
+		FormMain.setValue(fieldName, dateFormatted);
+	}
 	dateRangeChanges(  fieldName, key, dateSelected){
 		let formatStr = baseDateFormat,
 			dateFormatted = format(dateSelected, formatStr);
 			//dateFormatted = Moment(dateSelected).format(format);
-		console.log(dateSelected,dateFormatted,"dateFormatted");
+		//console.log(dateSelected,dateFormatted,"dateFormatted");
 		FormMain.ChangeValueByKey( fieldName, key, dateFormatted );
 	}
 	rangeChanges(  fieldName, key, event){
@@ -245,6 +256,7 @@ class FormInput extends Component {
 				case 'checkboxes':
 				case 'autocomplete':
 				case 'radios':
+				case 'date':
 					html = this[inputData.widget.type + 'Build']( this.state.inputData );
 					break;
 				case 'range':
@@ -333,12 +345,27 @@ class FormInput extends Component {
 	        options={options}
 	      />
 	}
+	dateBuild (inputData){
+		let value = FormMain.getValue(inputData.field),
+			placeholder = this.getPlaceholder( inputData ),
+			isYearPicker = inputData.type_settings && 'year' === inputData.type_settings.date_type,
+			bareValue = ( utils.isArray(value) ? value[0] : value ),
+			valueDate = value ? parse( (bareValue.value ? bareValue.value : bareValue), baseDateFormat, new Date()) : null;
+		valueDate = !valueDate || isNaN( valueDate.getTime() ) ? null : valueDate;
+		return  <DatePicker 
+					placeholder={placeholder}
+					selected={valueDate}
+					showYearPicker={isYearPicker}
+					dateFormat={isYearPicker ? 'yyyy' :baseDateFormat}
+					name={inputData.field} 
+					onChange={this.datepickerChanges.bind(this, inputData.field)} />;
+		
+	}
 	dateRangeBuild (inputData){
 		let structuredsearch_from_label = this.state['structuredsearch-from-label'],
 			structuredsearch_to_label = this.state['structuredsearch-to-label'],
 			defaultValue1, defaultValue2,
 			currentValue = FormMain.getValue( inputData.field );
-		console.log("currentValue dateRangeBuild",currentValue);
 		if(currentValue){
 			// if( utils.isArray( currentValue ) ){
 				// 	currentValue = currentValue[0];

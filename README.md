@@ -33,12 +33,14 @@ No key needed, the field would be unieqe identifier
     'field' => 'namespace',
     'label' => "Text showed on form as input's label",
 	'widget' => [
-	    'type' => 'checkboxes',
+	    'type' => 'select',
 	    'position' => 'sidebar',    
 	    'options' => [
 	            "label"=>"text of label",
-	            "value"=>"value"
+	            "value"=>"value",
+                "is_not_multiple" => true
 	    ],
+	    'to_indexing_function' => callable_string,
 	    'autocomplete_callback' => callable_string,
 	    'search_callbak' => callable_string,
 ]
@@ -50,6 +52,7 @@ No key needed, the field would be unieqe identifier
 ```label``` shown on search UI as label of search input. Can contain HTML.  
 ```widget``` is array defines the search widget.  
 ```widget.type``` Possible values are: text|select|autocomplete|radios|checkboxes|range.  
+```widget.is_not_multiple``` Set to true toget one option in select.  
 ```widget.position``` Where the widget would be rendered:  
 ```topbar``` - on main box, below the main search input.
 ```sidebar``` - on sidebar.  
@@ -74,6 +77,17 @@ For example see:
 The function gets two variables: &$params, $fieldName  
 Add values to $params['search'] (string)
 Example - this function is checking what the value of "duration_type" (could be days, hours or minutes) and modify search in accordance.   
+```to_indexing_function``` -  Convert the data before index in elastic search.  
+**Use case**: if the data stored in template is  a date but you want to search by year, add custom function to convert full date to year, then add select of years in search page.  
+```
+
+'to_indexing_function' => '_convert_date_to_year',
+
+function _convert_date_to_year( $p ){
+    return date('Y',\MediaWiki\Extension\StructuredSearch\Utils::convertStrToTimestamp( $p ));
+}
+```
+
 ```
 function convert_duration_type_to_cargo_fields(&$params, $pKey){
     if( in_array('time_table:duration_type', array_keys($params)) && $params['time_table:duration'] ){

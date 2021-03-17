@@ -161,11 +161,9 @@ class Hooks{
 			if( Utils::isCargoField($param['field']) ){
 				$keyForCirrus = Utils::replaceCargoFieldToElasticField( $param['field']);
 				$fieldName = $param['field'];
-				print_r([__LINE__,$vals[$fieldName ]]);
 				$fields[ $keyForCirrus ] = isset($vals[ $fieldName ]) ? Utils::getFieldValueForIndex($vals[$fieldName ], $param) : '';
 			}
 		}
-		print_r($fields);
 	}
 	
 	public static function onCirrusSearchMappingConfig( array &$config, MappingConfigBuilder $builder ) { 

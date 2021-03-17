@@ -167,13 +167,9 @@ class Utils{
 		return $binds;
 	}
 	public static function getFeatureSearchStr( $fieldName, $fieldValue, $fieldDef ) {
-		if( 'section_24447:560t5r' == $fieldName ){
-			print_r([__LINE__,$fieldValue]);
-		}
-		$fieldValue = self::getFieldValueForIndex($fieldValue, $fieldDef);
-		if( 'section_24447:560t5r' == $fieldName ){
-			print_r([__LINE__,$fieldValue]);
-		}
+		//use it not for indexing - send third patam FALSE
+		$fieldValue = self::getFieldValueForIndex($fieldValue, $fieldDef, FALSE);
+
 		$fieldValue = is_array($fieldValue) ? implode("|", $fieldValue) : $fieldValue;
 		$fieldValue = '"' . addcslashes($fieldValue,'"') .  '"';
 		return ' ' . Utils::getFeatureKey( $fieldName) . ':' . $fieldValue;
@@ -190,24 +186,31 @@ class Utils{
 	public static function isCargoField( $key ) {
 		return strpos($key, ':');
 	}
-	public static function getFieldValueForIndex( $val, $paramDef ) {
+	public static function convertStrToTimestamp( $str ) {
+		if(preg_match('%\d{4}/\d{1,2}/\d{1,2}%', $str )){
+			$str = implode('-', array_reverse(explode('/', $str)));
+		}
+		return strtotime($str);
+	}
+	public static function getFieldValueForIndex( $val, $paramDef, $forIndex = true ) {
 		$type = isset( $paramDef['type'] ) ? $paramDef['type'] : 'default';
 		$val = is_array($val) ? $val : explode( '|', $val);
-		
-		switch( $type ){
-			case 'date':
-				$cb = function ($p){
-					if(preg_match('%\d{4}/\d{1,2}/\d{1,2}%', $p )){
-						$p = implode('-', array_reverse(explode('/', $p)));
-					}
-					return strtotime($p);
-				};
-				break;
-			default:
-				$cb = function ($p){
-					return $p;
-				};
-				break;
+		if( $forIndex && isset( $paramDef['to_indexing_function'] ) && $paramDef['to_indexing_function']){
+			$cb = $paramDef['to_indexing_function'];
+		}
+		else{
+			switch( $type ){
+				case 'date':
+					$cb = function ($p){
+						return self::convertStrToTimestamp( $p );
+					};
+					break;
+				default:
+					$cb = function ($p){
+						return $p;
+					};
+					break;
+			}
 		}
 		$val = array_map($cb, $val);
 		

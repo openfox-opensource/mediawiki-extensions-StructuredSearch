@@ -27,7 +27,7 @@ class ApiParams extends \ApiBase {
 
 	public function execute() {
 		global $fennecLocal;
-		if($fennecLocal || '127.0.0.1' == $_SERVER["REMOTE_ADDR"]){
+		if($fennecLocal ){
 			header("Access-Control-Allow-Origin: *");
 		}
 
