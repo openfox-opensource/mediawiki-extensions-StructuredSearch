@@ -257,16 +257,9 @@ class FormInput extends Component {
 				case 'autocomplete':
 				case 'radios':
 				case 'date':
-					html = this[inputData.widget.type + 'Build']( this.state.inputData );
-					break;
 				case 'range':
-					if('date' == inputData.type){
-						html = this['dateRangeBuild']( this.state.inputData );
-					}
-					else{
-						html = this[inputData.widget.type + 'Build']( this.state.inputData );
-					}
-					//console.log(inputData,'inputData');
+				case 'dateRange':
+					html = this[inputData.widget.type + 'Build']( this.state.inputData );
 					break;
 				default:
 					break;

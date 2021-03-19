@@ -7,7 +7,7 @@
 
 class fieldsDetector{
 	static isRange( fieldDef ){
-		return 'range' === fieldDef.widget.type;
+		return ['range','dateRange'].includes( fieldDef.widget.type );
 	}
 	static isMultiple( fieldDef ){
 		return multyFieldsTypes.includes( fieldDef.widget.type )

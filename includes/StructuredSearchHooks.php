@@ -217,7 +217,7 @@ class Hooks{
 					break;
 			}
 		}
-		self::addOptionsToCargoTable( $params );
+		
 		
 	}
 	static public function addOptionsToCargoTable( &$params ){

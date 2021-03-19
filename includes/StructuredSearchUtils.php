@@ -125,11 +125,22 @@ class Utils{
 		$params = $conf->get('StructuredSearchParams');
 		$newKeyedArray = [];
 		foreach ($params as $param) {
+			if(!isset($param['field']) || !$param['field']){
+				continue;
+			}
 			$newKeyedArray[$param['field']] = $param;
 		}
 		//run this before all hooks to let others modify predefined fields
 		Hooks::onStructuredSearchParams($newKeyedArray);
 		\Hooks::run( 'StructuredSearchParams', [ &$newKeyedArray ] );
+		//sanity
+		foreach ($newKeyedArray as $key => $param) {
+			if(!isset($param['field']) || !$param['field']){
+				unset($newKeyedArray[$key]);
+			}
+			
+		}
+		Hooks::addOptionsToCargoTable( $newKeyedArray );
 		//die(print_r($params,1));
 		return self::fixSearchParams( $newKeyedArray );
 	}

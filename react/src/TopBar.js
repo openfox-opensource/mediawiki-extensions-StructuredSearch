@@ -107,7 +107,7 @@ class TopBar extends Component {
           newLabels[fieldKey] = [];
           //console.log(allData[fieldKey],"allData[fieldKey]");
           allData[fieldKey] = this.standardizeItem( allData[fieldKey] );
-          if( 'range' === this.state.inputs[fieldKey].widget.type ){
+          if( fieldsDetector.isRange( this.state.inputs[fieldKey] ) ){
             let data = allData[fieldKey];
             //console.log('dataRange', data);
             if(data && (data[0] || data[1]) ){
