@@ -10,7 +10,7 @@ class FormMain{
 	static addValue(name, value){
 		FormMain.allData[ name ] = FormMain.allData[ name ] || [];
 		let standardizeValue = FormMain.standardizeValue(value);
-		//console.log(FormMain.allData[ name ], standardizeValue);
+		//console.log(FormMain.allData[ name ], standardizeValue,"standardizeValue");
 		if( !FormMain.allData[ name ].map( item => ('' + item.value)).includes( '' + standardizeValue.value ) ){
 			FormMain.allData[ name ].push( standardizeValue );
 			FormMain.fireChangeEvent();
@@ -51,10 +51,11 @@ class FormMain{
 	    }
 	}
 	static standardizeValue( value ){
-		return !('object' === typeof value && (value.value  || 0 === value.value ) )? {
+		let returnedOutput = !('object' === typeof value && (value.value  || 0 === value.value ) ) ? {
 			label: value,
 			value: value
 		} : value;
+		return returnedOutput;
 	}
 	static getAllValuesRaw(){
 		return FormMain.allData;

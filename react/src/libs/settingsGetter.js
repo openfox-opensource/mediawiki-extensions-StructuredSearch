@@ -9,7 +9,6 @@ class settingsGetter{
 			}
 		}
 		return data;
-		//console.log("data.params",data.params)
 		//console.log("data",data);
 	}
 	static get(){

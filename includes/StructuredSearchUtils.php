@@ -178,7 +178,7 @@ class Utils{
 		return $binds;
 	}
 	public static function getFeatureSearchStr( $fieldName, $fieldValue, $fieldDef ) {
-		//use it not for indexing - send third patam FALSE
+		//use it not for indexing - send third param FALSE
 		$fieldValue = self::getFieldValueForIndex($fieldValue, $fieldDef, FALSE);
 
 		$fieldValue = is_array($fieldValue) ? implode("|", $fieldValue) : $fieldValue;

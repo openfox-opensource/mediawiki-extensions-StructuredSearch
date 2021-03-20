@@ -148,21 +148,25 @@ class FormInput extends Component {
 				titles = allData[1],
 				links = allData[3],
 				filteredOptions = [];
-			for(let i = 0; i < titles.length; i++){
-				let ns, label, 
-					labelSplitted = titles[i].split(':');
-				if( labelSplitted.length > 1 ){
-					ns = labelSplitted.shift();
+			if(titles){
+
+				for(let i = 0; i < titles.length; i++){
+					let ns, label, 
+						labelSplitted = titles[i].split(':');
+					if( labelSplitted.length > 1 ){
+						ns = labelSplitted.shift();
+					}
+					label = labelSplitted.join(':')
+			
+					filteredOptions.push({
+						label : label,
+						ns : ns,
+						value : links[i],
+						href : links[i],
+					});
 				}
-				label = labelSplitted.join(':')
-		
-				filteredOptions.push({
-					label : label,
-					ns : ns,
-					value : links[i],
-					href : links[i],
-				});
 			}
+			
 			this.setState({
 				filteredOptions : filteredOptions
 			});
@@ -359,16 +363,17 @@ class FormInput extends Component {
 			structuredsearch_to_label = this.state['structuredsearch-to-label'],
 			defaultValue1, defaultValue2,
 			currentValue = FormMain.getValue( inputData.field );
-		if(currentValue){
-			// if( utils.isArray( currentValue ) ){
-				// 	currentValue = currentValue[0];
-				// }
-				// if(currentValue && currentValue.value){
-					// 	currentValue = currentValue.value;
+			if(currentValue){
+				// if( utils.isArray( currentValue ) ){
+					// 	currentValue = currentValue[0];
 					// }
-			let splitted = currentValue && !utils.isArray( currentValue ) ? currentValue.split('|') : ( currentValue ? currentValue : [] );
-			defaultValue1 = splitted[0] ? parse(splitted[0],baseDateFormat, new Date()) : null;
-			defaultValue2 = splitted[1] ? parse(splitted[1], baseDateFormat, new Date()) : null;
+					// if(currentValue && currentValue.value){
+						// 	currentValue = currentValue.value;
+						// }
+				let splitted = currentValue && !utils.isArray( currentValue ) ? currentValue.split('|') : ( currentValue ? currentValue : [] );
+				defaultValue1 = splitted[0] ? parse(splitted[0],baseDateFormat, new Date()) : null;
+				defaultValue2 = splitted[1] ? parse(splitted[1], baseDateFormat, new Date()) : null;
+				
 			//console.log("currentValue splitted",splitted[1],defaultValue2,splitted[0],defaultValue1);
 		}
 		return   <>
@@ -378,14 +383,14 @@ class FormInput extends Component {
 							className="date-range-input range-input-from"
 							name={inputData.field} 
 							selectsStart={true}
-							selected={defaultValue1}
+							selected={defaultValue1 ? defaultValue1 : ''}
 							dateFormat={baseDateFormat}
 							onChange={this.dateRangeChanges.bind(this, inputData.field,0)} />
 						</div>
 						<div><span>{structuredsearch_to_label}</span>
 						<DatePicker 
 							className="date-range-input range-input-to"
-							selected={defaultValue2}
+							selected={defaultValue2 ? defaultValue2 : ''}
 							selectsEnd={true}
 							name={inputData.field} 
 							dateFormat={baseDateFormat}

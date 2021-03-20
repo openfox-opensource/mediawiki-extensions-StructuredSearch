@@ -2,7 +2,8 @@
 	'select',
 	'autocomplete',
 	'checkboxes',
-	'range'
+	'range',
+	'dateRange'
 ];
 
 class fieldsDetector{

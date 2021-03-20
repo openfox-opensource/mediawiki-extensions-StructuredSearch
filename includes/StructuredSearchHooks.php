@@ -224,6 +224,7 @@ class Hooks{
 		foreach ($params as &$param ) {
 			if( isset($param['widget']['type']) && in_array($param['widget']['type'] , ['checkboxes','radios','select']) && !isset($param['widget']['options']) && Utils::isCargoField( $param['field'] ) ){
 				$options = array_values(Utils::cargoAllRows($param['field']));
+				$options = array_filter($options);
 				foreach ($options as &$option) {
 					$option = [
 						'label' => $option,
