@@ -16,6 +16,12 @@ class FormMain{
 			FormMain.fireChangeEvent();
 		}
 	}
+	static removeValueByKey(name, key){
+		if( FormMain.allData[ name ] ){
+			FormMain.allData[ name ].splice( key ,1 );
+		}
+		FormMain.fireChangeEvent();
+	}
 	static removeValue(name, value){
 		let ind = FormMain.allData[ name ].findIndex( item => ('' + value.value) === ('' + item.value) );
 		if( ind > -1){
@@ -68,9 +74,10 @@ class FormMain{
 				continue;
 			}
 			if('object' === typeof copyOfData[dataKey] && 'undefined' !== typeof copyOfData[dataKey].length){
-				copyOfData[dataKey] = copyOfData[dataKey].map(val => {return 'undefined' != typeof val.value ?val.value: val});
+				copyOfData[dataKey] = copyOfData[dataKey].map(val => {return val && 'undefined' != typeof val.value ?val.value: val});
 			}
 			if( 'string' != typeof copyOfData[dataKey] && copyOfData[dataKey].length){
+				console.log("copyOfData[dataKey]", copyOfData[dataKey])
 				copyOfData[dataKey] = copyOfData[dataKey].join('|');
 			}
 		}
