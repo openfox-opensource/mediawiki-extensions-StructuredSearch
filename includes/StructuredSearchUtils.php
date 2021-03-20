@@ -204,7 +204,8 @@ class Utils{
 		return strtotime($str);
 	}
 	public static function getFieldValueForIndex( $val, $paramDef, $forIndex = true ) {
-		$type = isset( $paramDef['type'] ) ? $paramDef['type'] : 'default';
+		
+		$type = isset( $paramDef['widget']['type'] ) ? $paramDef['widget']['type']: 'default';
 		$val = is_array($val) ? $val : explode( '|', $val);
 		if( $forIndex && isset( $paramDef['to_indexing_function'] ) && $paramDef['to_indexing_function']){
 			$cb = $paramDef['to_indexing_function'];
@@ -212,6 +213,7 @@ class Utils{
 		else{
 			switch( $type ){
 				case 'date':
+				case 'dateRange':
 					$cb = function ($p){
 						return self::convertStrToTimestamp( $p );
 					};
@@ -229,7 +231,7 @@ class Utils{
 	} 
 	public static function isNumericField( $param ) {
 		$isRange = isset($param['widget']['type']) && 'range' == $param['widget']['type'];
-		$isNumber = isset($param['filed_type']) && 'number' == $param['filed_type'];
+		$isNumber = isset($param['field_type']) && 'number' == $param['field_type'];
 		return $isRange || $isNumber;
 	}
 	public static function getFeatureKey( $key ) {
