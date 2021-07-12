@@ -72,8 +72,7 @@
 	},
 	"MessagesDirs": {
 		"StructuredSearch": [
-			"i18n",
-			"i18n/api"
+			"i18n"
 		]
 	},
 	"Hooks": {
