@@ -56,9 +56,8 @@ class Hooks{
 		
 	}
 	static public function getNamspacesDefaultWithOverrides( ){
-		global $wgContLang;
-		$namespaceIds = $wgContLang->getNamespaceIds();
-		//die(print_r($namespaceIds));
+		$contLang = \Mediawiki\MediaWikiServices::getInstance()->getContentLanguage();
+		$namespaceIds = $contLang->getNamespaceIds();
 		return self::namespacesProccess( $namespaceIds );
 	}
 	static public function namespacesProccess( $namespaces ){
@@ -132,6 +131,7 @@ class Hooks{
 					$fields[$keyForCirrus] = Utils::isNumericField($param) ? $builder->newLongField($keyForCirrus) : $builder->newStringField($keyForCirrus);
 				}
 			}
+			
 			//$fields['tryToText'] = CoordinatesIndexField::build( 'coordinates', $engine->getConfig(), $engine );
 		} 
 		
@@ -153,8 +153,8 @@ class Hooks{
 		ParserOutput $parserOutput,
 		SearchEngine $searchEngine
 	) {
-		
 		$params = Utils::getSearchParams();
+		//print_r(["ddd",$params]);
 		$vals = ApiSearch::getResultsAdditionalFieldsFromTitles( [$page->getTitle()->getPrefixedText()],[[]]);
 		$vals = array_pop( $vals );
 		foreach ($params as $param) {
@@ -164,6 +164,7 @@ class Hooks{
 				$fields[ $keyForCirrus ] = isset($vals[ $fieldName ]) ? Utils::getFieldValueForIndex($vals[$fieldName ], $param) : '';
 			}
 		}
+		//print_r(['$fields ' . "\n",$fields]);
 	}
 	
 	public static function onCirrusSearchMappingConfig( array &$config, MappingConfigBuilder $builder ) { 
