@@ -58,6 +58,7 @@ class Hooks{
 	static public function getNamspacesDefaultWithOverrides( ){
 		$contLang = \Mediawiki\MediaWikiServices::getInstance()->getContentLanguage();
 		$namespaceIds = $contLang->getNamespaceIds();
+
 		return self::namespacesProccess( $namespaceIds );
 	}
 	static public function namespacesProccess( $namespaces ){
