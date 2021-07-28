@@ -37,8 +37,8 @@ class ApiSearch extends \ApiBase {
 		$result->addValue( NULL, 'StructuredSearchSearch', $this->getSearchParams() );
 	}
 	public static function getNamespaces(){
-		global $wgContLang;
-		return $wgContLang->getNamespaceIds();
+		$contLang = \Mediawiki\MediaWikiServices::getInstance()->getContentLanguage();
+		return $contLang->getNamespaceIds();
 	}
 	public function getSearchParams() {
 			
