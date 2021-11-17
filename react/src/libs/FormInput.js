@@ -302,7 +302,7 @@ class FormInput extends Component {
 			}
 			let uniqe = (inputData.field + '-' + option.value).replace(/\s|:/g,'-'),
 				checkbox = <span key={ inputData.field +'-' + option.value} className={'checkbox-wrp' + selectedClass }>
-					<input id={uniqe} type='checkbox' value={option.value} checked={checked} onChange={this.checkboxChanges.bind(this, inputData.field, option)} />
+					<input id={uniqe} aria-label={inputData.field} type='checkbox' value={option.value} checked={checked} onChange={this.checkboxChanges.bind(this, inputData.field, option)} />
 					<label htmlFor={ uniqe } >
 						<i className={faClass}></i>
 						<span className='checkbox-label' dangerouslySetInnerHTML={{__html: option.label}}></span>
@@ -339,8 +339,11 @@ class FormInput extends Component {
 	}
 	selectBuild (inputData){
 		let options = this.extractOptions( inputData.widget.options);
-
 		return <Select
+			inputId={inputData.field.replace(/:/g,'-')}
+			instanceId={ 'inst- ' + inputData.field.replace(/:/g,'-')}
+			aria-label={inputData.field}
+			name={inputData.field.replace(/:/g,'-')}
 			className={'select select-' + inputData.field}
 			value={this.state.selected}
 	        onChange={this.selectChanged.bind(this, inputData.field)}
@@ -401,11 +404,14 @@ class FormInput extends Component {
 		}
 		return   <>
 					<div>
-						<span>{structuredsearch_from_label}</span>
+						<label>
+							{structuredsearch_from_label}
 							<DatePicker {...value1}  />
+							</label>
 						</div>
-						<div><span>{structuredsearch_to_label}</span>
+						<div><label>{structuredsearch_to_label}
 							<DatePicker {...value2}  />
+						</label>
 						</div>
 						</>;
 	}
@@ -429,6 +435,7 @@ class FormInput extends Component {
 					<span>{structuredsearch_from_label}</span>
 					<input 
 						type="number" 
+						aria-label={inputData.field}
 						className="range-input range-input-from"
 						name={inputData.field} 
 						defaultValue={defaultValue1}
@@ -436,9 +443,10 @@ class FormInput extends Component {
 					<span>{structuredsearch_to_label}</span>
 					<input 
 						type="number" 
+						aria-label={inputData.field + ' (to)'}
 						className="range-input range-input-to"
 						defaultValue={defaultValue2}
-						name={inputData.field} 
+						name={inputData.field + '_to'} 
 						onChange={this.rangeChanges.bind(this, inputData.field,1)} />
 					</span>;
 	}
@@ -448,6 +456,7 @@ class FormInput extends Component {
 			//console.log("value",value);
 			return   <input 
 					type="text" 
+					aria-label={placeholder||inputData.field}
 					placeholder={placeholder}
 					value={value ? value.value : ''}
 					name={inputData.field} 
@@ -457,6 +466,7 @@ class FormInput extends Component {
 			let submitButton = this.isSearchAutomplete() ? <button type='button' onClick={this.submitClicked.bind(this)} dangerouslySetInnerHTML={{__html:this.state['structuredsearch-search-label']}}></button> : '',///
 				placeholder = this.getPlaceholder( inputData );
 			return   <div className="autocomplete-wrp"><Autocomplete
+						  aria-label={placeholder||inputData.field}
 						  getItemValue={(item) => item.label}
 						  menuStyle={ {position:'absolute',top:'45px',right:0,left:'auto',zIndex:5,'background': '#FFF'}}
 						  items={this.state.filteredOptions}
@@ -490,10 +500,10 @@ class FormInput extends Component {
 	}
 	render() {
 		let inputHtml = this.getInputHtml();
-		
+	let idInput = this.state.inputData.field.replace(/:/g,'-');
 	return (
 	  <div className={"form-input form-input-wrp-" + this.state.inputData.field.replace(/:/g,'-')}>
-	    {inputHtml}
+		{inputHtml}
 	</div>
 	);
 	}
