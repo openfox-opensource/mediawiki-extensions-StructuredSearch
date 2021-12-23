@@ -21,17 +21,27 @@ class Utils{
 			$res = $dbrCargo->select($subTable,[
 				'DISTINCT(_value) as val'
 			]);
+			
 		}
 		else{
-			$res = $dbrCargo->select($tableName,[
-				'DISTINCT(' . $columnName . ') as val'
-			]);
+			try {
+				$res = $dbrCargo->select($tableName,[
+					'DISTINCT(' . $columnName . ') as val'
+				]);
+				
+			} catch (\Throwable $th) {
+				
+				//TODO indicate this table not exits
+				return [];
+			}
+			
 		}
-		$results = [];
 		
+		$results = [];
 		while ( $row = $dbrCargo->fetchObject( $res ) ) {
 			$results[$row->val] = $row->val;
 		}
+
 		return $results;
 	}
 	static public function cargoAutocomplete( $term, $fieldName ){

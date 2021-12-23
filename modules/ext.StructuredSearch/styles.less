@@ -491,7 +491,22 @@ span.label-wrp {
       padding-bottom: 1em;
       text-align: left;
     }
-      .subject-links:after, .area-links:after, .seperator:after {
+    .subject-links {
+    background: #fff;
+    color: var(--fox-azure);
+    padding: 1px 6px 2px;
+    border-radius: 3px;
+    margin-left: 2px;
+    font-size: .8em;
+    border: thin solid;
+    display: inline-block;
+    margin-bottom: 4px;
+	&:hover {
+		background: var(--fox-azure);
+		color: #fff;
+		}
+	}
+      .area-links:after, .seperator:after {
         content: ",";
       }
       .subject-links:last-child:after, .area-links:last-child:after, .seperator:last-child:after {
