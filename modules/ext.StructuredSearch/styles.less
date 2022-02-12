@@ -1,6 +1,3 @@
-@main-color: #047dc7;
-@main-color-light: rgba(4, 125, 199, 0.48);
-@background-color: #f5fafd;
 .hide-on-desktop{
     display: none;
 }
@@ -29,7 +26,7 @@
 .side-bar {
     
     padding: 3em 2em;
-    box-shadow: rgba(0,0,0,0.67) 0px 5px 6px -5px;    
+    box-shadow: var(--search-bar-boxshadow);    
     .select .css-kj6f9i-menu {
         z-index: 3;
     }
@@ -62,7 +59,7 @@
     background: #fff;
     padding: 0 1em;
     margin: -2px 1em;
-    border: #d1cfc0 solid 1px;
+    border: var(--search-light-border) solid 1px;
     transition: all ease .5s;
     }
     &.opened {
@@ -100,7 +97,7 @@
 }
 .TopBar .main-and-advanced-wrp {
   button {
-    background: #d1cfc0;
+    background: var(--search-button-bg);
     border: none;
     padding: 9px 0;
     cursor: pointer;
@@ -116,7 +113,7 @@
 
 .side-bar .main-and-advanced-wrp {
   button {
-    background: #d1cfc0;
+    background: var(--search-button-bg);
     border: none;
     padding: 9px;
     cursor: pointer;
@@ -149,10 +146,10 @@
     font-size: 19px;
     height: auto;
     border-width: 2px;
-    border-color: #d1cfc0;
+    border-color: var(--search-light-border);
     border-radius: 23px;
     &:hover {
-      box-shadow: 0 1px 6px 0 rgba(32,33,36,0.28);
+      box-shadow: 0 1px 6px 0 var(--search-input-shadow);
     }
   }
    button {
@@ -166,7 +163,7 @@
     border: transparent solid;
     border-left: none;
     position: absolute;
-    color: #aaa78c;
+    color: var(--search-button);
     cursor: pointer;
     font-size: 21px;
     outline: 0;
@@ -178,7 +175,7 @@
     background: #fff;
 }
 .highlighted {
-    background: #e8e8e8;
+    background: var(--search-highlight-bg);
 }
 .ns-wrapper{
   float: right;
@@ -224,7 +221,7 @@
         z-index: 0;
         }
         &.fa-check-square:after {
-          background: #78c043;
+          background: var(--search-bar-active);
         }
     }
 }
@@ -245,9 +242,9 @@
 #top-bar {
     margin: 0 10px 10px;
     z-index: 2;
-
     top: 47px;
-    box-shadow: rgba(0,0,0,0.67) 0px 5px 6px -5px;
+    top: var(--sidebar-height);
+    box-shadow: var(--search-bar-boxshadow);
       &.fixed {
       position: fixed;
       top: 47px;
@@ -276,8 +273,8 @@
       cursor: pointer;
       position: absolute;
       outline: 0;
-      color: #8b8762;
-      border: #D1CFC1 solid 2px;
+      color: var(--search-button); 
+      border: var(--search-light-border) solid 2px;
       right: 5px;
       bottom: 5px;
       opacity: 0;
@@ -299,7 +296,7 @@
         /* display: none; */
       }
       &.selected {
-            background: #d1cfc0;
+            background: var(--search-light-border);
             i {
                 font-weight: bold;
                 color: #000;
@@ -353,7 +350,7 @@
     background: transparent;
     border: none;
     cursor: pointer;
-    color: #8a8660;
+    color: var(--search-button);
     font-size: 15px;
     top: 2px;
     position: relative;
@@ -367,9 +364,9 @@ span.label-wrp {
     font-weight: 700;
     margin: 6px 3px;
     font-size: 14px;
-    color: #8a8660;
+    color: var(--search-button);
     background: #fff;
-    border: #eee5c8 solid 1px;
+    border: var(--search-light-border) solid 1px;
     }
 /*  results */
 .results {
@@ -377,22 +374,23 @@ span.label-wrp {
     padding-top: 2em;
     
     button {
-    background: #78c043;
+    background: var(--search-bar-active);
     color: #fff;
     margin: auto;
     border: none;
     padding: 8px 1em;
     border-radius: 21px;
-    box-shadow: rgba(0,0,0,0.67) 0px 5px 6px -5px;    display: block;
+    box-shadow: var(--search-bar-boxshadow) 0px 5px 6px -5px;
+    display: block;
     font-size: 18px;
     outline: none;
     transition: all ease .3s;
     &:hover{
-          box-shadow: rgba(0,0,0,0.67) 1px 4px 6px -2px;
+          box-shadow: var(--search-bar-boxshadow) 1px 4px 6px -2px;
     }
     /* @noflip */
     &:focus{
-        background: repeating-linear-gradient(to right, #78c043 0, #fff 50%, #78c043 100%);
+        background: repeating-linear-gradient(to right, var(--search-button-more) 0, #fff 50%, var(--search-button-more) 100%);
         background-size: 200% auto;
         background-position: 0 100%;
         animation: gradient 2s 3;
@@ -405,14 +403,14 @@ span.label-wrp {
   text-align: center;
   i{
     margin: 3em auto;
-    color: #d1cfc0;
+    color: var(--search-light-border);
   }
 }
 
 .no-results.no-results-empty {
     font-size: 2em;
     text-align: center;
-    color: #78c043;
+    color: var(--search-bar-active);
 }
 /* @no-flip */
 @keyframes gradient {
@@ -428,7 +426,8 @@ span.label-wrp {
     margin: 0 0 2em;
     transition: all ease .1s;
     position: relative;
-    box-shadow: rgba(0,0,0,0.67) 0px 5px 6px -5px;    .columns {
+    box-shadow: var(--search-bar-boxshadow);
+    .columns {
       padding-left: 0;
       position: static;
     }
@@ -525,20 +524,18 @@ span.label-wrp {
         height: 73px;
         width: auto;
         position: absolute;
-        filter: drop-shadow(2px 4px 6px #000000);
+        filter: drop-shadow(2px 4px 6px var(--search-bar-shadow));
         left: -4.5em;
         bottom: 50%;
         }
-      
-
 }
 
 /* autocomplete */
 .search-suggestions-open .form-input.form-input-wrp-search .autocomplete-wrp > div > div {
     border-radius: 0 0 23px 23px;
     overflow: hidden;
-    box-shadow: 0 1px 6px 0 rgba(32,33,36,0.28);
-    border: solid #d1cfc0 2px;
+    box-shadow: var(--search-input-shadow);
+    border: solid var(--search-light-border) 2px;
     border-top: none;
     .autocomplete-item {
     padding: 9px 19px;
@@ -564,6 +561,7 @@ span.label-wrp {
       transition: all ease .3s;
       width: 100%;
       top: 47px;
+      top: var(--sidebar-height);
       padding-top: 6em;
       &.show {
         left: 0;
@@ -576,7 +574,7 @@ span.label-wrp {
         position: absolute;
         right: 8px;
         top: 10px;
-        color: #8f8b66;
+        color: var(--search-button);
         outline: none;
       }
     }
@@ -598,6 +596,7 @@ span.label-wrp {
     .TopBar {
       position: fixed;
       top: 47px;
+      top: var(--sidebar-height);
       right: 0;
       left: 0;
       padding: 8px 3.5em 8px 5px;
@@ -646,8 +645,8 @@ span.label-wrp {
         top: 5px;
         position: absolute;
         outline: 0;
-        color: #A5A5A5;
-        border: #8ec0e5 solid 2px;
+        color: var(--search-bar-bg);
+        border: var(--search-light-blue) solid 2px;
 	right: 4px;
         border-radius: 0 23px 23px 0;
 	display:block;
@@ -777,7 +776,7 @@ td[class*="mw-search-ns"], #mw-searchoptions h4,
   }
   .divider {
     clear: both;
-    border-bottom: 1px solid #eaecf0;
+    border-bottom: 1px solid #fff;
     padding-top: 0.5em;
     margin-bottom: 0.5em;
     width: 100%;
@@ -799,22 +798,22 @@ td[class*="mw-search-ns"], #mw-searchoptions h4,
         height: 14px;
     }
     .fa-square.fa-check-square:after, .fa-check-square:after {
-       background: @main-color;
+       background: var(--search-bar-active)
     }
   }
   .side-bar, #top-bar {
-      background: @background-color;
+      background: var(--search-bar-bg);
   }
   .field-wrp-name-search {
     input {
-        border-color: @main-color-light;
+        border-color: var(--search-trans-blue);
     }
     button {
-    color: @main-color-light;
+    color: var(--search-trans-blue);
       &:hover {
         color: #fff;
 	i {
-	color: #A5A5A5;
+	color: var(--search-bar-bg);
 	}
       }
     }
@@ -827,17 +826,17 @@ td[class*="mw-search-ns"], #mw-searchoptions h4,
   margin: 0 0 2em;
   transition: all ease .1s;
   position: relative;
-  box-shadow: rgba(0,0,0,0.2) 0px 5px 9px -2px;
+  box-shadow: var(--search-bar-shadow) 0px 5px 9px -2px;
   }
   .TopBar form:focus-within .field-wrp-name-search button, .TopBar.search-suggestions-open .field-wrp-name-search button, .TopBar .field-wrp-name-search button:hover {
-      background: @main-color;
-      border-color: @main-color;
+      background: var(--search-button);
+      border-color: var(--search-button);
   }
   span.label-wrp, .TopBar > header > button {
-    color: @main-color;
-    border: #87c1e4 solid 1px;
+    color:  var(--search-button);
+    border: var(--search-light-border) solid 1px;
   }
   .label-remove {
-    color: @main-color;
+    color: var( --search-button);
   }
 }

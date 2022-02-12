@@ -17,7 +17,7 @@
 	"structuredsearch-to-label": "עד",
 	"structuredsearch-more-label": "עוד <i class='fal fa-plus'></i>",
 	"structuredsearch-less-label": "סגור <i class='fal fa-times'>",
-	"structuredsearch-no-results": "<i class='fal fa-snowman'></i> לא נמצאו תוצאות",
+	"structuredsearch-no-results": "<i class='fal fa-person-dolly-empty'></i> לא נמצאו תוצאות",
 	"structuredsearch-search-label": "<i class='far fa-search' title='לחצו לחיפוש' data-toggle='tooltip' data-placement='right'></i>",
 	"structuredsearch-on-results-error": "<div class='results-error'>אירעה שגיאה. אנא בדקו את תנאי החיפוש ונסו שוב</div>",
 	"structuredsearch-clear": "נקה",

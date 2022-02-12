@@ -123,6 +123,7 @@
 	"ResourceModules": {
 		"ext.StructuredSearch": {
 			"styles": [
+				"ext.StructuredSearch/variables.less",
 				"ext.StructuredSearch/styles.less"
 			],
 			"messages" : [
