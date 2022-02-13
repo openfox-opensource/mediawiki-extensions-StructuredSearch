@@ -74,9 +74,7 @@ class ApiSearch extends \ApiBase {
 		
 
 		$params['limit'] = 10;
-		if(isset($_GET['hhhh'])){
-			$params['limit'] = 5000;
-		}
+		
 		if(!isset($params['search'])){
 			$params['search'] = '*';	
 		}
@@ -105,9 +103,6 @@ class ApiSearch extends \ApiBase {
 
 		
 		$results = $api->getResult()->getResultData();
-		if(isset($_GET['hhhh'])){
-			die(print_r([$params, $results]));
-		}
 		return $this->getResultsAdditionalFields($results);
 	}	
 	public static function extractSearchStringFromFields( $params ) {
