@@ -206,7 +206,7 @@ class ApiSearch extends \ApiBase {
 
 			self::addCategories( $resultsTitlesForCheck );
 			self::addCargoFields( $resultsTitlesForCheck, $resultsTitlesAliases );
-			if(class_exists('PageImages')){
+			if(class_exists('PageImages') || class_exists('PageImages\PageImages')){
 				self::addPageImage( $resultsTitlesForCheck );
 			}
 		}
