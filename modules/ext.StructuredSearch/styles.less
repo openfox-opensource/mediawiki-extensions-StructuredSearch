@@ -1,3 +1,12 @@
+.mw-special-StructuredSearch {
+	.item-action-menu {display: none !important;}
+	#contentwrapper {
+  	width: 100%;
+    	max-width: 1440px;
+    	flex: 1;
+    	margin: 64px auto;
+	}
+}
 .hide-on-desktop{
     display: none;
 }
@@ -551,8 +560,9 @@ span.label-wrp {
 }
 /* mobile */
 @media (max-width: 992px) {
-    #contentwrapper {
-      position: static;
+    .mw-special-StructuredSearch #contentwrapper {
+      	position: static;
+	margin: 36px -15px;
     }
     .side-bar {
       left: -100vw;
@@ -645,7 +655,7 @@ span.label-wrp {
         top: 5px;
         position: absolute;
         outline: 0;
-        color: var(--search-bar-bg);
+        color: var(--search-button);
         border: var(--search-light-blue) solid 2px;
 	right: 4px;
         border-radius: 0 23px 23px 0;
@@ -685,30 +695,35 @@ span.label-wrp {
         padding-right: 0;
           &.result-info {
             padding: 0 6px;
-            h4 {
-              margin: 0;
-              z-index: 1;
-              position: absolute;
-              top: 0;
-              height: 131px;
-              width: 100%;
-              /*display: table;*/
-              padding: 0;
-	      font-size: 16px;
-		font-weight:normal;
-		color:#fff;
-              a {
-                vertical-align: middle;
-                display: table-cell;
-                padding: 5px;
-                color: #fff;
-                text-shadow: black 0px 0px 7px;
-		text-align: center;
-		width: 95%;
-		display: inline-block;
-		padding: 13% 0 0;
-		font-weight: bold;
-              }
+	    	   h4 {
+			   text-align: center;
+		   } 
+		  &.has-image {
+		    h4 {
+		      margin: 0;
+		      z-index: 1;
+		      position: absolute;
+		      top: 0;
+		      height: 131px;
+		      width: 100%;
+		      /*display: table;*/
+		      padding: 0;
+		      font-size: 16px;
+			font-weight:normal;
+			color:#fff;
+		      a {
+			vertical-align: middle;
+			display: table-cell;
+			padding: 5px;
+			color: #fff;
+			text-shadow: black 0px 0px 7px;
+			text-align: center;
+			width: 95%;
+			display: inline-block;
+			padding: 13% 0 0;
+			font-weight: bold;
+		      }
+      		}
             }
             .snippet {
               font-size: 17px;
