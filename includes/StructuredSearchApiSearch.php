@@ -215,6 +215,7 @@ class ApiSearch extends \ApiBase {
 		return $resultsTitlesForCheck;
 	}
 	public static function addPageImage( &$resultsTitlesForCheck ) {
+
 		$dbr = wfGetDB( DB_REPLICA );
 		$res = $dbr->select(
 			array( 'imagelinks','page' ),

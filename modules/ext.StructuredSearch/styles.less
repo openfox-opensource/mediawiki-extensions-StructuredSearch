@@ -477,13 +477,14 @@ span.label-wrp {
         display: block;
         width: 100%;
         height: 100%;
-        background-position: center;
-        background-size: cover;
+        background-image: var(--search-result-image);
+	background-position: center;
+        background-size: 150px;
         background-repeat: no-repeat;
         min-height: 131px;
           &:after {
           content: "";
-          background: radial-gradient(circle,rgba(0,0,0,0) 45%,rgba(0,0,0,0.6) 100%);
+          background: var(--search-result-shadow);
           width: 100%;
           height: 100%;
           display: block;
@@ -492,6 +493,9 @@ span.label-wrp {
           left: 0;
           background-size: 197%;
           background-position: 21em 0em;
+      }
+      &.link-with-img {
+        background-size: cover;
       }
     }
     .results-meta {
