@@ -37,7 +37,7 @@ class Hooks{
 	}
 	static public function getDefinedNamespaces( ){
 		$included = self::tryGetNSReplace();
-		return $included && count($included) ? $included : array_values( self::getNamspacesDefaultWithOverrides() );
+		return $included && count($included) ? $included : array_values( self::getNamespacesDefaultWithOverrides() );
 	}
 	static public function namespacesExtract( &$params ){
 		$conf = \MediaWiki\MediaWikiServices::getInstance()->getMainConfig();
@@ -55,13 +55,32 @@ class Hooks{
 
 		
 	}
-	static public function getNamspacesDefaultWithOverrides( ){
+	static public function getNamespacesDefaultWithOverrides( ){
 		$contLang = \Mediawiki\MediaWikiServices::getInstance()->getContentLanguage();
-		$namespaceIds = $contLang->getNamespaceIds();
-
-		return self::namespacesProccess( $namespaceIds );
+		$conf = \MediaWiki\MediaWikiServices::getInstance()->getMainConfig();
+		$namespaceIds = $conf->get( 'ContentNamespaces' );
+		$wgExtraNamespaces = $conf->get( 'ExtraNamespaces' );
+		$localizedNamespaces = $contLang->getNamespaces();
+		$namespaceIdsNames = [];
+		foreach( $namespaceIds as $namespaceId){
+			if( 0 === $namespaceId ){
+				$namespaceStr = trim(wfMessage('blanknamespace')->plain(),'()');
+			}
+			else{
+				$namespaceStr = isset( $wgExtraNamespaces[ $namespaceId ] ) ? $wgExtraNamespaces[ $namespaceId ] : $localizedNamespaces[ $namespaceId ];
+			}
+			if($namespaceStr){
+				$namespaceIdsNames[$namespaceStr] = $namespaceId;
+			}
+		}
+		
+		// function( $ns ) use ($localizedNamespaces, $wgExtraNamespaces){
+			
+		// }, $namespaceIds);
+		//$namespaceIdsNames = array_filter($namespaceIdsNames);
+		return self::namespacesProcess( $namespaceIdsNames );
 	}
-	static public function namespacesProccess( $namespaces ){
+	static public function namespacesProcess( $namespaces ){
 		$conf = \MediaWiki\MediaWikiServices::getInstance()->getMainConfig();
 		$includeTalkPagesType = $conf->get('StructuredSearchNSIncludeTalkPagesType');
 		$showDefault = $conf->get('StructuredSearchNSDefaultPosition');
@@ -223,7 +242,7 @@ class Hooks{
 		
 	}
 	static public function addOptionsToCargoTable( &$params ){
-		foreach ($params as &$param ) {
+		foreach ($params as $key => &$param ) {
 			if( isset($param['widget']['type']) && in_array($param['widget']['type'] , ['checkboxes','radios','select']) && !isset($param['widget']['options']) && Utils::isCargoField( $param['field'] ) ){
 				$options = array_values(Utils::cargoAllRows($param['field']));
 				$options = array_filter($options);
@@ -232,6 +251,10 @@ class Hooks{
 						'label' => $option,
 						'value' => $option,
 					];
+				}
+				if(!count($options)){
+					unset( $params[$key] );
+					continue;
 				}
 				if( 'select' === $param['widget']['type'] ){
 					array_unshift($options, [

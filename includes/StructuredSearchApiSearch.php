@@ -50,8 +50,8 @@ class ApiSearch extends \ApiBase {
 		$params = $this->extractRequestParams();
 		if(!isset($params['namespaces']) || !strlen($params['namespaces'])){
 			$conf = \MediaWiki\MediaWikiServices::getInstance()->getMainConfig();
-			$useDefualtNsForSearch = $conf->get('StructuredSearchUseMWDefaultSearchNS');
-			if( $useDefualtNsForSearch ){
+			$useDefaultNsForSearch = $conf->get('StructuredSearchUseMWDefaultSearchNS');
+			if( $useDefaultNsForSearch ){
 				$namespaces = $conf->get('NamespacesToBeSearchedDefault');
 				$namespaces = array_filter($namespaces);
 				$namespaces = array_keys($namespaces);

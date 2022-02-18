@@ -6,7 +6,7 @@ class Utils{
 	static public function categoryAutocomplete( $term ){
 		$conf = \MediaWiki\MediaWikiServices::getInstance()->getMainConfig();
 		$categoryInclude = $conf->get('StructuredSearchCategoryInclude');
-		return  $categoryInclude ? self::preccessDefaultCategories( $categoryInclude, $term ) : self::getCategiresFromDb($term);
+		return  $categoryInclude ? self::preccessDefaultCategories( $categoryInclude, $term ) : self::getCategoriesFromDb($term);
 	}
 	static public function cargoAllRows( $fieldName ){
 		$dbrCargo = \CargoUtils::getDB();
@@ -71,7 +71,7 @@ class Utils{
 	// 	// print_r($b->_getKeywords());
 	// }
 
-	static public function getCategiresFromDb( $term ){
+	static public function getCategoriesFromDb( $term ){
 		$dbr = wfGetDB( DB_REPLICA );
 		$conf = \MediaWiki\MediaWikiServices::getInstance()->getMainConfig();
 		$categoryExclude = $conf->get('StructuredSearchCategoryExclude');
