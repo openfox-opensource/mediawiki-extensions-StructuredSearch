@@ -43,7 +43,7 @@ class Hooks{
 		$conf = \MediaWiki\MediaWikiServices::getInstance()->getMainConfig();
 		$topOrSide = $conf->get('StructuredSearchNSTopOrSide');
 		$params['namespaces'] = [
-			'label' => '',//wfMessage('structuredsearch-namespace-label')->text(),
+			'label' => wfMessage('structuredsearch-namespace-label')->text(),
         	'field' => 'namespaces',
         	'withoutLabels' => 1,
 	        'widget' => [

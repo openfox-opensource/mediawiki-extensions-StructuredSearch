@@ -1,0 +1,65 @@
+diff --git a/includes/StructuredSearchApiSearch.php b/includes/StructuredSearchApiSearch.php
+index ef4631e..6d0d3b5 100644
+--- a/includes/StructuredSearchApiSearch.php
++++ b/includes/StructuredSearchApiSearch.php
+@@ -201,7 +201,8 @@ class ApiSearch extends \ApiBase {
+ 
+ 			self::addCategories( $resultsTitlesForCheck );
+ 			self::addCargoFields( $resultsTitlesForCheck, $resultsTitlesAliases );
+-			if(class_exists('PageImages')){
++			
++			if(class_exists('PageImages') || class_exists('PageImages\PageImages')){
+ 				self::addPageImage( $resultsTitlesForCheck );
+ 			}
+ 		}
+@@ -210,6 +211,7 @@ class ApiSearch extends \ApiBase {
+ 		return $resultsTitlesForCheck;
+ 	}
+ 	public static function addPageImage( &$resultsTitlesForCheck ) {
++		
+ 		$dbr = wfGetDB( DB_REPLICA );
+ 		$res = $dbr->select(
+ 			array( 'imagelinks','page' ),
+diff --git a/modules/ext.StructuredSearch/styles.less b/modules/ext.StructuredSearch/styles.less
+index 2588df1..1f00bb1 100644
+--- a/modules/ext.StructuredSearch/styles.less
++++ b/modules/ext.StructuredSearch/styles.less
+@@ -477,13 +477,14 @@ span.label-wrp {
+         display: block;
+         width: 100%;
+         height: 100%;
+-        background-position: center;
+-        background-size: cover;
++        background-image: var(--search-result-image);
++	background-position: center;
++        background-size: 150px;
+         background-repeat: no-repeat;
+         min-height: 131px;
+           &:after {
+           content: "";
+-          background: radial-gradient(circle,rgba(0,0,0,0) 45%,rgba(0,0,0,0.6) 100%);
++          background: var(--search-result-shadow); 
+           width: 100%;
+           height: 100%;
+           display: block;
+@@ -493,6 +494,9 @@ span.label-wrp {
+           background-size: 197%;
+           background-position: 21em 0em;
+       }
++      &.link-with-img {
++        background-size: cover;
++      }
+     }
+     .results-meta {
+       position: relative;
+diff --git a/modules/ext.StructuredSearch/variables.less b/modules/ext.StructuredSearch/variables.less
+index 9e5c2b0..a78d4cc 100644
+--- a/modules/ext.StructuredSearch/variables.less
++++ b/modules/ext.StructuredSearch/variables.less
+@@ -12,4 +12,6 @@
+ 	--search-highlight-bg:#e8e8e8;
+ 	--search-light-blue: #8ec0e5;
+ 	--search-trans-blue: #047dc77a;
++	--search-result-image: url(https://files.cdn.openfox.io/w/upload/templates/7/75/JustLogo.svg);
++	--search-result-shadow: radial-gradient(circle,rgba(0,0,0,0) 45%,rgba(0,0,0,0.6) 100%);
+ }
