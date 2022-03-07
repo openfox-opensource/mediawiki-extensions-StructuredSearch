@@ -134,7 +134,7 @@ class Hooks{
 	 */
 	public static function onSearchIndexFields( array &$fields, SearchEngine $engine ) {
 		
-		//die(print_r(get_class($engine)));
+
 		if ( $engine instanceof \CirrusSearch\CirrusSearch ) {
 			/**
 			 * @var \CirrusSearch $engine
@@ -173,8 +173,10 @@ class Hooks{
 		ParserOutput $parserOutput,
 		SearchEngine $searchEngine
 	) {
+		$conf = \MediaWiki\MediaWikiServices::getInstance()->getMainConfig();
+
+
 		$params = Utils::getSearchParams();
-		//print_r(["ddd",$params]);
 		$vals = ApiSearch::getResultsAdditionalFieldsFromTitles( [$page->getTitle()->getPrefixedText()],[[]]);
 		$vals = array_pop( $vals );
 		foreach ($params as $param) {
@@ -184,9 +186,67 @@ class Hooks{
 				$fields[ $keyForCirrus ] = isset($vals[ $fieldName ]) ? Utils::getFieldValueForIndex($vals[$fieldName ], $param) : '';
 			}
 		}
-		//print_r(['$fields ' . "\n",$fields]);
+		//die(print_r(['$fields ' . "\n", $fields[ 'text' ]]));
 	}
-	
+	static public function onStructuredSearchSearchDataForIndexAfterWikiText(
+		array &$fields,
+		WikiPage $page,
+		ParserOutput $parserOutput,
+		SearchEngine $searchEngine
+	){
+
+		if( NS_FILE != $page->getTitle()->getNameSpace()){
+			$images = self::getPageFiles( $page );
+			$filesContent = "";
+			foreach( $images as $image ){
+				$imagePage = \ImagePage::newFromID($image);
+
+				if($imagePage){
+					$pageContent = $imagePage->getPage()->getRevision()->getContent()->getText();
+					$fileContent = "";
+					try {
+						$file = $imagePage->getFile();
+						$mimeType = $file->getMimeType() ?? 'unknown';
+						$fileHandler = $file->getHandler( $mimeType);
+						if( $fileHandler ){
+							$fileContent = $fileHandler->getEntireText($file);
+						}
+					} catch (\Throwable $th) {
+						error_log("Error on StructuredSearch::onSearchDataForIndex " . $th->getMessage());
+					}
+					$allContent = implode("\n", array_filter([$pageContent,$fileContent]));
+
+					if( $allContent ){
+						$filesContent = $allContent;
+					}
+				}
+			}
+
+			if( $filesContent ){
+				$fields[ 'text' ] .= "\n" .  $filesContent;
+				$fields[ 'source_text' ] .= "\n" . $filesContent;
+
+			}
+
+		}
+		else{
+			$allImagesIncluded = self::getImagesIncluded( [$page->getDBkey()] );
+
+			if(count($allImagesIncluded)){
+
+				$fields['source_text'] = '';
+				$fields['title'] = '';
+				$fields['text'] = '';
+				$fields['file_text'] = '';
+
+			}
+			print_r([
+				$fields,
+				$allImagesIncluded,
+				$page->getDBkey()
+			]);
+		}
+	}
 	public static function onCirrusSearchMappingConfig( array &$config, MappingConfigBuilder $builder ) { 
 		
 	}
@@ -274,6 +334,7 @@ class Hooks{
 				$imagesKeys[] = $param['field'];
 			}
 		}
+
 		foreach ($results as &$result) {
 			foreach ($imagesKeys as $imageKey) {
 				if(isset($result[$imageKey])){
@@ -281,16 +342,63 @@ class Hooks{
 				}
 			}
 		}
-		//die();
-		//die(print_r($imagesKeys));
+
 	}
+
+	static public function getImagesIncluded( $imagesIds ){
+		$dbr = wfGetDB( DB_REPLICA );
+		$res = $dbr->select(
+				['imagelinks'  ],
+			[ 'DISTINCT il_to  as il_to' ],
+			[ 'il_to IN (' . $dbr->makeList( $imagesIds) . ')' ],
+		);
+		$allImagesIncluded = [];
+		while ( $row = $dbr->fetchObject( $res ) ) {
+			$allImagesIncluded[] = $row->il_to;
+		}
+		return $allImagesIncluded;
+	}
+	static public function getPageFiles( $page ){
+		$dbr = wfGetDB( DB_REPLICA );
+		$res = $dbr->select(
+			array( 'imagelinks', 'page'),
+			array( 'il_to', 'page_id' ),
+			array(
+				'il_from=' . $page->getId()
+			),
+			__METHOD__,
+			array(),
+			array(
+				'page' => array( 'INNER JOIN', array( 'page_title=il_to', "page_namespace=" . NS_FILE ) ),
+			)
+		);
+
+		$allImages = [];
+		while ( $row = $dbr->fetchObject( $res ) ) {
+			$allImages[] = $row->page_id;
+		}
+		return $allImages;
+	}
+	static public function overrideWikitextContentHandler( ){
+		global $wgContentHandlers;
+		$conf = \MediaWiki\MediaWikiServices::getInstance()->getMainConfig();
+		if( $conf->get('StructuredSearchAddFilesContentToIncludingPages') ){
+
+			$wgContentHandlers[CONTENT_MODEL_WIKITEXT] = StructuredSearchWikitextContentHandler::class;
+
+			// if(isset($_GET['ddd'])){
+			// }
+
+		}
+	}
+
 	static public function fixImageToThumbs( $file ){
 		$conf = \MediaWiki\MediaWikiServices::getInstance()->getMainConfig();
 		$wgScriptPath = $conf->get('ScriptPath');
 		$wgStructuredSearchThumbSize = $conf->get('StructuredSearchThumbSize');
-		$dismensions = explode('X', $wgStructuredSearchThumbSize);
+		$dimensions = explode('X', $wgStructuredSearchThumbSize);
 		$fileClass = wfFindFile(\Title::newFromText($file));
-		$thumb = $fileClass ? $fileClass->transform( [ 'width' => $dismensions[0], 'height' => $dismensions[1] ] ) : NULL;
+		$thumb = $fileClass ? $fileClass->transform( [ 'width' => $dimensions[0], 'height' => $dimensions[1] ] ) : NULL;
 		$thumbUrl = NULL;
 		if ( $thumb ) {
 			$thumbUrl = $thumb->getUrl( );

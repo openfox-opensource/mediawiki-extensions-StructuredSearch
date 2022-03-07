@@ -150,7 +150,7 @@ class ApiSearch extends \ApiBase {
 		//die(print_r($results['query']));
 		$resultsData = self::getResultsAdditionalFieldsFromTitles( $titles, $results['query']['search']);
 		\Hooks::run( 'StructuredSearchResultsView', [ &$resultsData ] );
-	
+		$results['query']['searchinfo']['totalhits'] = count($resultsData);
 		return [
 			'continue' => isset( $results['continue'] ) ? $results['continue'] : '',
 			'searchinfo' => $results['query']['searchinfo'],
@@ -176,6 +176,7 @@ class ApiSearch extends \ApiBase {
 					'full_title'=> $titleClass->getFullText(), 
 					'short_title'=> $titleClass->getText(), 
 					'title_dash'=> $titleClass->getPrefixedDBkey(), 
+					'title_dash_short'=> $titleClass->getDBkey(),
 					'page_link'=> $titleClass->getLinkURL(), 
 					'namespace' => $titleClass->getNsText(), 
 					'namespaceId' => $titleClass->getNamespace(),

@@ -67,6 +67,10 @@
 		"StructuredSearchThumbSize": {
 			"description": "Thumns dismensions",
 			"value": "150X150"
+		},
+		"StructuredSearchAddFilesContentToIncludingPages": {
+			"description": "If set to true, file content would added to page includes it, and omit from search",
+			"value": true
 		}
 		
 	},
@@ -75,6 +79,9 @@
 			"i18n"
 		]
 	},
+	"ExtensionFunctions" : [
+		"MediaWiki\\Extension\\StructuredSearch\\Hooks::overrideWikitextContentHandler"
+	],
 	"Hooks": {
 		
     	"SearchIndexFields": [
@@ -88,6 +95,9 @@
         ],
     	"SearchDataForIndex": [
         	"MediaWiki\\Extension\\StructuredSearch\\Hooks::onSearchDataForIndex"
+	],
+	"StructuredSearchSearchDataForIndexAfterWikiText": [
+		"MediaWiki\\Extension\\StructuredSearch\\Hooks::onStructuredSearchSearchDataForIndexAfterWikiText"
     	]
 	},
 	"ExtensionMessagesFiles": {
@@ -96,6 +106,7 @@
 	},
 	"AutoloadClasses": {
 		"MediaWiki\\Extension\\StructuredSearch\\Utils": "includes/StructuredSearchUtils.php",
+		"MediaWiki\\Extension\\StructuredSearch\\StructuredSearchWikitextContentHandler": "includes/StructuredSearchWikitextContentHandler.php",
 		"MediaWiki\\Extension\\StructuredSearch\\ApiParams": "includes/StructuredSearchApiParams.php",
 		"MediaWiki\\Extension\\StructuredSearch\\ApiSearch": "includes/StructuredSearchApiSearch.php",
 		"MediaWiki\\Extension\\StructuredSearch\\SpecialStructuredSearch": "includes/SpecialStructuredSearch.php",
