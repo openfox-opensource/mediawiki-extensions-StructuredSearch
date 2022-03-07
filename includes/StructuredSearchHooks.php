@@ -240,11 +240,7 @@ class Hooks{
 				$fields['file_text'] = '';
 
 			}
-			print_r([
-				$fields,
-				$allImagesIncluded,
-				$page->getDBkey()
-			]);
+
 		}
 	}
 	public static function onCirrusSearchMappingConfig( array &$config, MappingConfigBuilder $builder ) { 
