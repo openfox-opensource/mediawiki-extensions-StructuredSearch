@@ -139,7 +139,7 @@ class Hooks{
 			/**
 			 * @var \CirrusSearch $engine
 			 */
-			
+			$conf = \MediaWiki\MediaWikiServices::getInstance()->getMainConfig();
 			$params = Utils::getSearchParams();
 			
 			foreach ($params as $param) {
@@ -151,7 +151,9 @@ class Hooks{
 					$fields[$keyForCirrus] = Utils::isNumericField($param) ? $builder->newLongField($keyForCirrus) : $builder->newStringField($keyForCirrus);
 				}
 			}
-			
+			if( $conf->get('StructuredSearchAddFilesContentToIncludingPages') ){
+				$fields['is_included_file'] = $builder->newLongField('is_included_file');
+			}
 			//$fields['tryToText'] = CoordinatesIndexField::build( 'coordinates', $engine->getConfig(), $engine );
 		} 
 		
@@ -175,7 +177,6 @@ class Hooks{
 	) {
 		$conf = \MediaWiki\MediaWikiServices::getInstance()->getMainConfig();
 
-
 		$params = Utils::getSearchParams();
 		$vals = ApiSearch::getResultsAdditionalFieldsFromTitles( [$page->getTitle()->getPrefixedText()],[[]]);
 		$vals = array_pop( $vals );
@@ -186,6 +187,7 @@ class Hooks{
 				$fields[ $keyForCirrus ] = isset($vals[ $fieldName ]) ? Utils::getFieldValueForIndex($vals[$fieldName ], $param) : '';
 			}
 		}
+
 		//die(print_r(['$fields ' . "\n", $fields[ 'text' ]]));
 	}
 	static public function onStructuredSearchSearchDataForIndexAfterWikiText(
@@ -194,7 +196,12 @@ class Hooks{
 		ParserOutput $parserOutput,
 		SearchEngine $searchEngine
 	){
-
+		$conf = \MediaWiki\MediaWikiServices::getInstance()->getMainConfig();
+		$addIncludedFilesField = $conf->get('StructuredSearchAddFilesContentToIncludingPages');
+		// if( $addIncludedFilesField ){
+		// 	$fields['is_included_files'] = 0;
+		// }
+		
 		if( NS_FILE != $page->getTitle()->getNameSpace()){
 			$images = self::getPageFiles( $page );
 			$filesContent = "";
@@ -234,14 +241,15 @@ class Hooks{
 
 			if(count($allImagesIncluded)){
 
-				$fields['source_text'] = '';
-				$fields['title'] = '';
-				$fields['text'] = '';
-				$fields['file_text'] = '';
+				if( $addIncludedFilesField ){
+					$fields['is_included_file'] = 1;
+				}
 
 			}
 
 		}
+		// print_r($fields);
+		// die();
 	}
 	public static function onCirrusSearchMappingConfig( array &$config, MappingConfigBuilder $builder ) { 
 		
@@ -253,6 +261,7 @@ class Hooks{
 	 */
 	public static function onCirrusSearchAddQueryFeatures( SearchConfig $config, array &$features ) {
 		$features[] = new InCargoFeature();
+		$features[] = new NotIncludedFileFeature();
 	}
 	static public function onStructuredSearchParams( &$params ){
 		$params['search'] = [

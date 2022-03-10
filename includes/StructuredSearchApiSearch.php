@@ -106,7 +106,8 @@ class ApiSearch extends \ApiBase {
 		return $this->getResultsAdditionalFields($results);
 	}	
 	public static function extractSearchStringFromFields( $params ) {
-		
+		$conf = \MediaWiki\MediaWikiServices::getInstance()->getMainConfig();
+
 		$searchParams = Utils::getSearchParams();
 		$searchParamsKeys = array_column($searchParams , 'field');
 		foreach ($params as $pKey => $pValue) {
@@ -131,6 +132,9 @@ class ApiSearch extends \ApiBase {
 				}
 			}
 		}
+		if( $conf->get('StructuredSearchAddFilesContentToIncludingPages') ){
+			$params['search'] .= ' not_included_file:1';
+		}		
 		//die( print_r([$params,$searchParamsKeys]));
 		return $params;
 	}

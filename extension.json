@@ -82,8 +82,7 @@
 	"ExtensionFunctions" : [
 		"MediaWiki\\Extension\\StructuredSearch\\Hooks::overrideWikitextContentHandler"
 	],
-	"Hooks": {
-		
+	"Hooks": {	
     	"SearchIndexFields": [
         	"MediaWiki\\Extension\\StructuredSearch\\Hooks::onSearchIndexFields"
     	],
@@ -95,9 +94,9 @@
         ],
     	"SearchDataForIndex": [
         	"MediaWiki\\Extension\\StructuredSearch\\Hooks::onSearchDataForIndex"
-	],
-	"StructuredSearchSearchDataForIndexAfterWikiText": [
-		"MediaWiki\\Extension\\StructuredSearch\\Hooks::onStructuredSearchSearchDataForIndexAfterWikiText"
+		],
+		"StructuredSearchSearchDataForIndexAfterWikiText": [
+			"MediaWiki\\Extension\\StructuredSearch\\Hooks::onStructuredSearchSearchDataForIndexAfterWikiText"
     	]
 	},
 	"ExtensionMessagesFiles": {
@@ -112,7 +111,8 @@
 		"MediaWiki\\Extension\\StructuredSearch\\SpecialStructuredSearch": "includes/SpecialStructuredSearch.php",
 		"MediaWiki\\Extension\\StructuredSearch\\ApiAutocomplete": "includes/StructuredSearchApiAutocomplete.php",
 		"MediaWiki\\Extension\\StructuredSearch\\Hooks": "includes/StructuredSearchHooks.php",
-		"MediaWiki\\Extension\\StructuredSearch\\InCargoFeature": "includes/InCargoFeature.php"
+		"MediaWiki\\Extension\\StructuredSearch\\InCargoFeature": "includes/InCargoFeature.php",
+		"MediaWiki\\Extension\\StructuredSearch\\NotIncludedFileFeature": "includes/NotIncludedFileFeature.php"
 	},
 	"AutoloadNamespaces": {
 		"MediaWiki\\Extension\\StructuredSearch\\": "includes/"
