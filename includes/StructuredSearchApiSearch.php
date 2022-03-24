@@ -180,7 +180,9 @@ class ApiSearch extends \ApiBase {
 					'namespace' => $titleClass->getNsText(), 
 					'namespaceId' => $titleClass->getNamespace(),
 					'title_key' => $titleKey,
+					'text_had_search_results_inside' => !!strpos($fullResults[$key]['snippet'], 'class="searchmatch"')
 			];
+			
 			
 			$resultsTitlesForCheck[$titleKey] = array_merge($resultsTitlesForCheck[$titleKey], $fullResults[$key]);
 			$resultsTitlesAliases[$val] = &$resultsTitlesForCheck[$titleKey];
