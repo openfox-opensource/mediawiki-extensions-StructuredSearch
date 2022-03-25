@@ -437,21 +437,54 @@ span.label-wrp {
     position: relative;
     box-shadow: var(--search-bar-boxshadow);
     .columns {
+      font-size: 15px;
+      padding-right: 0;
       padding-left: 0;
       position: static;
+         &.result-header {
+                  position: relative;
+                  .item-type {
+                          position: absolute;
+			  z-index: 1;
+			  width: calc(100%);
+			  color: #fff;
+			  font-size: 17px;
+			  padding: 2px 5px;
+			  span:before {
+				  content: "\f15c";
+				  font-family: 'Font Awesome 5 Pro';
+				  padding-right: .4em;
+			  }
+                }
+        }
     }
+    .reusults-bc {
+    background: var(--light-bg3);
+	}
+
     .snippet {
-      font-size: 20px;
+      font-size: 17px;
       line-height: 1.3;
-      margin: 1em;
       .searchmatch {
         font-weight: bold;
       }
     }
     h4 {
-      margin: 4px 17px 0;
+	margin: 0;
+      padding: 4px 1rem 0;
       font-size: 27px;
       text-align: left;
+    }
+    h6 {
+      font-weight: bold;
+      padding: 0 1rem;
+    }
+    p {
+        padding: 0.5em 1rem;
+	margin: 0;
+    }
+    .result-info > div {
+	padding-left: 1rem;
     }
     &.with-img{
     }
@@ -531,6 +564,7 @@ span.label-wrp {
         i {
           margin-right: .5em;
         }
+	a {display: inline-block;}
       }
       .standard-tag {
         max-height: 73px;
@@ -701,7 +735,7 @@ span.label-wrp {
             padding: 0 6px;
 	    	   h4 {
 			   text-align: center;
-		   } 
+		   }
 		  &.has-image {
 		    h4 {
 		      margin: 0;
@@ -730,8 +764,7 @@ span.label-wrp {
       		}
             }
             .snippet {
-              font-size: 17px;
-              margin: 1em 0;
+              font-size: 15px;
           }
 
           .results-meta {
