@@ -180,7 +180,7 @@ class ApiSearch extends \ApiBase {
 					'namespace' => $titleClass->getNsText(), 
 					'namespaceId' => $titleClass->getNamespace(),
 					'title_key' => $titleKey,
-					'text_had_search_results_inside' => !!strpos($fullResults[$key]['snippet'], 'class="searchmatch"')
+					'text_had_search_results_inside' => !!strpos($fullResults[$key]['snippet'], 'class="searchmatch"') ? "1" : ""
 			];
 			
 			
