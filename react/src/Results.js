@@ -68,9 +68,10 @@ class Results extends Component {
         else{
           newResults = results;
         }
+        let newTotal = (data.searchinfo?.totalhits || 0) + ( data.reset ? 0 : this.state.total );
         this.setState({
           offset: data.continue ? data.continue.sroffset : null,
-          total: data.searchinfo ? data.searchinfo.totalhits : 0,
+          total: newTotal,
           lastIsError:false,
           results:newResults,
           searchReturned:true,

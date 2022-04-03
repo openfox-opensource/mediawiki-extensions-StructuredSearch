@@ -141,12 +141,12 @@ class Hooks{
 			 */
 			$conf = \MediaWiki\MediaWikiServices::getInstance()->getMainConfig();
 			$params = Utils::getSearchParams();
-			
+			$builder = new CirrusSearchIndexFieldFactory($engine->getConfig());
 			foreach ($params as $param) {
 				if( Utils::isCargoField($param['field']) ){
 					$keyForCirrus = Utils::replaceCargoFieldToElasticField( $param['field']);
 					
-					$builder = new CirrusSearchIndexFieldFactory($engine->getConfig());
+					
 
 					$fields[$keyForCirrus] = Utils::isNumericField($param) ? $builder->newLongField($keyForCirrus) : $builder->newStringField($keyForCirrus);
 				}
@@ -154,7 +154,7 @@ class Hooks{
 			if( $conf->get('StructuredSearchAddFilesContentToIncludingPages') ){
 				$fields['is_included_file'] = $builder->newLongField('is_included_file');
 			}
-			//$fields['tryToText'] = CoordinatesIndexField::build( 'coordinates', $engine->getConfig(), $engine );
+			
 		} 
 		
 	}
