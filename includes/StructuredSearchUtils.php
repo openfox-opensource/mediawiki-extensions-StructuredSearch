@@ -134,10 +134,12 @@ class Utils{
 		$conf = \MediaWiki\MediaWikiServices::getInstance()->getMainConfig();
 		$params = $conf->get('StructuredSearchParams');
 		$newKeyedArray = [];
+
 		foreach ($params as $param) {
 			if(!isset($param['field']) || !$param['field']){
 				continue;
 			}
+
 			$newKeyedArray[$param['field']] = $param;
 		}
 		//run this before all hooks to let others modify predefined fields
