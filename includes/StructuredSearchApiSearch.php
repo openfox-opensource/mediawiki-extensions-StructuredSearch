@@ -105,15 +105,11 @@ class ApiSearch extends \ApiBase {
 		$searchParams = Utils::getSearchParams();
 		$searchParamsKeys = array_column($searchParams , 'field');
 		foreach ($params as $pKey => $pValue) {
-			//print_r([in_array($pKey, $searchParamsKeys), self::isSearchableField( $pKey )]);
 			if( in_array($pKey, $searchParamsKeys) && isset($searchParams[$pKey]['search_callbak']) && function_exists($searchParams[$pKey]['search_callbak']) ){
 					call_user_func_array($searchParams[$pKey]['search_callbak'], [&$params, $pKey]);
-					//print_r($params);
 				}
 		}
-		//print_r($params);
 		foreach ($params as $pKey => $pValue) {
-			//print_r([in_array($pKey, $searchParamsKeys), self::isSearchableField( $pKey )]);
 			if( in_array($pKey, $searchParamsKeys) ){
 				
 				if(  Utils::isSearchableField( $pKey ) && $pValue){
@@ -126,10 +122,12 @@ class ApiSearch extends \ApiBase {
 				}
 			}
 		}
-		if( '6' == $params['namespace'] && $conf->get('StructuredSearchAddFilesContentToIncludingPages') ){
+
+		
+		if( NS_FILE != (integer) $params['namespace'] && $conf->get('StructuredSearchAddFilesContentToIncludingPages') ){
 			$params['search'] .= ' not_included_file:1';
-		}		
-		//die( print_r([$params,$searchParamsKeys]));
+		}
+		
 		return $params;
 	}
 	
@@ -145,7 +143,6 @@ class ApiSearch extends \ApiBase {
 
 	protected function getResultsAdditionalFields( $results) {
 		$titles = array_column($results['query']['search'], 'title');
-		//die(print_r($results['query']));
 		$resultsData = self::getResultsAdditionalFieldsFromTitles( $titles, $results['query']['search']);
 		\Hooks::run( 'StructuredSearchResultsView', [ &$resultsData ] );
 		$results['query']['searchinfo']['totalhits'] = count($resultsData);
@@ -200,9 +197,6 @@ class ApiSearch extends \ApiBase {
 			return $titles;
 		}
 		
-		
-		
-
 		if(count($resultsTitlesForCheck)){
 
 			self::addCategories( $resultsTitlesForCheck );
@@ -270,12 +264,9 @@ class ApiSearch extends \ApiBase {
 			$conditions[] = '_pageName IN (' . $dbr->makeList( array_column( $resultsTitlesForCheck,'full_title' )) . ')';
 			$res = $dbrCargo->select( $tableName, $fields, $conditions);
 			
-			//print_r($conditions);
 			while ( $row = $dbrCargo->fetchObject( $res ) ) {
-				//print_r([$row,'d']);
 				$addToArr = &$resultsTitlesAliases[$row->_pageName];
 				foreach ($row as $key => $value) {
-					//echo "$key $value<br/>";
 					$keySplitted = explode('__', $key);
 					$fullField = $tableName . ':' .  $keySplitted[0];
 					if(isset( $keySplitted[1] ) && $keySplitted[1] == 'full'){
@@ -288,9 +279,7 @@ class ApiSearch extends \ApiBase {
 						$addToArr[$fullField] = $value;
 					}
 				}
-				//print_r([$row]);
-				//unset( $row['_pageName']);
-				//$addToArr = array_merge($addToArr, (array)$row);
+	
 			}
 		}
 			
@@ -320,7 +309,7 @@ class ApiSearch extends \ApiBase {
 		        	$r[] = $row2->Field;
 				}
 			}
-			$tables[$row->main_table] = $r;//unserialize($r);
+			$tables[$row->main_table] = $r;
 		}
 
 
@@ -365,7 +354,6 @@ class ApiSearch extends \ApiBase {
 				]
 			);
 			while ( $row = $dbr->fetchObject( $res ) ) {
-				//print_r($row);
 				$categoriesToExclude[] = $row->page_title;
 			}
 		}
@@ -419,19 +407,7 @@ class ApiSearch extends \ApiBase {
 	public static function getFieldsNames($allCargoTableExits, $tableName){
 		
 		return $allCargoTableExits[$tableName] ;
-		// $res = $dbr->query('Describe ');
-		// $row = $dbr->fetchRow( $res );
-		// $fields = $row[0] ? unserialize($row[0]) : [];
-		// $fieldsNames = [];
-		// foreach ($fields as $fName => &$field) {
-		// 	if( isset($field['isList']) && $field['isList']){
-		// 		$fieldsNames[] = $fName .'__full';
-		// 	}
-		// 	else{
-		// 		$fieldsNames[] = $fName;
-		// 	}
-		// }
-		// return $fieldsNames;
+		
 
 	}
 	public static function getFieldsByTable(){

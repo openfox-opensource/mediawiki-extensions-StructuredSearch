@@ -22,52 +22,48 @@ namespace MediaWiki\Extension\StructuredSearch;
 class ApiAutocomplete extends \ApiBase {
 		public function __construct( $query, $moduleName ) {
 		parent::__construct( $query, $moduleName );
-
-	}
+	 }
 
 	public function execute() {
-		if('127.0.0.1' == $_SERVER["REMOTE_ADDR"]){
-			header("Access-Control-Allow-Origin: *");
+		if ( '127.0.0.1' == $_SERVER["REMOTE_ADDR"] ) {
+			header( "Access-Control-Allow-Origin: *" );
 		}
 		$params = $this->extractRequestParams();
 		$result = $this->getResult();
-		
-		$result->addValue( NULL, 'values', $this->getAutocompleteSearch() );
-		
+
+		$result->addValue( null, 'values', $this->getAutocompleteSearch() );
 	}
 
 	public function getAutocompleteSearch() {
 		$search = [];
-		
+
 		$searchParams = Utils::getSearchParams();
 		$params = $this->extractRequestParams();
 		$searchField = $params['field'];
-		if(isset( $searchParams[ $searchField ] ) ){
-			if(isset( $searchParams[ $searchField ]['widget']['autocomplete_callback'] )){
-				$search = call_user_func( $searchParams[ $searchField ]['widget']['autocomplete_callback'],$params['search'], $searchField);
-			}
-			else if( Utils::isCargoField($searchField) ){
+		if ( isset( $searchParams[ $searchField ] ) ) {
+			if ( isset( $searchParams[ $searchField ]['widget']['autocomplete_callback'] ) ) {
+				$search = call_user_func( $searchParams[ $searchField ]['widget']['autocomplete_callback'], $params['search'], $searchField );
+			} elseif ( Utils::isCargoField( $searchField ) ) {
 				$search = Utils::cargoAutocomplete( $params['search'], $searchField );
 			}
-		}
-		else {
+		} else {
 			$search = [];
 		}
 		return $search;
 	}
-	
+
 	protected function getAllowedParams() {
-		return array(
+		return [
 			'search' => null,
 			'field' => null,
-		);
+		];
 	}
 
 	protected function getParamDescription() {
-		return array(
+		return [
 			'search' => 'search term',
 			'field' => 'Field key as defined in StructuredSearchParams',
-		);
+		];
 	}
 
 	protected function getDescription() {
@@ -75,10 +71,9 @@ class ApiAutocomplete extends \ApiBase {
 	}
 
 	protected function getExamples() {
-		return array(
+		return [
 			'action=structuredsearchautocomplete&field=category&search=a',
-		);
+		];
 	}
-
 
 }

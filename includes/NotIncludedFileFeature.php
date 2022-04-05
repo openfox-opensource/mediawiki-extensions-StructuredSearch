@@ -4,9 +4,8 @@ namespace MediaWiki\Extension\StructuredSearch;
 
 use Config;
 use CirrusSearch\Search\SearchContext;
-use Title;
 use CirrusSearch\Query\SimpleKeywordFeature;
-use CirrusSearch\Query\QueryHelper;
+
 /**
 
  */
@@ -19,9 +18,8 @@ class NotIncludedFileFeature extends SimpleKeywordFeature {
 	/**
 	 * @param Config $config
 	 */
-	public function __construct(  ) {
+	public function __construct() {
 	}
-	
 
 	/**
 	 * @return string[]
@@ -43,11 +41,10 @@ class NotIncludedFileFeature extends SimpleKeywordFeature {
 	 */
 	protected function doApply( SearchContext $context, $key, $value, $quotedValue, $negated ) {
 		$filter = new \Elastica\Query\BoolQuery();
-		
-		$filter->addMustNot( ["match" => ['is_included_file' => 1 ]]);
-		
+
+		$filter->addMustNot( [ "match" => [ 'is_included_file' => 1 ] ] );
+
 		return [ $filter, false ];
 	}
 
-	
 }
