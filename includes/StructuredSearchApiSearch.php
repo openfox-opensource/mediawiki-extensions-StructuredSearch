@@ -126,7 +126,7 @@ class ApiSearch extends \ApiBase {
 				}
 			}
 		}
-		if( $conf->get('StructuredSearchAddFilesContentToIncludingPages') ){
+		if( '6' == $params['namespace'] && $conf->get('StructuredSearchAddFilesContentToIncludingPages') ){
 			$params['search'] .= ' not_included_file:1';
 		}		
 		//die( print_r([$params,$searchParamsKeys]));
