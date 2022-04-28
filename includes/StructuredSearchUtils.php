@@ -164,9 +164,9 @@ class Utils {
 						];
 					}
 				}
+				// ensure options is no keyed array
+				$param['widget']['options'] = array_values( $param['widget']['options'] );
 			}
-			// ensure options is no keyed array
-			$param['widget']['options'] = array_values( $param['widget']['options'] );
 		}
 		return $newKeyedArray;
 	}
