@@ -113,6 +113,19 @@ class Results extends Component {
     else return 0;
 
   }
+  insertWordsInArrayToLink(index, arrayStringOfSearch) {//index to word search in array
+    let arrayWordToLink = new Array;
+    for (var i = index - 3, j = 0; i < index + 3; i++, j++) {
+      arrayWordToLink[j] = arrayStringOfSearch[i];
+    }
+    return arrayWordToLink;
+  }
+  locationsWords(string, substring) {
+    var match, matches = [];
+    while ((match = substring.exec(string)) != null) {
+      matches.push(match.index);
+    }
+  }
   findTheLocationOfSearchStringWithTag(arrayWordsInputValue, arrayStringSnippet) {
     let locationOfStartStringToLink = [];
     let stringToSearch = arrayWordsInputValue[0];
@@ -121,13 +134,12 @@ class Results extends Component {
       if (arrayStringSnippet[i].includes(stringToSearch))
         locationWordSearch.push(i)
     }
-    for (var i = 0; i < locationWordSearch.length; i += 2) {
+    for (var i = 0; i < locationWordSearch.length; i ++) {
       for (var j = 0, x = 0, index = 0; j < arrayWordsInputValue.length; j++, x++, index += 2) {
         if (arrayStringSnippet[locationWordSearch[i] + index].includes(arrayWordsInputValue[j])) {
           if (x + 1 === arrayWordsInputValue.length) {
             locationOfStartStringToLink.push(locationWordSearch[i])
           }
-
         }
         else {
           break;
@@ -151,12 +163,18 @@ class Results extends Component {
 
         }
         else {
-          // console.log("kkkjj");
           break;
         }
       }
     }
     return locationOfStartStringToLink;
+  }
+  searchStringInArray(str, strArray) {
+    for (var j = 0; j < strArray.length; j++) {
+      if (strArray[j].match(str)) return j;
+    }
+    return -1;
+
   }
   insertLink(locationToLinkWithTag,arrayWordsInputValue,arraySpllitSnippet){
      for(let i=locationToLinkWithTag-1;i<=(locationToLinkWithTag+arrayWordsInputValue);i++){
@@ -166,7 +184,6 @@ class Results extends Component {
   }
   arrayInputAndStringToLink(arrayWithReplcaeSpanWithA,arrayWordsInputValue,locationToLinkWithTag,locationToLinkWithTagLength){
    let sizeToArray=arrayWordsInputValue.length+2;
-   console.log(sizeToArray);
    let arrayToLink = [Array(sizeToArray)];
     for(let i=0,j=1;i<locationToLinkWithTag+(arrayWordsInputValue.length)*2;j++,i++)
     {
@@ -182,7 +199,7 @@ class Results extends Component {
     let wordInput = wordSearch.getElementsByTagName('input');// Find the search text
     let arrayWordsInputValue = this.spllit(wordInput[0].value);
     let locationToLinkWithTag = this.findTheLocationOfSearchStringWithTag(arrayWordsInputValue, arraySpllitSnippet)
-    let arrayWithReplcaeSpanWithA;
+    let arrayWithReplcaeSpanWithA=[];
     let arrayInputAndString;
     for(let i=0;i<locationToLinkWithTag.length;i++){
       arrayWithReplcaeSpanWithA=this.insertLink(locationToLinkWithTag[i],arrayWordsInputValue.length,arraySpllitSnippet);
@@ -200,6 +217,7 @@ class Results extends Component {
         arrayWithReplcaeSpanWithA[j] = arrayWithReplcaeSpanWithA[j].substring(0, 0) + ' href="' + protocol + '/' + title + '#:~:text=' + stringLink + '" '+arrayWithReplcaeSpanWithA[j]
       }
     }
+    console.log(arrayWithReplcaeSpanWithA);
     let stringFix = "";
         for (var i = 0; i < arrayWithReplcaeSpanWithA.length; i++) {
           stringFix += arrayWithReplcaeSpanWithA[i] + " ";
