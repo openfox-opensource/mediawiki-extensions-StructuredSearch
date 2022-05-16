@@ -15,7 +15,7 @@ class Utils {
 		$columnName = $splitted[1];
 		$subTable = self::replaceCargoFieldToElasticField( $fieldName );
 		$tables = self::getSubtablesOfFields( $tableName );
-		if ( in_array( $subTable, $tables ) ) {
+		if ( $tables && in_array( $subTable, $tables ) ) {
 
 			// read subtitle
 			$res = $dbrCargo->select( $subTable, [
@@ -118,6 +118,9 @@ class Utils {
 		$res = $dbr->select( 'cargo_tables', [ 'field_tables' ],
 			[ 'main_table' => $tableName ] );
 		$row = $dbr->fetchRow( $res );
+		if( !$row || !count($row) ){
+			return [];
+		}
 		$tables = unserialize( $row[0] );
 		$allDefinedTables = $dbrCargo->query( 'show tables' );
 		$tablesFromShow = [];
