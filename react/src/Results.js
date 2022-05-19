@@ -90,7 +90,6 @@ class Results extends Component {
     });
   }
   resultClicked(title, event) {
-    console.log("rererr");
     // console.log("resultClicked StructuredSearchResultclicked", title, event);
     FormMain.fireGlobalEvent({ title: title }, 'StructuredSearchResultclicked');
   }
@@ -177,10 +176,17 @@ class Results extends Component {
 
   }
   insertLink(locationToLinkWithTag,arrayWordsInputValue,arraySpllitSnippet){
-     for(let i=locationToLinkWithTag-1;i<=(locationToLinkWithTag+arrayWordsInputValue);i++){
-      arraySpllitSnippet[i]=arraySpllitSnippet[i].replaceAll('span', 'a');
+    for(let i=locationToLinkWithTag;i<locationToLinkWithTag+(2*arrayWordsInputValue)-2;i++)
+    {
+      arraySpllitSnippet[i]=arraySpllitSnippet[i].replaceAll('class="searchmatch">','');
+      arraySpllitSnippet[i]=arraySpllitSnippet[i].replaceAll('<span', '');
+      arraySpllitSnippet[i]=arraySpllitSnippet[i].replaceAll('</span>', '');
     }
-      return arraySpllitSnippet;
+    let lastLocation=locationToLinkWithTag+(2*arrayWordsInputValue)-2;
+    arraySpllitSnippet[locationToLinkWithTag-1]=arraySpllitSnippet[locationToLinkWithTag-1].replaceAll('span', 'a');
+    arraySpllitSnippet[lastLocation]=arraySpllitSnippet[lastLocation].replaceAll('span', 'a');
+    arraySpllitSnippet[lastLocation]=arraySpllitSnippet[lastLocation].replaceAll('class="searchmatch">', '');
+    return arraySpllitSnippet;
   }
   arrayInputAndStringToLink(arrayWithReplcaeSpanWithA,arrayWordsInputValue,locationToLinkWithTag,locationToLinkWithTagLength){
    let sizeToArray=arrayWordsInputValue.length+2;
@@ -204,25 +210,26 @@ class Results extends Component {
     for(let i=0;i<locationToLinkWithTag.length;i++){
       arrayWithReplcaeSpanWithA=this.insertLink(locationToLinkWithTag[i],arrayWordsInputValue.length,arraySpllitSnippet);
     }
+    // console.log("fff",arrayWordsInputValue[1],!!!arrayWordsInputValue[1].match(/^[.,:!?]/));
     let protocol = window.location.protocol;
     let title = result.full_title;
     for(let i=0;i<locationToLinkWithTag.length;i++){
-      for(let j=locationToLinkWithTag[i];j<locationToLinkWithTag[i]+(arrayWordsInputValue.length)*2;j+=2){
-        arrayInputAndString=this.arrayInputAndStringToLink(arrayWithReplcaeSpanWithA,arrayWordsInputValue,locationToLinkWithTag[i],locationToLinkWithTag.length);
-       let stringLink="";
-        for(let x=0;x<arrayWordsInputValue.length+2;x++){
-          stringLink+=arrayInputAndString[x]+" ";
-        }
-        arrayWithReplcaeSpanWithA[j]=arrayWithReplcaeSpanWithA[j].replaceAll('class="searchmatch"','');
-        arrayWithReplcaeSpanWithA[j] = arrayWithReplcaeSpanWithA[j].substring(0, 0) + ' href="' + protocol + '/' + title + '#:~:text=' + stringLink + '" '+arrayWithReplcaeSpanWithA[j]
+      if(arrayWordsInputValue.length<=4)
+       
+      arrayInputAndString=this.arrayInputAndStringToLink(arrayWithReplcaeSpanWithA,arrayWordsInputValue,locationToLinkWithTag[i],locationToLinkWithTag.length);
+      else arrayInputAndString=arrayWordsInputValue;
+         let stringLink="";
+      for(let x=0;x<arrayWordsInputValue.length+2;x++){
+        stringLink+=arrayInputAndString[x]+" ";
       }
+      arrayWithReplcaeSpanWithA[locationToLinkWithTag[i]-1] = arrayWithReplcaeSpanWithA[locationToLinkWithTag[i]-1]+" "+arrayWithReplcaeSpanWithA[locationToLinkWithTag[i]-1].substring(0, 0) + ' href="' + protocol + '/' + title + '#:~:text=' + stringLink + '" '+'>'
     }
-    console.log(arrayWithReplcaeSpanWithA);
     let stringFix = "";
         for (var i = 0; i < arrayWithReplcaeSpanWithA.length; i++) {
           stringFix += arrayWithReplcaeSpanWithA[i] + " ";
         }
-    result.snippet=stringFix;
+    if(stringFix)
+       result.snippet=stringFix;
   }
  
   getResultJsx(result) {
