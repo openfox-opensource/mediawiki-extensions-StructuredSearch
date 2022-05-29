@@ -450,6 +450,8 @@ span.label-wrp {
 			  color: #fff;
 			  font-size: 17px;
 			  padding: 2px 5px;
+			  bottom: 0;
+			  background: var(--trans-bg2);
 			  span:before {
 				  content: "\f15c";
 				  font-family: 'Font Awesome 5 Pro';
@@ -460,8 +462,18 @@ span.label-wrp {
     }
     .reusults-bc {
     background: var(--light-bg3);
+    	.array-element {
+		display: none;
+		&:first-child {display: inline-block;}
 	}
-
+	}
+	p.excerpt {
+	    display: -webkit-box;
+	    -webkit-line-clamp: 3;
+	    -webkit-box-orient: vertical;
+	    overflow: hidden;
+	    padding-bottom: 0;
+	}
     .snippet {
       font-size: 17px;
       line-height: 1.3;
@@ -477,10 +489,11 @@ span.label-wrp {
     }
     h6 {
       font-weight: bold;
-      padding: 0 1rem;
+      padding: 1rem 1rem 0;
+      margin: 0;
     }
     p {
-        padding: 0.5em 1rem;
+        padding: 0 1rem .5rem;
 	margin: 0;
     }
     .result-info > div {

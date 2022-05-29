@@ -140,6 +140,7 @@ class Utils {
 			if ( !isset( $param['field'] ) || !$param['field'] ) {
 				continue;
 			}
+
 			$newKeyedArray[$param['field']] = $param;
 		}
 		// run this before all hooks to let others modify predefined fields
