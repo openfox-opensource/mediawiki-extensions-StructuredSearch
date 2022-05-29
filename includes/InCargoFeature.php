@@ -4,9 +4,8 @@ namespace MediaWiki\Extension\StructuredSearch;
 
 use Config;
 use CirrusSearch\Search\SearchContext;
-use Title;
 use CirrusSearch\Query\SimpleKeywordFeature;
-use CirrusSearch\Query\QueryHelper;
+
 /**
 
  */
@@ -19,9 +18,8 @@ class InCargoFeature extends SimpleKeywordFeature {
 	/**
 	 * @param Config $config
 	 */
-	public function __construct(  ) {
+	public function __construct() {
 	}
-	
 
 	/**
 	 * @return string[]
@@ -31,10 +29,10 @@ class InCargoFeature extends SimpleKeywordFeature {
 		$params = Utils::getSearchParams();
 
 		$keywords = [];
-		foreach ($params as $param) {
+		foreach ( $params as $param ) {
 			$fieldName = $param['field'];
-			if( Utils::isCargoField($fieldName) ){
-				$keywords[] = 'in_' . Utils::replaceCargoFieldToElasticField( $fieldName);
+			if ( Utils::isCargoField( $fieldName ) ) {
+				$keywords[] = 'in_' . Utils::replaceCargoFieldToElasticField( $fieldName );
 			}
 		}
 		return $keywords;
@@ -52,24 +50,24 @@ class InCargoFeature extends SimpleKeywordFeature {
 	 *  string.
 	 */
 	protected function doApply( SearchContext $context, $key, $value, $quotedValue, $negated ) {
-		$tableDef = preg_replace('/in_/', '', $key); //cargoParts[0];
-		
-		$values = explode( '|',$value);
+		$tableDef = preg_replace( '/in_/', '', $key ); // cargoParts[0];
+
+		$values = explode( '|', $value );
 		$params = Utils::getSearchParams();
 		$paramKey = Utils::replaceElasticFieldToCargoField( $tableDef );
-		$param = isset( $params[ $paramKey ]) ? $params[ $paramKey ]: null;
+		$param = isset( $params[ $paramKey ] ) ? $params[ $paramKey ] : null;
 		$paramQueryType = $param && isset( $param['widget']['type'] ) ? $param['widget']['type'] : '';
-		
+
 		switch ( $paramQueryType ) {
 			case 'range':
-				$filter = $this->matchCargoRange($tableDef, $values );
+				$filter = $this->matchCargoRange( $tableDef, $values );
 				break;
-			
+
 			default:
-				$filter = $this->matchCargoQuery($tableDef, $values );
+				$filter = $this->matchCargoQuery( $tableDef, $values );
 				break;
 		}
-		
+
 		if ( $filter === null ) {
 			$context->setResultsPossible( false );
 			$context->addWarning(
@@ -77,7 +75,7 @@ class InCargoFeature extends SimpleKeywordFeature {
 				$key
 			);
 		}
-		
+
 		return [ $filter, false ];
 	}
 
@@ -89,25 +87,24 @@ class InCargoFeature extends SimpleKeywordFeature {
 	 * @return \Elastica\Query\Match|null A null return value means all values are filtered
 	 *  and an empty result set should be returned.
 	 */
-	private function matchCargoQuery(string $tableDef, array $values ) {
+	private function matchCargoQuery( string $tableDef, array $values ) {
 		$filter = new \Elastica\Query\BoolQuery();
-		
-		
+
 		foreach ( $values as $value ) {
 			$match = new \Elastica\Query\Match();
-			$match->setFieldQuery( $tableDef , $value );
+			$match->setFieldQuery( $tableDef, $value );
 			$filter->addShould( $match );
 		}
 
 		return $filter;
 	}
-	private function matchCargoRange(string $tableDef, array $rangeArgs ) {
+	private function matchCargoRange( string $tableDef, array $rangeArgs ) {
 		$rangeArgs = [
-			'gte' =>(integer) $rangeArgs[0],
-			'lte' => (integer)$rangeArgs[1],
+			'gte' => (int)$rangeArgs[0],
+			'lte' => (int)$rangeArgs[1],
 		];
 		$filter = new \Elastica\Query\BoolQuery();
-		$range = new \Elastica\Query\Range($tableDef, $rangeArgs);
+		$range = new \Elastica\Query\Range( $tableDef, $rangeArgs );
 		$filter->addShould( $range );
 		return $filter;
 	}

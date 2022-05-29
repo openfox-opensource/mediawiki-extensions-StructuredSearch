@@ -22,53 +22,51 @@ namespace MediaWiki\Extension\StructuredSearch;
 class ApiParams extends \ApiBase {
 		public function __construct( $query, $moduleName ) {
 		parent::__construct( $query, $moduleName );
-
-	}
+	 }
 
 	public function execute() {
 		global $fennecLocal;
-		if($fennecLocal ){
-			header("Access-Control-Allow-Origin: *");
+		if ( $fennecLocal ) {
+			header( "Access-Control-Allow-Origin: *" );
 		}
 
 		// else{
-		// 	die($_SERVER["REMOTE_ADDR"]);
+		// die($_SERVER["REMOTE_ADDR"]);
 		// }
 		$params = $this->extractRequestParams();
 		$result = $this->getResult();
 		$searchParams = Utils::getSearchParams();
-		$result->addValue( NULL, 'params',  $searchParams);
-		$result->addValue( NULL, 'binds',  Utils::getSearchBinds($searchParams));
-		$result->addValue( NULL, 'templates', self::getResultsTemplates() );
-		$result->addValue( NULL, 'translations', self::getTranslates() );
+		$result->addValue( null, 'params',  $searchParams );
+		$result->addValue( null, 'binds',  Utils::getSearchBinds( $searchParams ) );
+		$result->addValue( null, 'templates', self::getResultsTemplates() );
+		$result->addValue( null, 'translations', self::getTranslates() );
 	}
 
-	
 	public static function getResultsTemplates() {
 		$conf = \MediaWiki\MediaWikiServices::getInstance()->getMainConfig();
-		$templates = $conf->get('StructuredSearchResultsTemplates');
+		$templates = $conf->get( 'StructuredSearchResultsTemplates' );
 		return $templates;
-	}	
+	}
 	public static function getTranslates() {
-		$translateStrs = file_get_contents( __DIR__ .'/../i18n/he.json');
-		$translateStrs = json_decode($translateStrs, TRUE);
-		unset($translateStrs['@metadata']);
-		$translateStrs = array_keys($translateStrs);
-		
+		$translateStrs = file_get_contents( __DIR__ . '/../i18n/he.json' );
+		$translateStrs = json_decode( $translateStrs, true );
+		unset( $translateStrs['@metadata'] );
+		$translateStrs = array_keys( $translateStrs );
+
 		$translations = [];
-		foreach ($translateStrs as $tStr) {
-			$translations[$tStr] = wfMessage($tStr)->text();
+		foreach ( $translateStrs as $tStr ) {
+			$translations[$tStr] = wfMessage( $tStr )->text();
 		}
 		return $translations;
 	}
 	protected function getAllowedParams() {
-		return array(
-		);
+		return [
+		];
 	}
 
 	protected function getParamDescription() {
-		return array(
-		);
+		return [
+		];
 	}
 
 	protected function getDescription() {
@@ -76,14 +74,13 @@ class ApiParams extends \ApiBase {
 	}
 
 	protected function getExamples() {
-		return array(
+		return [
 			'action=structuredsearchparams'
-		);
+		];
 	}
 
 	public function getVersion() {
 		return __CLASS__ . ': $Id$';
 	}
-
 
 }
