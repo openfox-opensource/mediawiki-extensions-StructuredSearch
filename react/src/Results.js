@@ -129,13 +129,13 @@ class Results extends Component {
     let locationOfStartStringToLink = [];
     let stringToSearch = arrayWordsInputValue[0];
     let locationWordSearch = [];
-    for (var i = 0; i < arrayStringSnippet.length; i++) {
-      if (arrayStringSnippet[i].includes(stringToSearch))
+    for (let i = 0; i < arrayStringSnippet.length; i++) {
+      if ( arrayStringSnippet[i] && arrayStringSnippet[i].includes(stringToSearch))
         locationWordSearch.push(i)
     }
-    for (var i = 0; i < locationWordSearch.length; i ++) {
+    for (let i = 0; i < locationWordSearch.length; i ++) {
       for (var j = 0, x = 0, index = 0; j < arrayWordsInputValue.length; j++, x++, index += 2) {
-        if (arrayStringSnippet[locationWordSearch[i] + index].includes(arrayWordsInputValue[j])) {
+        if ( arrayStringSnippet[locationWordSearch[i] + index] && arrayStringSnippet[locationWordSearch[i] + index] && arrayStringSnippet[locationWordSearch[i] + index] && arrayStringSnippet[locationWordSearch[i] + index].includes(arrayWordsInputValue[j])) {
           if (x + 1 === arrayWordsInputValue.length) {
             locationOfStartStringToLink.push(locationWordSearch[i])
           }

@@ -86,7 +86,13 @@ class FormInput extends Component {
 		return optionsStructured;
 	}
 	valueChanged( key, value ){
-		FormMain.setValue( key, value );
+		console.log("key, value",key, value);
+		if(!value){
+			FormMain.removeValueByKey( key );
+		}
+		else{
+			FormMain.setValue( key, value );
+		}			
 	}
 	checkboxChanges( fieldName, value, event){
 		if(event.target.checked){
