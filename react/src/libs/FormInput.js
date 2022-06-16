@@ -266,7 +266,6 @@ class FormInput extends Component {
 				label = this.getLabel( inputData ),
 				wrpClass = 'field-wrp field-wrp-type-' + inputData.widget.type + ' field-wrp-name-' + inputData.field,
 				html = '';
-			console.log("inputData.widget.type", inputData.widget.type);
 			switch( inputData.widget.type){
 				case 'text':
 				case 'select':
