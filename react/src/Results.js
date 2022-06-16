@@ -178,9 +178,11 @@ class Results extends Component {
   insertLink(locationToLinkWithTag,arrayWordsInputValue,arraySpllitSnippet){
     for(let i=locationToLinkWithTag;i<locationToLinkWithTag+(2*arrayWordsInputValue)-2;i++)
     {
-      arraySpllitSnippet[i]=arraySpllitSnippet[i].replaceAll('class="searchmatch">','');
-      arraySpllitSnippet[i]=arraySpllitSnippet[i].replaceAll('<span', '');
-      arraySpllitSnippet[i]=arraySpllitSnippet[i].replaceAll('</span>', '');
+      if(arraySpllitSnippet[i]){
+        arraySpllitSnippet[i]=arraySpllitSnippet[i].replaceAll('class="searchmatch">','');
+        arraySpllitSnippet[i]=arraySpllitSnippet[i].replaceAll('<span', '');
+        arraySpllitSnippet[i]=arraySpllitSnippet[i].replaceAll('</span>', '');
+      }
     }
     let lastLocation=locationToLinkWithTag+(2*arrayWordsInputValue)-2;
     arraySpllitSnippet[locationToLinkWithTag-1]=arraySpllitSnippet[locationToLinkWithTag-1].replaceAll('span', 'a');
