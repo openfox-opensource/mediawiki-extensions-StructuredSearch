@@ -129,13 +129,13 @@ class Results extends Component {
     let locationOfStartStringToLink = [];
     let stringToSearch = arrayWordsInputValue[0];
     let locationWordSearch = [];
-    for (let i = 0; i < arrayStringSnippet.length; i++) {
-      if ( arrayStringSnippet[i] && arrayStringSnippet[i].includes(stringToSearch))
+    for (var i = 0; i < arrayStringSnippet.length; i++) {
+      if (arrayStringSnippet[i].includes(stringToSearch))
         locationWordSearch.push(i)
     }
-    for (let i = 0; i < locationWordSearch.length; i ++) {
+    for (var i = 0; i < locationWordSearch.length; i ++) {
       for (var j = 0, x = 0, index = 0; j < arrayWordsInputValue.length; j++, x++, index += 2) {
-        if ( arrayStringSnippet[locationWordSearch[i] + index] && arrayStringSnippet[locationWordSearch[i] + index] && arrayStringSnippet[locationWordSearch[i] + index] && arrayStringSnippet[locationWordSearch[i] + index].includes(arrayWordsInputValue[j])) {
+        if (arrayStringSnippet[locationWordSearch[i] + index].includes(arrayWordsInputValue[j])) {
           if (x + 1 === arrayWordsInputValue.length) {
             locationOfStartStringToLink.push(locationWordSearch[i])
           }
@@ -200,6 +200,7 @@ class Results extends Component {
     return arrayToLink;
   }
   linkToWordSearch(result){
+    let flag=0;
     let arraySpllitSnippet=this.spllit(result.snippet);
     let wordSearch = document.querySelector('.field-wrp-name-search');
     let wordInput = wordSearch.getElementsByTagName('input');// Find the search text
@@ -210,7 +211,6 @@ class Results extends Component {
     for(let i=0;i<locationToLinkWithTag.length;i++){
       arrayWithReplcaeSpanWithA=this.insertLink(locationToLinkWithTag[i],arrayWordsInputValue.length,arraySpllitSnippet);
     }
-    // console.log("fff",arrayWordsInputValue[1],!!!arrayWordsInputValue[1].match(/^[.,:!?]/));
     let protocol = window.location.protocol;
     let title = result.full_title;
     for(let i=0;i<locationToLinkWithTag.length;i++){
@@ -228,8 +228,13 @@ class Results extends Component {
         for (var i = 0; i < arrayWithReplcaeSpanWithA.length; i++) {
           stringFix += arrayWithReplcaeSpanWithA[i] + " ";
         }
-    if(stringFix)
+    if(stringFix&&!flag){
        result.snippet=stringFix;
+       flag=1;
+       console.log("yes");
+    }
+    else console.log("no");
+
   }
  
   getResultJsx(result) {
