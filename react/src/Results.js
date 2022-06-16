@@ -185,9 +185,11 @@ class Results extends Component {
       }
     }
     let lastLocation=locationToLinkWithTag+(2*arrayWordsInputValue)-2;
-    arraySpllitSnippet[locationToLinkWithTag-1]=arraySpllitSnippet[locationToLinkWithTag-1].replaceAll('span', 'a');
-    arraySpllitSnippet[lastLocation]=arraySpllitSnippet[lastLocation].replaceAll('span', 'a');
-    arraySpllitSnippet[lastLocation]=arraySpllitSnippet[lastLocation].replaceAll('class="searchmatch">', '');
+    arraySpllitSnippet[locationToLinkWithTag-1]=arraySpllitSnippet[locationToLinkWithTag-1]? arraySpllitSnippet[locationToLinkWithTag-1].replaceAll('span', 'a') : '';
+    if(arraySpllitSnippet[lastLocation]){
+      arraySpllitSnippet[lastLocation]=arraySpllitSnippet[lastLocation].replaceAll('span', 'a');
+      arraySpllitSnippet[lastLocation]=arraySpllitSnippet[lastLocation].replaceAll('class="searchmatch">', '');
+    }
     return arraySpllitSnippet;
   }
   arrayInputAndStringToLink(arrayWithReplcaeSpanWithA,arrayWordsInputValue,locationToLinkWithTag,locationToLinkWithTagLength){
