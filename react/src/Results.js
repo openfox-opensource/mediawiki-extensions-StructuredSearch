@@ -204,7 +204,9 @@ class Results extends Component {
     return arrayToLink;
   }
   linkToWordSearch(result){
-    let flag=0;
+    if(result.snippetReplaced){
+      return;
+    }
     let arraySpllitSnippet=this.spllit(result.snippet);
     let wordSearch = document.querySelector('.field-wrp-name-search');
     let wordInput = wordSearch.getElementsByTagName('input');// Find the search text
@@ -232,12 +234,10 @@ class Results extends Component {
         for (var i = 0; i < arrayWithReplcaeSpanWithA.length; i++) {
           stringFix += arrayWithReplcaeSpanWithA[i] + " ";
         }
-    if(stringFix&&!flag){
+    if( stringFix ){
        result.snippet=stringFix;
-       flag=1;
-       console.log("yes");
+       result.snippetReplaced = true;
     }
-    else console.log("no");
 
   }
  
