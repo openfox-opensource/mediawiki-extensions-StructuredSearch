@@ -77,7 +77,6 @@ class FormMain{
 				copyOfData[dataKey] = copyOfData[dataKey].map(val => {return val && 'undefined' != typeof val.value ?val.value: val});
 			}
 			if( 'string' != typeof copyOfData[dataKey] && copyOfData[dataKey].length){
-				console.log("copyOfData[dataKey]", copyOfData[dataKey])
 				copyOfData[dataKey] = copyOfData[dataKey].join('|');
 			}
 		}
