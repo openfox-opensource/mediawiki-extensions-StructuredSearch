@@ -178,14 +178,18 @@ class Results extends Component {
   insertLink(locationToLinkWithTag,arrayWordsInputValue,arraySpllitSnippet){
     for(let i=locationToLinkWithTag;i<locationToLinkWithTag+(2*arrayWordsInputValue)-2;i++)
     {
-      arraySpllitSnippet[i]=arraySpllitSnippet[i].replaceAll('class="searchmatch">','');
-      arraySpllitSnippet[i]=arraySpllitSnippet[i].replaceAll('<span', '');
-      arraySpllitSnippet[i]=arraySpllitSnippet[i].replaceAll('</span>', '');
+      if(arraySpllitSnippet[i]){
+        arraySpllitSnippet[i]=arraySpllitSnippet[i].replaceAll('class="searchmatch">','');
+        arraySpllitSnippet[i]=arraySpllitSnippet[i].replaceAll('<span', '');
+        arraySpllitSnippet[i]=arraySpllitSnippet[i].replaceAll('</span>', '');
+      }
     }
     let lastLocation=locationToLinkWithTag+(2*arrayWordsInputValue)-2;
-    arraySpllitSnippet[locationToLinkWithTag-1]=arraySpllitSnippet[locationToLinkWithTag-1].replaceAll('span', 'a');
-    arraySpllitSnippet[lastLocation]=arraySpllitSnippet[lastLocation].replaceAll('span', 'a');
-    arraySpllitSnippet[lastLocation]=arraySpllitSnippet[lastLocation].replaceAll('class="searchmatch">', '');
+    arraySpllitSnippet[locationToLinkWithTag-1]=arraySpllitSnippet[locationToLinkWithTag-1]? arraySpllitSnippet[locationToLinkWithTag-1].replaceAll('span', 'a') : '';
+    if(arraySpllitSnippet[lastLocation]){
+      arraySpllitSnippet[lastLocation]=arraySpllitSnippet[lastLocation].replaceAll('span', 'a');
+      arraySpllitSnippet[lastLocation]=arraySpllitSnippet[lastLocation].replaceAll('class="searchmatch">', '');
+    }
     return arraySpllitSnippet;
   }
   arrayInputAndStringToLink(arrayWithReplcaeSpanWithA,arrayWordsInputValue,locationToLinkWithTag,locationToLinkWithTagLength){
@@ -200,7 +204,9 @@ class Results extends Component {
     return arrayToLink;
   }
   linkToWordSearch(result){
-    let flag=0;
+    if(result.snippetReplaced){
+      return;
+    }
     let arraySpllitSnippet=this.spllit(result.snippet);
     let wordSearch = document.querySelector('.field-wrp-name-search');
     let wordInput = wordSearch.getElementsByTagName('input');// Find the search text
@@ -228,12 +234,11 @@ class Results extends Component {
         for (var i = 0; i < arrayWithReplcaeSpanWithA.length; i++) {
           stringFix += arrayWithReplcaeSpanWithA[i] + " ";
         }
-    if(stringFix&&!flag){
+    if( stringFix ){
        result.snippet=stringFix;
-       flag=1;
-       console.log("yes");
+       result.snippetReplaced = true;
+       console.log(result.snippet);
     }
-    else console.log("no");
 
   }
  
