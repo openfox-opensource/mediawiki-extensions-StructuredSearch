@@ -237,7 +237,6 @@ class Results extends Component {
     if( stringFix ){
        result.snippet=stringFix;
        result.snippetReplaced = true;
-       console.log(result.snippet);
     }
 
   }
