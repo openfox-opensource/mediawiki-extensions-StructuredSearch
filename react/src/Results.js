@@ -210,11 +210,11 @@ class Results extends Component {
     let arraySpllitSnippet=this.spllit(result.snippet);
     let wordSearch = document.querySelector('.field-wrp-name-search');
     let wordInput = wordSearch.getElementsByTagName('input');// Find the search text
-    if(wordInput=="")
-    {
-      console.log("zzzz");
+    // if(wordInput=="")
+    // {
+      console.log("zzzz",wordInput);
       return;
-    }
+    // }
     let arrayWordsInputValue = this.spllit(wordInput[0].value);
     let locationToLinkWithTag = this.findTheLocationOfSearchStringWithTag(arrayWordsInputValue, arraySpllitSnippet)
     let arrayWithReplcaeSpanWithA=[];
