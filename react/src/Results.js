@@ -213,7 +213,7 @@ class Results extends Component {
     // if(wordInput=="")
     // {
       console.log("zzzz",wordInput);
-      return;
+
     // }
     let arrayWordsInputValue = this.spllit(wordInput[0].value);
     let locationToLinkWithTag = this.findTheLocationOfSearchStringWithTag(arrayWordsInputValue, arraySpllitSnippet)
