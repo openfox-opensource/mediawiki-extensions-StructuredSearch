@@ -71,6 +71,10 @@
 		"StructuredSearchAddFilesContentToIncludingPages": {
 			"description": "If set to true, file content would added to page includes it, and omit from search",
 			"value": true
+		},
+		"StructuredSearchDevelHost":{
+			"description": "Set host (e.g. http://localhost:3002) when developing",
+			"value": false
 		}
 		
 	},
