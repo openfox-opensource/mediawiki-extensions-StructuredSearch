@@ -68,6 +68,21 @@ class ApiSearch extends \ApiBase {
 		if ( !isset( $params['search'] ) ) {
 			$params['search'] = '*';
 		}
+		$params['prop'] = implode( '|', [
+			"size",
+			"wordcount",
+			"timestamp",
+			"snippet",
+			"titlesnippet",
+			"redirecttitle",
+			"redirectsnippet",
+			"sectiontitle",
+			"sectionsnippet",
+			"isfilematch",
+			"categorysnippet",
+			"extensiondata",
+		]);
+		$params[\CirrusSearch\CirrusSearch::EXTRA_FIELDS_TO_EXTRACT] = 'authors';
 		foreach ( $params as $pKey => $pValue ) {
 			if ( !in_array( $pKey, [ 'action','list' ] ) ) {
 				$srParams['sr' . $pKey ] = $pValue;
@@ -81,7 +96,8 @@ class ApiSearch extends \ApiBase {
 			return !is_null( $val );
 		} );
 		$params['action'] = 'query';
-		$params['list'] = 'search';
+		$params['list'] = 'ssearch';
+		
 		$callApiParams = new \DerivativeRequest(
 			$this->getRequest(),
 				$params
@@ -90,6 +106,7 @@ class ApiSearch extends \ApiBase {
 		$api->execute();
 
 		$results = $api->getResult()->getResultData();
+		die( print_r( $results ) );
 		return $this->getResultsAdditionalFields( $results );
 	}
 	public static function extractSearchStringFromFields( $params ) {

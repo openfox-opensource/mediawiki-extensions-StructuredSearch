@@ -10,14 +10,7 @@ use CirrusSearch\Query\SimpleKeywordFeature;
 
  */
 class InCargoFeature extends SimpleKeywordFeature {
-	/**
-	 * @var int
-	 */
-	private $maxConditions;
 
-	/**
-	 * @param Config $config
-	 */
 	public function __construct() {
 	}
 

@@ -45,7 +45,7 @@
 			"value": []
 		},
 		"StructuredSearchNSOverride": {
-			"description": "Override NS list. Usefull to modify full list Each NS can be 'main', 'advanced' or 'disable'",
+			"description": "Override NS list. Useful to modify full list Each NS can be 'main', 'advanced' or 'disable'",
 			"value": []
 		},
 		"StructuredSearchUseMWDefaultSearchNS": {
@@ -71,6 +71,10 @@
 		"StructuredSearchAddFilesContentToIncludingPages": {
 			"description": "If set to true, file content would added to page includes it, and omit from search",
 			"value": true
+		},
+		"StructuredSearchShowAuthorsBots":{
+			"description": "set true to include nots in authers field",
+			"value": false
 		},
 		"StructuredSearchDevelHost":{
 			"description": "Set host (e.g. http://localhost:3002) when developing",
@@ -115,7 +119,10 @@
 		"MediaWiki\\Extension\\StructuredSearch\\SpecialStructuredSearch": "includes/SpecialStructuredSearch.php",
 		"MediaWiki\\Extension\\StructuredSearch\\ApiAutocomplete": "includes/StructuredSearchApiAutocomplete.php",
 		"MediaWiki\\Extension\\StructuredSearch\\Hooks": "includes/StructuredSearchHooks.php",
+		"MediaWiki\\Extension\\StructuredSearch\\AuthorsReader": "includes/AuthorsReader.php",
+		"MediaWiki\\Extension\\StructuredSearch\\StructuredSearchApiQuerySearch": "includes/StructuredSearchApiQuerySearch.php",
 		"MediaWiki\\Extension\\StructuredSearch\\InCargoFeature": "includes/InCargoFeature.php",
+		"MediaWiki\\Extension\\StructuredSearch\\AuthorIsFeature": "includes/AuthorIsFeature.php",
 		"MediaWiki\\Extension\\StructuredSearch\\NotIncludedFileFeature": "includes/NotIncludedFileFeature.php"
 	},
 	"AutoloadNamespaces": {
@@ -125,6 +132,9 @@
 		"structuredsearchparams": "MediaWiki\\Extension\\StructuredSearch\\ApiParams",
 		"structuredsearchautocomplete": "MediaWiki\\Extension\\StructuredSearch\\ApiAutocomplete",
 		"structuredsearchsearch": "MediaWiki\\Extension\\StructuredSearch\\ApiSearch"
+	},
+	"APIListModules" : {
+		"ssearch":"MediaWiki\\Extension\\StructuredSearch\\StructuredSearchApiQuerySearch"
 	},
 	"_ContentHandlers": {
 		"xmldata": "MediaWiki\\Extension\\StructuredSearch\\XmlContentHandler"
