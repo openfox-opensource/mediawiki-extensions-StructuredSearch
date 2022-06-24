@@ -106,8 +106,28 @@ class ApiSearch extends \ApiBase {
 		$api->execute();
 
 		$results = $api->getResult()->getResultData();
-		die( print_r( $results ) );
+		$results['query']['ssearch'] = $this->addExtraFields( $results['query']['ssearch'] );
+		die( "<pre>". print_r( $results,1 ) );
 		return $this->getResultsAdditionalFields( $results );
+	}
+	public static function addExtraFields( $results ) {
+		foreach( $results as &$result ) {
+			if(isset($result['extensiondata']['extra_fields'])){
+				foreach( $result['extensiondata']['extra_fields'] as $extraKey => $extraField ){
+					if( strpos($extraField,'_') === 0){
+						continue;
+					}
+					
+					if( isset($extraField[0])){
+						$result[$extraKey] = $extraField[0];//TODO
+						// print_r([$extraKey, $extraField]);
+					}	
+				}
+				// die(print_r([array_keys($result['extensiondata']['extra_fields'] ),$result]));
+				unset($result['extensiondata']);
+			}
+		}
+		return $results;
 	}
 	public static function extractSearchStringFromFields( $params ) {
 		$conf = \MediaWiki\MediaWikiServices::getInstance()->getMainConfig();
