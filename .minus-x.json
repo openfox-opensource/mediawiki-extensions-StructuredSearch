@@ -1,0 +1,7 @@
+{
+	"ignoreDirectories": [
+		"./vendor",
+        "./node_modules",
+        "./react/node_modules"
+	]
+}

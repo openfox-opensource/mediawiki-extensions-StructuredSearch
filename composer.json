@@ -7,8 +7,8 @@
 	},
 	"scripts": {
 		"test": [
-			"parallel-lint . --exclude vendor --exclude node_modules",
-			"phpcs -p -s",
+			"parallel-lint . --exclude vendor --exclude node_modules --exclude react/node_modules",
+			"phpcs -p -s  --ignore=\"react/*\"  --ignore=\"vendor/*\"",
 			"minus-x check ."
 		],
 		"fix": [
