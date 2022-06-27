@@ -76,6 +76,10 @@
 			"description": "set true to include nots in authers field",
 			"value": false
 		},
+		"StructuredSearchFilterAuthorsBySearchNamespaces":{
+			"description": "set false to show editors of all content",
+			"value": true
+		},
 		"StructuredSearchDevelHost":{
 			"description": "Set host (e.g. http://localhost:3002) when developing",
 			"value": false

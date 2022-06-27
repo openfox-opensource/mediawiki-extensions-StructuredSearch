@@ -18,6 +18,7 @@ class Hooks {
 			'weight' => 0,
 			'widget' => [
 				'type' => 'select',
+				'is_not_multiple' => 1,
 				'position' => 'sidebar',
 				'options' => self::getAllAuthorsRenderedAsAsOptions(),
 			],
