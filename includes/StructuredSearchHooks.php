@@ -47,7 +47,7 @@ class Hooks {
 		}
 		return $manualNamespaces && count( $manualNamespaces ) ? $manualNamespaces : null;
 	}
-	public static function getDefinedNamespaces() {
+	public static function getDefinedNamespaces(  ){ 
 		$included = self::tryGetNSReplace();
 		return $included && count( $included ) ? $included : array_values( self::getNamespacesDefaultWithOverrides() );
 	}
@@ -82,11 +82,6 @@ class Hooks {
 				$namespaceIdsNames[$namespaceStr] = $namespaceId;
 			}
 		}
-
-		// function( $ns ) use ($localizedNamespaces, $wgExtraNamespaces){
-
-		// }, $namespaceIds);
-		// $namespaceIdsNames = array_filter($namespaceIdsNames);
 		return self::namespacesProcess( $namespaceIdsNames );
 	}
 	public static function namespacesProcess( $namespaces ) {
@@ -202,7 +197,6 @@ class Hooks {
 		$fields['authors'] = array_unique( $authorsReader->getAuthors());
 		$fields['creator'] = $authorsReader->getCreator();
 		$fields['last_editor'] = $authorsReader->getLastEditor();
-		//die(print_r([$fields]));
 	}
 	public static function onStructuredSearchSearchDataForIndexAfterWikiText(
 		array &$fields,
@@ -299,7 +293,7 @@ class Hooks {
 				$pName = $defaultParam;
 				$pAdditionalSettings = null;
 			}
-			// and assoiative param, with settings overriding
+			// and associative param, with settings overriding
  			else {
 				$pName = $keyParam;
 				$pAdditionalSettings = $defaultParam;
@@ -399,21 +393,16 @@ class Hooks {
 		global $wgContentHandlers;
 		$conf = MediaWikiServices::getInstance()->getMainConfig();
 		if ( $conf->get( 'StructuredSearchAddFilesContentToIncludingPages' ) ) {
-
 			$wgContentHandlers[CONTENT_MODEL_WIKITEXT] = StructuredSearchWikitextContentHandler::class;
-
-			// if(isset($_GET['ddd'])){
-			// }
-
 		}
 	}
 	
 	public static function getAllAuthorsRenderedAsAsOptions( ) {
-		$allAuthors = self::getAllAuthors();
+		$allAuthors = array_unique( self::getAllAuthors() );
 		$allAuthorsRenderedAsAsOptions = array_map( function( $p ){
 			return [
-				'label' => $p['user_name'],
-				'value' => str_replace( '_', ' ', $p['user_name']),
+				'label' => $p,
+				'value' => str_replace( '_', ' ', $p),
 			];
 		},$allAuthors );
 		array_unshift( $allAuthorsRenderedAsAsOptions, [

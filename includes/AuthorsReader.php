@@ -9,7 +9,7 @@ class AuthorsReader{
     private $fullList = [];
     public function __construct( $showBots = true, $conditions = false ){
         $this->showBots = $showBots;
-        $this->conditions = $conditions ?? ['1=1'];
+        $this->conditions = $conditions ? $conditions : ['1=1'];
         $this->loadAuthorsFromDb();
         $this->processResults();
     }
@@ -44,10 +44,10 @@ class AuthorsReader{
 		$revQuery = $revisionStore->getQueryInfo( [ 'user' ] );
 		$res = $dbr->select(
 			$revQuery['tables'],
-			['DISTINCT user_name, user_id'],
+			['user_name, user_id'],
 			$this->conditions,
 			__METHOD__,
-			['order by rev_id'],
+			['ORDER BY'=> 'rev_id ASC'],
 			$revQuery['joins']
 		);
 		$rows = [];
@@ -56,6 +56,7 @@ class AuthorsReader{
 				$rows[] = (array) $row;
 			}
 		}
+        //print_r([count($rows), $this->conditions]);
 		$this->fullList = $rows;
     }
     public function filterBots( $authors ){

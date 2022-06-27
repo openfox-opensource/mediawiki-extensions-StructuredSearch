@@ -9,18 +9,19 @@ use CirrusSearch\Query\FilterQueryFeature;
 
 
 class AuthorIsFeature extends SimpleKeywordFeature {
-    public function __construct() {
+    public static $fieldsNames = [
+		'creator',
+		'authors',
+		'last_editor',
+	];
+	public function __construct() {
 	}
 
 	/**
 	 * @return string[]
 	 */
 	protected function getKeywords() {
-		return [
-            'creator',
-            'authors',
-            'last_editor',
-        ];
+		return AuthorIsFeature::$fieldsNames;
 	}
 
 	/**
@@ -40,10 +41,9 @@ class AuthorIsFeature extends SimpleKeywordFeature {
 
 		foreach ( $names as $name ) {
             $match = new \Elastica\Query\Match();
-			$match->setFieldQuery( 'author', $name );
+			$match->setFieldQuery( $key, $name );
 			$filter->addShould( $match );
 		}
-
 
 		return [ $filter, false ];
 	}

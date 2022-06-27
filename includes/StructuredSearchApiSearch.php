@@ -82,7 +82,7 @@ class ApiSearch extends \ApiBase {
 			"categorysnippet",
 			"extensiondata",
 		]);
-		$params[\CirrusSearch\CirrusSearch::EXTRA_FIELDS_TO_EXTRACT] = 'authors';
+		$params[\CirrusSearch\CirrusSearch::EXTRA_FIELDS_TO_EXTRACT] = 'authors|creator|last_editor';
 		foreach ( $params as $pKey => $pValue ) {
 			if ( !in_array( $pKey, [ 'action','list' ] ) ) {
 				$srParams['sr' . $pKey ] = $pValue;
@@ -97,7 +97,6 @@ class ApiSearch extends \ApiBase {
 		} );
 		$params['action'] = 'query';
 		$params['list'] = 'ssearch';
-		
 		$callApiParams = new \DerivativeRequest(
 			$this->getRequest(),
 				$params
@@ -107,26 +106,36 @@ class ApiSearch extends \ApiBase {
 
 		$results = $api->getResult()->getResultData();
 		$results['query']['ssearch'] = $this->addExtraFields( $results['query']['ssearch'] );
-		die( "<pre>". print_r( $results,1 ) );
+		//die( "<pre>". print_r( [$results,$params],1 ) );
 		return $this->getResultsAdditionalFields( $results );
 	}
 	public static function addExtraFields( $results ) {
 		foreach( $results as &$result ) {
 			if(isset($result['extensiondata']['extra_fields'])){
+				//print_r(($result['extensiondata']['extra_fields']));
 				foreach( $result['extensiondata']['extra_fields'] as $extraKey => $extraField ){
-					if( strpos($extraField,'_') === 0){
+					if( strpos($extraKey,'_') === 0){
 						continue;
 					}
-					
-					if( isset($extraField[0])){
-						$result[$extraKey] = $extraField[0];//TODO
-						// print_r([$extraKey, $extraField]);
-					}	
+					if(is_array($extraField )){
+						foreach($extraField as $innerKey => $innerValue){
+							if( strpos($innerKey,'_') !== 0){
+								$result[$extraKey][] = $innerValue;
+							}
+						}
+					}
+					else{
+						$result[$extraKey] = $extraField;
+					}
+					// if( isset($extraField[0])){
+					// 	//(print_r($extraField));
+					// 	$result[$extraKey] = $extraField[0];//TODO
+					// }	
 				}
-				// die(print_r([array_keys($result['extensiondata']['extra_fields'] ),$result]));
 				unset($result['extensiondata']);
 			}
 		}
+//		die("ddddd");
 		return $results;
 	}
 	public static function extractSearchStringFromFields( $params ) {
@@ -141,15 +150,19 @@ class ApiSearch extends \ApiBase {
 		}
 		foreach ( $params as $pKey => $pValue ) {
 			if ( in_array( $pKey, $searchParamsKeys ) ) {
-
+				
 				if ( Utils::isSearchableField( $pKey ) && $pValue ) {
 					$params['search'] .= Utils::getFeatureSearchStr( $pKey, $pValue, $searchParams[$pKey] );
 					unset( $params[$pKey] );
+				} 
+				elseif( Utils::isAuthorsField( $pKey ) && $pValue ) {
+					$params['search'] .= " " . $pKey . ':"' . $pValue . '"';
+					unset( $params[$pKey] );
 				} elseif ( !$pValue ) {
 					unset( $params[$pKey] );
-
 				}
 			}
+			
 		}
 
 		if ( NS_FILE != (int)$params['namespace'] && $conf->get( 'StructuredSearchAddFilesContentToIncludingPages' ) ) {
@@ -169,8 +182,8 @@ class ApiSearch extends \ApiBase {
 	}
 
 	protected function getResultsAdditionalFields( $results ) {
-		$titles = array_column( $results['query']['search'], 'title' );
-		$resultsData = self::getResultsAdditionalFieldsFromTitles( $titles, $results['query']['search'] );
+		$titles = array_column( $results['query']['ssearch'], 'title' );
+		$resultsData = self::getResultsAdditionalFieldsFromTitles( $titles, $results['query']['ssearch'] );
 		\Hooks::run( 'StructuredSearchResultsView', [ &$resultsData ] );
 		$results['query']['searchinfo']['totalhits'] = count( $resultsData );
 		return [

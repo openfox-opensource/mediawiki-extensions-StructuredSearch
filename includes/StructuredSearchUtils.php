@@ -211,6 +211,9 @@ class Utils {
 	public static function isCargoField( $key ) {
 		return strpos( $key, ':' );
 	}
+	public static function isAuthorsField( $key ) {
+		return class_exists("MediaWiki\\Extension\\StructuredSearch\\AuthorIsFeature") && in_array( $key,AuthorIsFeature::$fieldsNames);
+	}
 	public static function convertStrToTimestamp( $str ) {
 		if ( preg_match( '%\d{4}/\d{1,2}/\d{1,2}%', $str ) ) {
 			$str = implode( '-', array_reverse( explode( '/', $str ) ) );
