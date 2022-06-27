@@ -8,6 +8,7 @@ class Utils {
 		$categoryInclude = $conf->get( 'StructuredSearchCategoryInclude' );
 		return $categoryInclude ? self::preccessDefaultCategories( $categoryInclude, $term ) : self::getCategoriesFromDb( $term );
 	}
+
 	public static function cargoAllRows( $fieldName ) {
 		$dbrCargo = \CargoUtils::getDB();
 		$splitted = preg_split( '/:/', $fieldName );
@@ -43,6 +44,7 @@ class Utils {
 
 		return $results;
 	}
+
 	public static function cargoAutocomplete( $term, $fieldName ) {
 		$results = self::cargoAllRows( $fieldName );
 		$results = array_filter( $results, function ( $val ) use ( $term ){
@@ -50,6 +52,7 @@ class Utils {
 		} );
 		return $results;
 	}
+
 	public static function preccessDefaultCategories( $cats, $term = false ) {
 		$newCats = [];
 		foreach ( $cats as $cat ) {
@@ -63,6 +66,7 @@ class Utils {
 		}
 		return $newCats;
 	}
+
 	// static public function onBeforePageDisplay(\OutputPage $out, \Skin $skin ){
 	// $title = $out->getTitle();
 	// //StructuredSearchApiSearch::getResultsAdditionalFieldsFromTitles([$title]);
@@ -101,6 +105,7 @@ class Utils {
 		}
 		return $categoriesToReturn;
 	}
+
 	public static function getSearchParamsFiltered() {
 		$params = self::getSearchParams();
 		foreach ( $params as &$param ) {
@@ -111,6 +116,7 @@ class Utils {
 				// die(print_r($params));
 		return $params;
 	}
+
 	public static function getSubtablesOfFields( $tableName ) {
 		$conf = \MediaWiki\MediaWikiServices::getInstance()->getMainConfig();
 		$dbr = wfGetDB( DB_REPLICA );
@@ -118,7 +124,7 @@ class Utils {
 		$res = $dbr->select( 'cargo_tables', [ 'field_tables' ],
 			[ 'main_table' => $tableName ] );
 		$row = $dbr->fetchRow( $res );
-		if( !$row || !count($row) ){
+		if ( !$row || !count( $row ) ) {
 			return [];
 		}
 		$tables = unserialize( $row[0] );
@@ -132,6 +138,7 @@ class Utils {
 		return array_intersect( $tables, $tablesFromShow );
 // return $tables;
 	}
+
 	public static function getSearchParams() {
 		$conf = \MediaWiki\MediaWikiServices::getInstance()->getMainConfig();
 		$params = $conf->get( 'StructuredSearchParams' );
@@ -157,6 +164,7 @@ class Utils {
 		// die(print_r($params,1));
 		return self::fixSearchParams( $newKeyedArray );
 	}
+
 	public static function fixSearchParams( $newKeyedArray ) {
 		foreach ( $newKeyedArray as &$param ) {
 			if ( isset( $param['widget']['options'] ) ) {
@@ -174,6 +182,7 @@ class Utils {
 		}
 		return $newKeyedArray;
 	}
+
 	public static function getSearchBinds( $params ) {
 		$binds = [];
 		foreach ( $params as $param ) {
@@ -191,6 +200,7 @@ class Utils {
 		}
 		return $binds;
 	}
+
 	public static function getFeatureSearchStr( $fieldName, $fieldValue, $fieldDef ) {
 		// use it not for indexing - send third param FALSE
 		$fieldValue = self::getFieldValueForIndex( $fieldValue, $fieldDef, false );
@@ -199,27 +209,34 @@ class Utils {
 		$fieldValue = '"' . addcslashes( $fieldValue, '"' ) . '"';
 		return ' ' . self::getFeatureKey( $fieldName ) . ':' . $fieldValue;
 	}
+
 	public static function replaceCargoFieldToElasticField( $field ) {
 		return preg_replace( '/:/', '__', $field );
 	}
+
 	public static function replaceElasticFieldToCargoField( $field ) {
 		return preg_replace( '/__/', ':', $field );
 	}
+
 	public static function isSearchableField( $key ) {
 		return 'category' == $key || self::isCargoField( $key );
 	}
+
 	public static function isCargoField( $key ) {
 		return strpos( $key, ':' );
 	}
+
 	public static function isAuthorsField( $key ) {
-		return class_exists("MediaWiki\\Extension\\StructuredSearch\\AuthorIsFeature") && in_array( $key,AuthorIsFeature::$fieldsNames);
+		return class_exists( "MediaWiki\\Extension\\StructuredSearch\\AuthorIsFeature" ) && in_array( $key, AuthorIsFeature::$fieldsNames );
 	}
+
 	public static function convertStrToTimestamp( $str ) {
 		if ( preg_match( '%\d{4}/\d{1,2}/\d{1,2}%', $str ) ) {
 			$str = implode( '-', array_reverse( explode( '/', $str ) ) );
 		}
 		return strtotime( $str );
 	}
+
 	public static function getFieldValueForIndex( $val, $paramDef, $forIndex = true ) {
 		$type = isset( $paramDef['widget']['type'] ) ? $paramDef['widget']['type'] : 'default';
 		$val = is_array( $val ) ? $val : explode( '|', $val );
@@ -244,11 +261,13 @@ class Utils {
 
 		return $val;
 	}
+
 	public static function isNumericField( $param ) {
 		$isRange = isset( $param['widget']['type'] ) && 'range' == $param['widget']['type'];
 		$isNumber = isset( $param['field_type'] ) && 'number' == $param['field_type'];
 		return $isRange || $isNumber;
 	}
+
 	public static function getFeatureKey( $key ) {
 		return 'in' . ( self::isCargoField( $key ) ? '_' : '' ) . self::replaceCargoFieldToElasticField( $key );
 	}

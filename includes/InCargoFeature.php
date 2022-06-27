@@ -2,12 +2,11 @@
 
 namespace MediaWiki\Extension\StructuredSearch;
 
-use Config;
-use CirrusSearch\Search\SearchContext;
 use CirrusSearch\Query\SimpleKeywordFeature;
+use CirrusSearch\Search\SearchContext;
 
 /**
-
+ *
  */
 class InCargoFeature extends SimpleKeywordFeature {
 
@@ -91,6 +90,7 @@ class InCargoFeature extends SimpleKeywordFeature {
 
 		return $filter;
 	}
+
 	private function matchCargoRange( string $tableDef, array $rangeArgs ) {
 		$rangeArgs = [
 			'gte' => (int)$rangeArgs[0],

@@ -22,7 +22,7 @@ namespace MediaWiki\Extension\StructuredSearch;
 class ApiParams extends \ApiBase {
 		public function __construct( $query, $moduleName ) {
 		parent::__construct( $query, $moduleName );
-	 }
+		}
 
 	public function execute() {
 		global $fennecLocal;
@@ -47,6 +47,7 @@ class ApiParams extends \ApiBase {
 		$templates = $conf->get( 'StructuredSearchResultsTemplates' );
 		return $templates;
 	}
+
 	public static function getTranslates() {
 		$translateStrs = file_get_contents( __DIR__ . '/../i18n/he.json' );
 		$translateStrs = json_decode( $translateStrs, true );
@@ -59,6 +60,7 @@ class ApiParams extends \ApiBase {
 		}
 		return $translations;
 	}
+
 	protected function getAllowedParams() {
 		return [
 		];

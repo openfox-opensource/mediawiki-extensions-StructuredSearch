@@ -2,12 +2,12 @@
 
 namespace MediaWiki\Extension\StructuredSearch;
 
-use Config;
-use CirrusSearch\Search\SearchContext;
 use CirrusSearch\Query\SimpleKeywordFeature;
+use CirrusSearch\Search\SearchContext;
+use Config;
 
 /**
-
+ *
  */
 class NotIncludedFileFeature extends SimpleKeywordFeature {
 	/**

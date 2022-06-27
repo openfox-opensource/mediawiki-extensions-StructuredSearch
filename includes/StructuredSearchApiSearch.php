@@ -21,6 +21,7 @@ namespace MediaWiki\Extension\StructuredSearch;
 
 class ApiSearch extends \ApiBase {
 	use \SearchApi;
+
 	public function __construct( $query, $moduleName ) {
 		parent::__construct( $query, $moduleName );
 	}
@@ -34,10 +35,12 @@ class ApiSearch extends \ApiBase {
 
 		$result->addValue( null, 'StructuredSearchSearch', $this->getSearchParams() );
 	}
+
 	public static function getNamespaces() {
 		$contLang = \Mediawiki\MediaWikiServices::getInstance()->getContentLanguage();
 		return $contLang->getNamespaceIds();
 	}
+
 	public function getSearchParams() {
 		$params = $this->extractRequestParams();
 		if ( !isset( $params['namespaces'] ) || !strlen( $params['namespaces'] ) ) {
@@ -81,7 +84,7 @@ class ApiSearch extends \ApiBase {
 			"isfilematch",
 			"categorysnippet",
 			"extensiondata",
-		]);
+		] );
 		$params[\CirrusSearch\CirrusSearch::EXTRA_FIELDS_TO_EXTRACT] = 'authors|creator|last_editor';
 		foreach ( $params as $pKey => $pValue ) {
 			if ( !in_array( $pKey, [ 'action','list' ] ) ) {
@@ -93,7 +96,7 @@ class ApiSearch extends \ApiBase {
 			$srParams['srsearch' ] = '*';
 		}
 		$params = array_filter( $srParams, function ( $val ){
-			return !is_null( $val );
+			return $val !== null;
 		} );
 		$params['action'] = 'query';
 		$params['list'] = 'ssearch';
@@ -106,38 +109,39 @@ class ApiSearch extends \ApiBase {
 
 		$results = $api->getResult()->getResultData();
 		$results['query']['ssearch'] = $this->addExtraFields( $results['query']['ssearch'] );
-		//die( "<pre>". print_r( [$results,$params],1 ) );
+		// die( "<pre>". print_r( [$results,$params],1 ) );
 		return $this->getResultsAdditionalFields( $results );
 	}
+
 	public static function addExtraFields( $results ) {
-		foreach( $results as &$result ) {
-			if(isset($result['extensiondata']['extra_fields'])){
-				//print_r(($result['extensiondata']['extra_fields']));
-				foreach( $result['extensiondata']['extra_fields'] as $extraKey => $extraField ){
-					if( strpos($extraKey,'_') === 0){
+		foreach ( $results as &$result ) {
+			if ( isset( $result['extensiondata']['extra_fields'] ) ) {
+				// print_r(($result['extensiondata']['extra_fields']));
+				foreach ( $result['extensiondata']['extra_fields'] as $extraKey => $extraField ) {
+					if ( strpos( $extraKey, '_' ) === 0 ) {
 						continue;
 					}
-					if(is_array($extraField )){
-						foreach($extraField as $innerKey => $innerValue){
-							if( strpos($innerKey,'_') !== 0){
+					if ( is_array( $extraField ) ) {
+						foreach ( $extraField as $innerKey => $innerValue ) {
+							if ( strpos( $innerKey, '_' ) !== 0 ) {
 								$result[$extraKey][] = $innerValue;
 							}
 						}
-					}
-					else{
+					} else {
 						$result[$extraKey] = $extraField;
 					}
 					// if( isset($extraField[0])){
 					// 	//(print_r($extraField));
 					// 	$result[$extraKey] = $extraField[0];//TODO
-					// }	
+					// }
 				}
-				unset($result['extensiondata']);
+				unset( $result['extensiondata'] );
 			}
 		}
-//		die("ddddd");
+// die("ddddd");
 		return $results;
 	}
+
 	public static function extractSearchStringFromFields( $params ) {
 		$conf = \MediaWiki\MediaWikiServices::getInstance()->getMainConfig();
 
@@ -150,19 +154,18 @@ class ApiSearch extends \ApiBase {
 		}
 		foreach ( $params as $pKey => $pValue ) {
 			if ( in_array( $pKey, $searchParamsKeys ) ) {
-				
+
 				if ( Utils::isSearchableField( $pKey ) && $pValue ) {
 					$params['search'] .= Utils::getFeatureSearchStr( $pKey, $pValue, $searchParams[$pKey] );
 					unset( $params[$pKey] );
-				} 
-				elseif( Utils::isAuthorsField( $pKey ) && $pValue ) {
+				} elseif ( Utils::isAuthorsField( $pKey ) && $pValue ) {
 					$params['search'] .= " " . $pKey . ':"' . $pValue . '"';
 					unset( $params[$pKey] );
 				} elseif ( !$pValue ) {
 					unset( $params[$pKey] );
 				}
 			}
-			
+
 		}
 
 		if ( NS_FILE != (int)$params['namespace'] && $conf->get( 'StructuredSearchAddFilesContentToIncludingPages' ) ) {
@@ -193,6 +196,7 @@ class ApiSearch extends \ApiBase {
 
 		];
 	}
+
 	public static function getResultsAdditionalFieldsFromTitles( $titles, $fullResults ) {
 		if ( !count( $titles ) ) {
 			return $titles;
@@ -248,6 +252,7 @@ class ApiSearch extends \ApiBase {
 		\Hooks::run( 'StructuredSearchResults', [ &$resultsTitlesForCheck ] );
 		return $resultsTitlesForCheck;
 	}
+
 	public static function addPageImage( &$resultsTitlesForCheck ) {
 		$dbr = wfGetDB( DB_REPLICA );
 		$res = $dbr->select(
@@ -266,6 +271,7 @@ class ApiSearch extends \ApiBase {
 			$resultsTitlesForCheck[$row->concatKey]['page_image_ext'] = Hooks::fixImageToThumbs( 'file:' . $row->il_to );
 		}
 	}
+
 	public static function addCargoFields( &$resultsTitlesForCheck, &$resultsTitlesAliases ) {
 		$dbr = wfGetDB( DB_REPLICA );
 		$dbrCargo = \CargoUtils::getDB();
@@ -318,6 +324,7 @@ class ApiSearch extends \ApiBase {
 			}
 		}
 	}
+
 	public static function cargoTableExits() {
 		$dbr = wfGetDB( DB_REPLICA );
 		$res = $dbr->select(
@@ -348,6 +355,7 @@ class ApiSearch extends \ApiBase {
 
 		return $tables;
 	}
+
 	public static function addCategories( &$resultsTitlesForCheck ) {
 		$dbr = wfGetDB( DB_REPLICA );
 		$res = $dbr->select(
@@ -405,6 +413,7 @@ class ApiSearch extends \ApiBase {
 			}
 		}
 	}
+
 	public static function getFieldFromSubtable( $subtableName, $row ) {
 		$results = [];
 		$dbrCargo = \CargoUtils::getDB();
@@ -434,9 +443,11 @@ class ApiSearch extends \ApiBase {
 			'action=structuredsearchsearch'
 		];
 	}
+
 	public static function getFieldsNames( $allCargoTableExits, $tableName ) {
 		return $allCargoTableExits[$tableName];
 	}
+
 	public static function getFieldsByTable() {
 		$allFieldsByTemplates = [];
 		$searchParams = Utils::getSearchParams();
@@ -449,9 +460,11 @@ class ApiSearch extends \ApiBase {
 		}
 		return $allFieldsByTemplates;
 	}
+
 	public function getSearchProfileParams() {
 		return [];
 	}
+
 	public function getVersion() {
 		return __CLASS__ . ': $Id$';
 	}

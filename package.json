@@ -1,7 +1,8 @@
 {
 	"private": true,
 	"scripts": {
-		"test": "grunt test && npm run qunit",
+		"test-qunit": "grunt test && npm run qunit",
+		"test": "composer test && CI=true react-scripts test --env=jsdom",
 		"qunit": "NODE_PATH=modules nyc qunit --require ./tests/bootstrap.js tests/qunit",
 		"qunit:watch": "NODE_PATH=modules qunit --watch --require ./tests/bootstrap.js tests/qunit"
 	},

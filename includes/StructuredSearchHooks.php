@@ -2,13 +2,13 @@
 
 namespace MediaWiki\Extension\StructuredSearch;
 
-use \MediaWiki\MediaWikiServices;
 use CirrusSearch\Search\CirrusSearchIndexFieldFactory;
 use CirrusSearch\SearchConfig;
-use SearchEngine;
-use ParserOutput;
-use WikiPage;
 use ContentHandler;
+use MediaWiki\MediaWikiServices;
+use ParserOutput;
+use SearchEngine;
+use WikiPage;
 
 class Hooks {
 	public static function authorsExtract( &$params ) {
@@ -23,6 +23,7 @@ class Hooks {
 			],
 		];
 	}
+
 	public static function categoryExtract( &$params ) {
 		$params['category'] = [
 			'label' => wfMessage( 'structuredsearch-category-label' )->text(),
@@ -35,6 +36,7 @@ class Hooks {
 			],
 		];
 	}
+
 	public static function tryGetNSReplace() {
 		global $wgContLang;
 		$conf = MediaWikiServices::getInstance()->getMainConfig();
@@ -47,10 +49,12 @@ class Hooks {
 		}
 		return $manualNamespaces && count( $manualNamespaces ) ? $manualNamespaces : null;
 	}
-	public static function getDefinedNamespaces(  ){ 
+
+	public static function getDefinedNamespaces() {
 		$included = self::tryGetNSReplace();
 		return $included && count( $included ) ? $included : array_values( self::getNamespacesDefaultWithOverrides() );
 	}
+
 	public static function namespacesExtract( &$params ) {
 		$conf = MediaWikiServices::getInstance()->getMainConfig();
 		$topOrSide = $conf->get( 'StructuredSearchNSTopOrSide' );
@@ -65,6 +69,7 @@ class Hooks {
 			],
 		];
 	}
+
 	public static function getNamespacesDefaultWithOverrides() {
 		$contLang = MediaWikiServices::getInstance()->getContentLanguage();
 		$conf = MediaWikiServices::getInstance()->getMainConfig();
@@ -84,6 +89,7 @@ class Hooks {
 		}
 		return self::namespacesProcess( $namespaceIdsNames );
 	}
+
 	public static function namespacesProcess( $namespaces ) {
 		$conf = MediaWikiServices::getInstance()->getMainConfig();
 		$includeTalkPagesType = $conf->get( 'StructuredSearchNSIncludeTalkPagesType' );
@@ -128,13 +134,14 @@ class Hooks {
 		// die(print_r($returnedNamespaces));
 		return $returnedNamespaces;
 	}
+
 /**
-	* Search index fields hook handler
-	* Adds our stuff to CirrusSearch/Elasticsearch schema
-	*
-	* @param array $fields
-	* @param SearchEngine $engine
-	*/
+ * Search index fields hook handler
+ * Adds our stuff to CirrusSearch/Elasticsearch schema
+ *
+ * @param array $fields
+ * @param SearchEngine $engine
+ */
 	public static function onSearchIndexFields( array &$fields, SearchEngine $engine ) {
 		if ( $engine instanceof \CirrusSearch\CirrusSearch ) {
 			/**
@@ -153,14 +160,13 @@ class Hooks {
 			if ( $conf->get( 'StructuredSearchAddFilesContentToIncludingPages' ) ) {
 				$fields['is_included_file'] = $builder->newLongField( 'is_included_file' );
 			}
-			foreach( [
+			foreach ( [
 				'creator',
 				'authors',
 				'last_editor',
-			] as $key){
+			] as $key ) {
 				$fields[$key] = $builder->newStringField( $key );
 			}
-
 
 		}
 	}
@@ -193,11 +199,12 @@ class Hooks {
 				$fields[ $keyForCirrus ] = isset( $vals[ $fieldName ] ) ? Utils::getFieldValueForIndex( $vals[$fieldName ], $param ) : '';
 			}
 		}
-		$authorsReader = new AuthorsReader( $conf->get("StructuredSearchShowAuthorsBots"), ['rev_page' => $page->getId()] );
-		$fields['authors'] = array_unique( $authorsReader->getAuthors());
+		$authorsReader = new AuthorsReader( $conf->get( "StructuredSearchShowAuthorsBots" ), [ 'rev_page' => $page->getId() ] );
+		$fields['authors'] = array_unique( $authorsReader->getAuthors() );
 		$fields['creator'] = $authorsReader->getCreator();
 		$fields['last_editor'] = $authorsReader->getLastEditor();
 	}
+
 	public static function onStructuredSearchSearchDataForIndexAfterWikiText(
 		array &$fields,
 		WikiPage $page,
@@ -258,8 +265,10 @@ class Hooks {
 		// print_r($fields);
 		// die();
 	}
+
 	public static function onCirrusSearchMappingConfig( array &$config, MappingConfigBuilder $builder ) {
 	}
+
 	/**
 	 * Add cargo search config
 	 * @param SearchConfig $config
@@ -270,6 +279,7 @@ class Hooks {
 		$features[] = new AuthorIsFeature();
 		$features[] = new NotIncludedFileFeature();
 	}
+
 	public static function onStructuredSearchParams( &$params ) {
 		$params['search'] = [
 			'label' => '',// wfMessage('structuredsearch-search-label')->text(),
@@ -294,10 +304,10 @@ class Hooks {
 				$pAdditionalSettings = null;
 			}
 			// and associative param, with settings overriding
- 			else {
+ else {
 				$pName = $keyParam;
 				$pAdditionalSettings = $defaultParam;
-			}
+ }
 			switch ( $pName ) {
 				case 'namespaces':
 				case 'category':
@@ -312,6 +322,7 @@ class Hooks {
 			}
 		}
 	}
+
 	public static function addOptionsToCargoTable( &$params ) {
 		foreach ( $params as $key => &$param ) {
 			if ( isset( $param['widget']['type'] ) && in_array( $param['widget']['type'], [ 'checkboxes','radios','select' ] ) && !isset( $param['widget']['options'] ) && Utils::isCargoField( $param['field'] ) ) {
@@ -337,6 +348,7 @@ class Hooks {
 			}
 		}
 	}
+
 	public static function onStructuredSearchResults( &$results ) {
 		$params = Utils::getSearchParams();
 		$imagesKeys = [];
@@ -368,6 +380,7 @@ class Hooks {
 		}
 		return $allImagesIncluded;
 	}
+
 	public static function getPageFiles( $page ) {
 		$dbr = wfGetDB( DB_REPLICA );
 		$res = $dbr->select(
@@ -389,6 +402,7 @@ class Hooks {
 		}
 		return $allImages;
 	}
+
 	public static function overrideWikitextContentHandler() {
 		global $wgContentHandlers;
 		$conf = MediaWikiServices::getInstance()->getMainConfig();
@@ -396,25 +410,27 @@ class Hooks {
 			$wgContentHandlers[CONTENT_MODEL_WIKITEXT] = StructuredSearchWikitextContentHandler::class;
 		}
 	}
-	
-	public static function getAllAuthorsRenderedAsAsOptions( ) {
+
+	public static function getAllAuthorsRenderedAsAsOptions() {
 		$allAuthors = array_unique( self::getAllAuthors() );
-		$allAuthorsRenderedAsAsOptions = array_map( function( $p ){
+		$allAuthorsRenderedAsAsOptions = array_map( function ( $p ){
 			return [
 				'label' => $p,
-				'value' => str_replace( '_', ' ', $p),
+				'value' => str_replace( '_', ' ', $p ),
 			];
-		},$allAuthors );
+		}, $allAuthors );
 		array_unshift( $allAuthorsRenderedAsAsOptions, [
 			'label' => wfMessage( 'structuredsearch-choose' ),
 			'value' => '<select>',
-		]);
+		] );
 		return $allAuthorsRenderedAsAsOptions;
 	}
-	public static function getAllAuthors( ) {
+
+	public static function getAllAuthors() {
 		$conf = MediaWikiServices::getInstance()->getMainConfig();
-		return ( new AuthorsReader($conf->get("StructuredSearchShowAuthorsBots")) )->getAuthors();
+		return ( new AuthorsReader( $conf->get( "StructuredSearchShowAuthorsBots" ) ) )->getAuthors();
 	}
+
 	public static function fixImageToThumbs( $file ) {
 		$conf = MediaWikiServices::getInstance()->getMainConfig();
 		$wgScriptPath = $conf->get( 'ScriptPath' );

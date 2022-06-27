@@ -22,7 +22,7 @@ namespace MediaWiki\Extension\StructuredSearch;
 class ApiAutocomplete extends \ApiBase {
 		public function __construct( $query, $moduleName ) {
 		parent::__construct( $query, $moduleName );
-	 }
+		}
 
 	public function execute() {
 		if ( '127.0.0.1' == $_SERVER["REMOTE_ADDR"] ) {

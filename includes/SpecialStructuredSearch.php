@@ -15,8 +15,8 @@ class SpecialStructuredSearch extends \SpecialPage {
 	function execute( $par ) {
 		$out = $this->getOutput();
 		$conf = $this->getConfig();
-		$scriptPath = $conf->get('ScriptPath');
-		$structuredSearchDevelHost = $conf->get('StructuredSearchDevelHost');
+		$scriptPath = $conf->get( 'ScriptPath' );
+		$structuredSearchDevelHost = $conf->get( 'StructuredSearchDevelHost' );
 		$this->setHeaders();
 		$out->setPageTitle( wfMessage( 'structuredsearch' ) );
 		$out->addModules( [ 'ext.StructuredSearch' ] );
@@ -38,12 +38,11 @@ class SpecialStructuredSearch extends \SpecialPage {
 		$path_to_static = 'react/dist';
 		// $path_to_static = 'react/build/static/js';
 		$scripts = '';
-		if( $structuredSearchDevelHost ){
+		if ( $structuredSearchDevelHost ) {
 			$scripts .= "<script src='$structuredSearchDevelHost/static/js/bundle.js'></script>";
-		}
-		else{
+		} else {
 			$all_files = scandir( __DIR__ . '/../' . $path_to_static );
-			
+
 			foreach ( $all_files as $file ) {
 				if ( 'js' == pathinfo( $file, PATHINFO_EXTENSION ) ) {
 					$path_for_file = $path_from_root . '/../' . $path_to_static . '/' . $file;
@@ -58,6 +57,7 @@ class SpecialStructuredSearch extends \SpecialPage {
 		}
 		$out->addHTML( file_get_contents( __DIR__ . '/../templates/search-page.html' ) . $scripts );
 	}
+
 	function getGroupName() {
 		return 'pages';
 	}

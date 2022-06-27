@@ -2,18 +2,16 @@
 
 namespace MediaWiki\Extension\StructuredSearch;
 
-use Config;
-use CirrusSearch\Search\SearchContext;
 use CirrusSearch\Query\SimpleKeywordFeature;
-use CirrusSearch\Query\FilterQueryFeature;
-
+use CirrusSearch\Search\SearchContext;
 
 class AuthorIsFeature extends SimpleKeywordFeature {
-    public static $fieldsNames = [
+	public static $fieldsNames = [
 		'creator',
 		'authors',
 		'last_editor',
 	];
+
 	public function __construct() {
 	}
 
@@ -21,7 +19,7 @@ class AuthorIsFeature extends SimpleKeywordFeature {
 	 * @return string[]
 	 */
 	protected function getKeywords() {
-		return AuthorIsFeature::$fieldsNames;
+		return self::$fieldsNames;
 	}
 
 	/**
@@ -36,11 +34,11 @@ class AuthorIsFeature extends SimpleKeywordFeature {
 	 *  string.
 	 */
 	protected function doApply( SearchContext $context, $key, $value, $quotedValue, $negated ) {
-		$names = explode( ' ', $value);
-        $filter = new \Elastica\Query\BoolQuery();
+		$names = explode( ' ', $value );
+		$filter = new \Elastica\Query\BoolQuery();
 
 		foreach ( $names as $name ) {
-            $match = new \Elastica\Query\Match();
+			$match = new \Elastica\Query\Match();
 			$match->setFieldQuery( $key, $name );
 			$filter->addShould( $match );
 		}
