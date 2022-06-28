@@ -29,7 +29,7 @@
 			"value": []
 		},
 		"StructuredSearchDefaultParams": {
-			"description": "Default are namesapces and category inputs",
+			"description": "Default are namespaces and category inputs",
 			"value": []
 		},
 		"StructuredSearchCategoryInclude": {

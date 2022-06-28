@@ -11,13 +11,12 @@ class AuthorsReader {
 	private $fullList = [];
 
 	public function __construct( $showBots = true, $conditions = false ) {
-		
 		$this->showBots = $showBots;
 		$this->conditions = $conditions ? $conditions : [];
-		if( $this->isFilterBySearchNamespaces()){
+		if ( $this->isFilterBySearchNamespaces() ) {
 			$dbr = wfGetDB( DB_REPLICA );
-			$namespaces = array_column(Hooks::getDefinedNamespaces(),"value");
-			$this->conditions[] = 'page_namespace IN (' . $dbr->makeList( $namespaces ) . ')' ;
+			$namespaces = array_column( Hooks::getDefinedNamespaces(), "value" );
+			$this->conditions[] = 'page_namespace IN (' . $dbr->makeList( $namespaces ) . ')';
 		}
 		$this->loadAuthorsFromDb();
 		$this->processResults();
@@ -55,7 +54,7 @@ class AuthorsReader {
 		$revisionStore = $services->getRevisionStore();
 		$dbr = wfGetDB( DB_REPLICA );
 		$revQuery = $revisionStore->getQueryInfo( [ 'user' ] );
-		if( $this->isFilterBySearchNamespaces() ){
+		if ( $this->isFilterBySearchNamespaces() ) {
 			$revQuery['tables'][] = 'page';
 			$revQuery['joins']['page'] = [
 				'JOIN',
@@ -65,7 +64,7 @@ class AuthorsReader {
 		$res = $dbr->select(
 			$revQuery['tables'],
 			[ 'user_name, user_id' ],
-			count($this->conditions) ? $this->conditions : ['1=1'],
+			count( $this->conditions ) ? $this->conditions : [ '1=1' ],
 			__METHOD__,
 			[ 'ORDER BY' => 'rev_id ASC' ],
 			$revQuery['joins']
@@ -83,18 +82,19 @@ class AuthorsReader {
 	public function filterBots( $authors ) {
 		$botsAuthors = $this->getBotsFromAuthors( array_column( $authors, 'user_id' ) );
 		$allAuthorsNotBots = array_filter( $authors, function ( $row ) use ( $botsAuthors ) {
-			return isset( $row['user_id'] ) 
-					&& $row['user_id'] 
-					&& !in_array( $row['user_id'], $botsAuthors ) 
-					&& $row['user_name'] != wfMessage('autocreatecategorypages-editor')->text();
+			return isset( $row['user_id'] )
+					&& $row['user_id']
+					&& !in_array( $row['user_id'], $botsAuthors )
+					&& $row['user_name'] != wfMessage( 'autocreatecategorypages-editor' )->text();
 		} );
 		return $allAuthorsNotBots;
 	}
 
-	public function isFilterBySearchNamespaces( ) {
+	public function isFilterBySearchNamespaces() {
 		$conf = \MediaWiki\MediaWikiServices::getInstance()->getMainConfig();
-		return $conf->get("StructuredSearchFilterAuthorsBySearchNamespaces");
+		return $conf->get( "StructuredSearchFilterAuthorsBySearchNamespaces" );
 	}
+
 	public function getBotsFromAuthors( array $authorsIds ) {
 		$authorsIds = array_filter( $authorsIds );
 		if ( !count( $authorsIds ) ) {

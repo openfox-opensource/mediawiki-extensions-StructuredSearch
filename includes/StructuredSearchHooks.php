@@ -161,12 +161,14 @@ class Hooks {
 			if ( $conf->get( 'StructuredSearchAddFilesContentToIncludingPages' ) ) {
 				$fields['is_included_file'] = $builder->newLongField( 'is_included_file' );
 			}
-			foreach ( [
-				'creator',
-				'authors',
-				'last_editor',
-			] as $key ) {
-				$fields[$key] = $builder->newStringField( $key );
+			if ( Utils::isAuthorsFieldOn() ) {
+				foreach ( [
+					'creator',
+					'authors',
+					'last_editor',
+				] as $key ) {
+					$fields[$key] = $builder->newStringField( $key );
+				}
 			}
 
 		}
@@ -200,10 +202,12 @@ class Hooks {
 				$fields[ $keyForCirrus ] = isset( $vals[ $fieldName ] ) ? Utils::getFieldValueForIndex( $vals[$fieldName ], $param ) : '';
 			}
 		}
-		$authorsReader = new AuthorsReader( $conf->get( "StructuredSearchShowAuthorsBots" ), [ 'rev_page' => $page->getId() ] );
-		$fields['authors'] = array_unique( $authorsReader->getAuthors() );
-		$fields['creator'] = $authorsReader->getCreator();
-		$fields['last_editor'] = $authorsReader->getLastEditor();
+		if ( Utils::isAuthorsFieldOn() ) {
+			$authorsReader = new AuthorsReader( $conf->get( "StructuredSearchShowAuthorsBots" ), [ 'rev_page' => $page->getId() ] );
+			$fields['authors'] = array_unique( $authorsReader->getAuthors() );
+			$fields['creator'] = $authorsReader->getCreator();
+			$fields['last_editor'] = $authorsReader->getLastEditor();
+		}
 	}
 
 	public static function onStructuredSearchSearchDataForIndexAfterWikiText(

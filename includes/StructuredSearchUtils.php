@@ -183,6 +183,11 @@ class Utils {
 		return $newKeyedArray;
 	}
 
+	public static function isAuthorsFieldOn() {
+		$conf = \MediaWiki\MediaWikiServices::getInstance()->getMainConfig();
+		return in_array( 'authors', $conf->get( 'StructuredSearchDefaultParams' ) );
+	}
+
 	public static function getSearchBinds( $params ) {
 		$binds = [];
 		foreach ( $params as $param ) {
