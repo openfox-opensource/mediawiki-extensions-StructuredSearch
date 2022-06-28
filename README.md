@@ -152,7 +152,8 @@ Any custom field added in ```$wgStructuredSearchParams``` would appear here.
 ```$wgStructuredSearchDefaultParams```  
 The extension provide out of the box predefined fields - for now there are 'namespaces', 'authors' and 'category'.  
 This options controls which of this fields would be shown. Default value is both 'namespaces' and 'category'.  
-If this configuration defined, you need to include all predefined fields you want.  
+If this configuration defined, you need to include all predefined fields you want. 
+When adding  'authors' option, you need to reindex or errors could happen.
 
 ### Predefined fields - category field configuration 
 
