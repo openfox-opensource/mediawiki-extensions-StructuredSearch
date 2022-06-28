@@ -164,7 +164,6 @@ Use all categories in categories autocomplete but exclude those categories.
 
 ### Predefined fields - namespace field configuration 
 
-
 ```$wgStructuredSearchNSReplace```  
 This option replace completely default NS option. You have to build array like this. (see ```widget.options``` definition):   
 ```
@@ -199,6 +198,15 @@ If true and ```$wgStructuredSearchNSReplace``` omitted, use [default MW list of 
 ```$wgStructuredSearchThumbSize```
 Files pages result getting special field which calls 'self_thumb'. This configuration defined the dimensions of this thumb. Default is 150X150.   
 
+### Predefined fields - authors field configuration 
+ 
+ `$wgStructuredSearchFilterAuthorsBySearchNamespaces`
+
+ If set true, would get authors list just from page defined in namespaces of the search.  Default is true
+ (TODO: Is there any reason to set it to false?)
+
+ `$wgStructuredSearchShowAuthorsBots`
+If set true, would show also  bots as part of author list. Default is false.
 
 ## Hooks  
 ```
