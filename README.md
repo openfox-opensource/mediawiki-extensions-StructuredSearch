@@ -7,7 +7,7 @@ This extension have three goals
 2. Customizing search UI
 3. Add filters to search by custom fields ( for now, mainly by cargo, but it's generic)  
 
-## dependies
+## depending
 This extension depend on CirrusSearch extension.  
 Default page design depends on font awesome. You should include it by yourself or override design by css.  
 
@@ -27,7 +27,7 @@ Add details about fields to:
 2. Add to results  
 
 The structure of the array.  
-No key needed, the field would be unieqe identifier
+No key needed, the field would be unique identifier
 ```
 'namespace'=>[
     'field' => 'namespace',
@@ -42,38 +42,38 @@ No key needed, the field would be unieqe identifier
 	    ],
 	    'to_indexing_function' => callable_string,
 	    'autocomplete_callback' => callable_string,
-	    'search_callbak' => callable_string,
+	    'search_callback' => callable_string,
 ]
 ```  
 
 ##### Detailed main config values
 
-```field``` must be unique. If contains ':', automaticlly treated as cargo field in structure of TABLENAME:FIELDNAME  
+```field``` must be unique. If contains ':', automatically treated as cargo field in structure of TABLENAME:FIELDNAME  
 ```label``` shown on search UI as label of search input. Can contain HTML.  
 ```widget``` is array defines the search widget.  
 ```widget.type``` Possible values are: text|select|autocomplete|radios|checkboxes|range.  
-```widget.is_not_multiple``` Set to true toget one option in select.  
+```widget.is_not_multiple``` Set to true to get one option in select.  
 ```widget.position``` Where the widget would be rendered:  
 ```topbar``` - on main box, below the main search input.
 ```sidebar``` - on sidebar.  
-```hide``` - dont show widget.  
-```widget.options``` -  for select, autocomplete, radios or checkboes you should give array of strings or objects.
+```hide``` - don't show widget.  
+```widget.options``` -  for select, autocomplete, radios or checkboxes you should give array of strings or objects.
 
 ```widget.options[key].value``` - value of option.
 ```widget.options[key].label``` - label of option (shown in UI).
 ```widget.options[key].show``` - Where to show the option. Could be 'main', 'advanced' or 'disabled'.
 ```widget.options[key].defaultChecked``` -  If to check this option by default (for checkboxes field).
 
-On cargo field, if ```widget.options``` ommited all table's field values would be the options.  
+On cargo field, if ```widget.options``` ommiad all table's field values would be the options.  
 
 ##### Detailed main config values - advanced
 
-```autocomplete_callback``` - If you want a autocomplete field with custom autocomplete by API call (php function), register it with this option. The function gets as arguments $term, $fieldname and returns data in the same strcture of ```widget.options```.  
+```autocomplete_callback``` - If you want a autocomplete field with custom autocomplete by API call (php function), register it with this option. The function gets as arguments $term, $fieldName and returns data in the same structure of ```widget.options```.  
 For example see:  
 ```MediaWiki\Extension\StructuredSearch\Utils::categoryAutocomplete```
 
 
-```search_callbak``` -  The search is by string sended to elasticsearch server. If you want to proccess by yourself this param and how it would send to search api, use this function.  
+```search_callback``` -  The search is by string sended to elasticsearch server. If you want to process by yourself this param and how it would send to search api, use this function.  
 The function gets two variables: &$params, $fieldName  
 Add values to $params['search'] (string)
 Example - this function is checking what the value of "duration_type" (could be days, hours or minutes) and modify search in accordance.   
@@ -123,7 +123,7 @@ Array in the structure of
 ]
 ```
 
-This is the way to conrol the results appearance.
+This is the way to control the results appearance.
 Each template is mustache string.
 Default fields you can use:
 * full_title
@@ -150,9 +150,9 @@ Any custom field added in ```$wgStructuredSearchParams``` would appear here.
 ### Predefined fields  
 
 ```$wgStructuredSearchDefaultParams```  
-The extension provide out of the box predefined fields - for now there are 'namespaces' and 'category'.  
+The extension provide out of the box predefined fields - for now there are 'namespaces', 'authors' and 'category'.  
 This options controls which of this fields would be shown. Default value is both 'namespaces' and 'category'.  
-If this configuration defined need, you need to include all predefined fields you want.  
+If this configuration defined, you need to include all predefined fields you want.  
 
 ### Predefined fields - category field configuration 
 
@@ -166,7 +166,7 @@ Use all categories in categories autocomplete but exclude those categories.
 
 
 ```$wgStructuredSearchNSReplace```  
-This option replace completely default NS option. You have to build array like this. (see ```widget.options``` defination):   
+This option replace completely default NS option. You have to build array like this. (see ```widget.options``` definition):   
 ```
 array(
     'label' => 'main',//ns readable name,
@@ -180,7 +180,7 @@ array(
 if this var defined, we will take all default NS and overriding 'show', 'defaultChecked', 'label' and 'weight' options.  
 ```
 array(
-    'ns' => 0,// NS number, to let the extesion know what you are overriding
+    'ns' => 0,// NS number, to let the extension know what you are overriding
     'show' => 'advanced',
     'defaultChecked' => 0
 )
@@ -194,7 +194,7 @@ Would apply to any default NS, before using ```StructuredSearchNSOverride```.
 Same as ```$wgStructuredSearchNSDefaultPosition```, but for talk pages. Default value is "advanced".  
 
 ```$wgStructuredSearchUseMWDefaultSearchNS```
-If true and ```$wgStructuredSearchNSReplace``` ommited, use [default MW list of NS for search](https://www.mediawiki.org/wiki/Manual:$wgNamespacesToBeSearchedDefault) as base.  
+If true and ```$wgStructuredSearchNSReplace``` omitted, use [default MW list of NS for search](https://www.mediawiki.org/wiki/Manual:$wgNamespacesToBeSearchedDefault) as base.  
 
 ```$wgStructuredSearchThumbSize```
 Files pages result getting special field which calls 'self_thumb'. This configuration defined the dimensions of this thumb. Default is 150X150.   
@@ -243,8 +243,8 @@ If you want to add field for indexing, you need some coding.
 
 Steps:  
 
-1. Add your field to elastic indexing defination - use SearchIndexFields hook (see MediaWiki\Extension\StructuredSearch\hooks::onSearchIndexFields for inspiration).  
+1. Add your field to elastic indexing definition - use SearchIndexFields hook (see MediaWiki\Extension\StructuredSearch\hooks::onSearchIndexFields for inspiration).  
 2. Add your field data to elastic indexing - use SearchDataForIndex hook (see MediaWiki\Extension\StructuredSearch\hooks::onSearchDataForIndex for inspiration).  
-3. Add UI defintion by ```StructuredSearchParams``` or add straight to ```$wgStructuredSearchParams```.  
-4. In this defination, add the search to elasticsearch string by using ```search_callbak``` option for field.  
+3. Add UI definition by ```StructuredSearchParams``` or add straight to ```$wgStructuredSearchParams```.  
+4. In this definition, add the search to elasticsearch string by using ```search_callback``` option for field.  
 5. Add your field to results by ```StructuredSearchResults``` hook.  

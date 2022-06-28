@@ -148,8 +148,8 @@ class ApiSearch extends \ApiBase {
 		$searchParams = Utils::getSearchParams();
 		$searchParamsKeys = array_column( $searchParams, 'field' );
 		foreach ( $params as $pKey => $pValue ) {
-			if ( in_array( $pKey, $searchParamsKeys ) && isset( $searchParams[$pKey]['search_callbak'] ) && function_exists( $searchParams[$pKey]['search_callbak'] ) ) {
-					call_user_func_array( $searchParams[$pKey]['search_callbak'], [ &$params, $pKey ] );
+			if ( in_array( $pKey, $searchParamsKeys ) && isset( $searchParams[$pKey]['search_callback'] ) && function_exists( $searchParams[$pKey]['search_callback'] ) ) {
+					call_user_func_array( $searchParams[$pKey]['search_callback'], [ &$params, $pKey ] );
 			}
 		}
 		foreach ( $params as $pKey => $pValue ) {

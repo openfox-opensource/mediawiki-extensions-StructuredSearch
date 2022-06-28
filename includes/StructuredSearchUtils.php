@@ -6,7 +6,7 @@ class Utils {
 	public static function categoryAutocomplete( $term ) {
 		$conf = \MediaWiki\MediaWikiServices::getInstance()->getMainConfig();
 		$categoryInclude = $conf->get( 'StructuredSearchCategoryInclude' );
-		return $categoryInclude ? self::preccessDefaultCategories( $categoryInclude, $term ) : self::getCategoriesFromDb( $term );
+		return $categoryInclude ? self::processDefaultCategories( $categoryInclude, $term ) : self::getCategoriesFromDb( $term );
 	}
 
 	public static function cargoAllRows( $fieldName ) {
@@ -53,7 +53,7 @@ class Utils {
 		return $results;
 	}
 
-	public static function preccessDefaultCategories( $cats, $term = false ) {
+	public static function processDefaultCategories( $cats, $term = false ) {
 		$newCats = [];
 		foreach ( $cats as $cat ) {
 				$catTitle = \Title::newFromText( $cat );

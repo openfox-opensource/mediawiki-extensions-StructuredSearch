@@ -85,7 +85,10 @@ class AuthorsReader {
 			return isset( $row['user_id'] )
 					&& $row['user_id']
 					&& !in_array( $row['user_id'], $botsAuthors )
-					&& $row['user_name'] != wfMessage( 'autocreatecategorypages-editor' )->text();
+					&& in_array($row['user_name'], [
+						wfMessage( 'autocreatecategorypages-editor' )->text(),
+						'Maintenance script',
+					]);
 		} );
 		return $allAuthorsNotBots;
 	}
