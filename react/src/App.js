@@ -91,8 +91,12 @@ class App extends Component {
     if(this.state && 'undefined' != typeof this.state.inputs ){
       let inputsSorted = Object.values(this.state.inputs).sort( utils.sortByWeight );
       for(let inputData of inputsSorted){
-        if( !['topbar','hide'].includes(inputData.widget.position) ){
+        if( !['topbar','hide'].includes(inputData.widget.position) && 
+            ! FormInput.isFieldHiddenByCondition(inputData ) ){
           allInputs.push( <FormInput key={inputData.field} inputData={inputData} /> )
+        }
+        else{
+          console.log("hidden!!!!!", inputData, FormInput.isFieldHiddenByCondition(inputData ))
         }
       }
     }
