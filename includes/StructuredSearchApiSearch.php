@@ -152,13 +152,14 @@ class ApiSearch extends \ApiBase {
 					call_user_func_array( $searchParams[$pKey]['search_callback'], [ &$params, $pKey ] );
 			}
 		}
+
 		foreach ( $params as $pKey => $pValue ) {
 			if ( in_array( $pKey, $searchParamsKeys ) ) {
 
 				if ( Utils::isSearchableField( $pKey ) && $pValue ) {
 					$params['search'] .= Utils::getFeatureSearchStr( $pKey, $pValue, $searchParams[$pKey] );
 					unset( $params[$pKey] );
-				} elseif ( Utils::isAuthorsField( $pKey ) && $pValue ) {
+				} elseif ( Utils::isSimpleField( $pKey ) && $pValue ) {
 					$params['search'] .= " " . $pKey . ':"' . $pValue . '"';
 					unset( $params[$pKey] );
 				} elseif ( !$pValue ) {

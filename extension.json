@@ -126,7 +126,8 @@
 		"MediaWiki\\Extension\\StructuredSearch\\AuthorsReader": "includes/AuthorsReader.php",
 		"MediaWiki\\Extension\\StructuredSearch\\StructuredSearchApiQuerySearch": "includes/StructuredSearchApiQuerySearch.php",
 		"MediaWiki\\Extension\\StructuredSearch\\InCargoFeature": "includes/InCargoFeature.php",
-		"MediaWiki\\Extension\\StructuredSearch\\AuthorIsFeature": "includes/AuthorIsFeature.php",
+		"MediaWiki\\Extension\\StructuredSearch\\InCargoFeature": "includes/InCargoFeature.php",
+		"MediaWiki\\Extension\\StructuredSearch\\DateRangeFeature": "includes/DateRangeFeature.php",
 		"MediaWiki\\Extension\\StructuredSearch\\NotIncludedFileFeature": "includes/NotIncludedFileFeature.php"
 	},
 	"AutoloadNamespaces": {

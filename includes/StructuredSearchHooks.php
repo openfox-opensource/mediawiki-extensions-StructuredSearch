@@ -11,6 +11,18 @@ use SearchEngine;
 use WikiPage;
 
 class Hooks {
+	public static function createdExtract( &$params ) {
+		$params['created'] = [
+			'label' => wfMessage( 'structuredsearch-created-label' )->text(),
+			'field' => 'created',
+			'weight' => 0,
+			'widget' => [
+				'type' => 'dateRange',
+				'position' => 'sidebar',
+			],
+		];
+	}
+
 	public static function authorsExtract( &$params ) {
 		$params['authors'] = [
 			'label' => wfMessage( 'structuredsearch-authors-label' )->text(),
@@ -282,6 +294,7 @@ class Hooks {
 	public static function onCirrusSearchAddQueryFeatures( SearchConfig $config, array &$features ) {
 		$features[] = new InCargoFeature();
 		$features[] = new AuthorIsFeature();
+		$features[] = new DateRangeFeature();
 		$features[] = new NotIncludedFileFeature();
 	}
 
@@ -302,8 +315,9 @@ class Hooks {
 		if ( !count( $defaultParams ) ) {
 			$defaultParams = [ 'namespaces', 'category' ];
 		}
+
 		foreach ( $defaultParams as $keyParam => $defaultParam ) {
-			// suppot both keyed array (without settings overriding)
+			// support both keyed array (without settings overriding)
 			if ( is_string( $defaultParam ) ) {
 				$pName = $defaultParam;
 				$pAdditionalSettings = null;
@@ -313,18 +327,22 @@ class Hooks {
 				$pName = $keyParam;
 				$pAdditionalSettings = $defaultParam;
  }
+
 			switch ( $pName ) {
 				case 'namespaces':
 				case 'category':
 				case 'authors':
+				case 'created':
 					$methodName = $pName . "Extract";
 					self::$methodName( $params );
+
 					if ( $pAdditionalSettings ) {
 						$params[$pName] = array_merge( $params[$pName], $pAdditionalSettings );
 					}
 				default:
 					break;
 			}
+
 		}
 	}
 

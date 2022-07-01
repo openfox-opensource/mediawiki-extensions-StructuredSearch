@@ -142,6 +142,7 @@ class Utils {
 	public static function getSearchParams() {
 		$conf = \MediaWiki\MediaWikiServices::getInstance()->getMainConfig();
 		$params = $conf->get( 'StructuredSearchParams' );
+
 		$newKeyedArray = [];
 		foreach ( $params as $param ) {
 			if ( !isset( $param['field'] ) || !$param['field'] ) {
@@ -231,13 +232,16 @@ class Utils {
 		return strpos( $key, ':' );
 	}
 
-	public static function isAuthorsField( $key ) {
-		return class_exists( "MediaWiki\\Extension\\StructuredSearch\\AuthorIsFeature" ) && in_array( $key, AuthorIsFeature::$fieldsNames );
+	public static function isSimpleField( $key ) {
+		$simpleFieldsNames = array_merge( AuthorIsFeature::$keywords, DateRangeFeature::$keywords );
+		return in_array( $key, $simpleFieldsNames );
 	}
 
 	public static function convertStrToTimestamp( $str ) {
 		if ( preg_match( '%\d{4}/\d{1,2}/\d{1,2}%', $str ) ) {
 			$str = implode( '-', array_reverse( explode( '/', $str ) ) );
+		} elseif ( preg_match( '%\d{2}/\d{1,2}/\d{1,4}%', $str ) ) {
+			$str = implode( '-',  explode( '/', $str ) );
 		}
 		return strtotime( $str );
 	}

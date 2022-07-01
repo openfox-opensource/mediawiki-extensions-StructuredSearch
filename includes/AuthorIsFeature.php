@@ -6,7 +6,7 @@ use CirrusSearch\Query\SimpleKeywordFeature;
 use CirrusSearch\Search\SearchContext;
 
 class AuthorIsFeature extends SimpleKeywordFeature {
-	public static $fieldsNames = [
+	public static $keywords = [
 		'creator',
 		'authors',
 		'last_editor',
@@ -19,7 +19,7 @@ class AuthorIsFeature extends SimpleKeywordFeature {
 	 * @return string[]
 	 */
 	protected function getKeywords() {
-		return self::$fieldsNames;
+		return self::$keywords;
 	}
 
 	/**
