@@ -13,7 +13,6 @@ import ReactTooltip from 'react-tooltip'
 import {format, parse} from 'date-fns'
 import "react-datepicker/dist/react-datepicker.css";
 const baseDateFormat = 'dd/MM/yyyy';
-const notEqual = '!==';
 //Moment.locale('he-IL');
 class FormInput extends Component {
 	constructor(props) {
@@ -510,27 +509,11 @@ class FormInput extends Component {
 		let inputHtml = this.getInputHtml();
 	let idInput = this.state.inputData.field.replace(/:/g,'-');
 	return (
-	  <div className={"form-input form-input-wrp-" + this.state.inputData.field.replace(/:/g,'-')}>
+	  <div className={"form-input form-input-wrp-" + idInput}>
 		{inputHtml}
 	</div>
 	);
 	}
-}
-FormInput.isFieldHiddenByCondition = ( inputData )=>{
-	let currentData = FormMain.getAllValuesProcessed();
 	
-	//no condition at all, always not hidden
-	if(!inputData.hiddenByCondition){
-		return false;
-	}
-	let fieldToSearch = Object.keys(currentData).find( p => p.includes(':' + inputData.hiddenByCondition.fieldId));
-	let valueToCompare = fieldToSearch ? currentData[fieldToSearch].split('|') : null;
-	
-	if(inputData.hiddenByCondition.arithmetic === notEqual){
-		return !valueToCompare || !valueToCompare.includes(inputData.hiddenByCondition.compareValue);
-	}
-	else{
-		return  valueToCompare.includes(inputData.hiddenByCondition.compareValue);
-	}
 }
 export default FormInput;

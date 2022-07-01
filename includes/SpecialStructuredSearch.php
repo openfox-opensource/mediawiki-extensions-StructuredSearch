@@ -39,7 +39,7 @@ class SpecialStructuredSearch extends \SpecialPage {
 		// $path_to_static = 'react/build/static/js';
 		$scripts = '';
 		if ( $structuredSearchDevelHost ) {
-			$scripts .= "<script src='$structuredSearchDevelHost/static/js/bundle.js'></script>";
+			$scripts .= "<script src='$structuredSearchDevelHost/static/js/bundle.js' onerror=\"alert('Please start the dev app by npm start')\"></script>";
 		} else {
 			$all_files = scandir( __DIR__ . '/../' . $path_to_static );
 

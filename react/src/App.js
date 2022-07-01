@@ -92,11 +92,8 @@ class App extends Component {
       let inputsSorted = Object.values(this.state.inputs).sort( utils.sortByWeight );
       for(let inputData of inputsSorted){
         if( !['topbar','hide'].includes(inputData.widget.position) && 
-            ! FormInput.isFieldHiddenByCondition(inputData ) ){
+            ! FormMain.isFieldHiddenByCondition(inputData.hiddenByCondition ) ){
           allInputs.push( <FormInput key={inputData.field} inputData={inputData} /> )
-        }
-        else{
-          console.log("hidden!!!!!", inputData, FormInput.isFieldHiddenByCondition(inputData ))
         }
       }
     }

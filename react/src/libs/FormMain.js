@@ -2,7 +2,7 @@ import EventEmitter from './EventEmitter'
 import ajaxCall from './ajaxCall'
 import fieldsDetector from './fieldsDetector'
 import utils from './utils'
-
+const notEqual = '!==';
 
 class FormMain{
 	static allData = {}
@@ -13,14 +13,14 @@ class FormMain{
 		//console.log(FormMain.allData[ name ], standardizeValue,"standardizeValue");
 		if( !FormMain.allData[ name ].map( item => ('' + item.value)).includes( '' + standardizeValue.value ) ){
 			FormMain.allData[ name ].push( standardizeValue );
-			FormMain.fireChangeEvent();
+			FormMain.processChange();
 		}
 	}
 	static removeValueByKey(name, key){
 		if( FormMain.allData[ name ] ){
 			FormMain.allData[ name ].splice( key ,1 );
 		}
-		FormMain.fireChangeEvent();
+		FormMain.processChange();
 	}
 	static removeValue(name, value){
 		let ind = FormMain.allData[ name ].findIndex( item => ('' + value.value) === ('' + item.value) );
@@ -31,23 +31,38 @@ class FormMain{
 		if(!FormMain.allData[ name ].length){
 			FormMain.removeBoundFields( name );
 		}
-		FormMain.fireChangeEvent();
+		FormMain.processChange();
 	}
 	static ChangeValueByKey(name, key, value){
 		FormMain.allData[ name ] = FormMain.allData[ name ] || Array(key).fill(null);
 		FormMain.allData[ name ][ key ] = value;
-		FormMain.fireChangeEvent();
+		FormMain.processChange();
 
 	}
 	static setValue(name, value){
 		FormMain.allData[ name ] = value;
-		FormMain.fireChangeEvent();
+		FormMain.processChange();
 	}
 	static getValue(name){
 		return FormMain.allData[ name ];
 	}
 	static includes(name, valueToCheck){
 		return FormMain.allData[ name ] && FormMain.allData[ name ].filter( item => '' + item.value === '' + valueToCheck).length;
+	}
+	static processChange(){
+		FormMain.removeValueByConditional();
+		FormMain.fireChangeEvent();
+	}
+	static removeValueByConditional(){
+		//console.log("FormMain.allData",FormMain.allData,FormMain.conditionals)
+		Object.keys(FormMain.allData).forEach( fieldId => {
+			if( FormMain.conditionals[ fieldId] ){
+				
+				if(FormMain.isFieldHiddenByCondition(FormMain.conditionals[ fieldId].hiddenByCondition)){
+					FormMain.clearField(fieldId, true)
+				}
+			}
+		});
 	}
 	static fireChangeEvent(){
 		EventEmitter.emit("FormDataChanged", FormMain.getAllValuesRaw());
@@ -95,6 +110,7 @@ class FormMain{
 	}	
 	static setInputsParams( params ){
 		FormMain.inputsParams = params;
+		FormMain.setConditionalDisplayFieldsFromParams( FormMain.inputsParams );
 	}
 	static setDefaults( params ){
 		for(let paramSettingsKey in params){
@@ -211,6 +227,19 @@ class FormMain{
 		}
 		return allBound;
 	}
+	static setConditionalDisplayFieldsFromParams( paramsSettings ){
+		let conditionals = {};
+		Object.keys(paramsSettings).forEach( fieldId => {
+			let input = paramsSettings[fieldId];
+			if(input.hiddenByCondition){
+				conditionals[input.field] = {
+					id: input.field,
+					hiddenByCondition: input.hiddenByCondition
+				}
+			}
+		});
+		FormMain.conditionals = conditionals;
+	}
 	static getFullResultFromParams(val, fieldName, paramsSettings){
 		let foundOption, options = utils.safeGet(paramsSettings, fieldName + '.widget.options');
 		//console.log("paramsSettings, fieldName + '.widget.options'",paramsSettings, fieldName + '.widget.options', fieldsDetector.isMultiple(paramsSettings[fieldName]));
@@ -229,7 +258,26 @@ class FormMain{
 	static reset(){
 		FormMain.allData = [];
 	}
-
+	static isFieldHiddenByCondition = ( condition ) =>{
+		
+		//no condition at all, always not hidden
+		if(!condition){
+			return false;
+		}
+		let currentData = FormMain.getAllValuesProcessed();
+		let fieldToSearch = Object.keys(currentData).find( p => p.includes(':' + condition.fieldId));
+		let valueToCompare = fieldToSearch && currentData[fieldToSearch] ? currentData[fieldToSearch] : null;
+		if( 'string' == typeof valueToCompare){
+			valueToCompare = valueToCompare.split('|');
+		}
+		//console.log(Object.keys(currentData),fieldToSearch,valueToCompare, condition,"valueToCompare")
+		if(condition.arithmetic === notEqual){
+			return !valueToCompare || !valueToCompare.length || !valueToCompare.includes(condition.compareValue);
+		}
+		else{
+			return valueToCompare && valueToCompare.includes(condition.compareValue);
+		}
+	}
 }
 
 
