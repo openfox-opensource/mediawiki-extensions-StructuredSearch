@@ -217,7 +217,7 @@ class FormInput extends Component {
 		if('<select>' === value.value ){
 			if(!this.state.inputData.widget['is_not_multiple']){
 				if(FormMain.clearField( fieldName )){
-					FormMain.fireChangeEvent();
+					FormMain.processChange();
 				}
 				
 			}
