@@ -39,11 +39,15 @@ class DateRangeFeature extends SimpleKeywordFeature {
 		if ( $key === 'created' ) {
 			$key = 'create_timestamp';
 		}
-		$rangeArgs = [
-			'gte' => $this->fixValue( $values[0] ),
-			'lte' => $this->fixValue( $values[1] ),
-		];
-		// die(print_r($rangeArgs));
+		$rangeArgs = [];
+		if( isset($values[0]) && $values[0] ){
+			$rangeArgs['gte'] = $this->fixValue( $values[0] );
+			
+		}
+		if(isset($values[1]) && $values[1]){
+			$rangeArgs['lte'] = $this->fixValue( $values[1] );
+			
+		}
 		$filter = new \Elastica\Query\BoolQuery();
 		$range = new \Elastica\Query\Range( $key, $rangeArgs );
 		$filter->addMust( $range );
