@@ -83,7 +83,6 @@ class TopBar extends Component {
     return item;
   }
   removeLabel( fieldName, valueObj) {
-    console.log("fieldName, valueObj",this.state.inputs[fieldName], this.state.inputs,fieldName, valueObj);
     if('undefined' !== typeof this.state.inputs && ['range', 'dateRange'].includes(this.state.inputs[fieldName].widget.type) ){
       FormMain.clearField(fieldName);
     }
