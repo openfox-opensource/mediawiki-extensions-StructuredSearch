@@ -139,7 +139,7 @@ class Hooks {
 				if ( Utils::isCargoField( $param['field'] ) ) {
 					$keyForCirrus = Utils::replaceCargoFieldToElasticField( $param['field'] );
 
-					$fields[$keyForCirrus] = Utils::isNumericField( $param ) ? $builder->newLongField( $keyForCirrus ) : $builder->newStringField( $keyForCirrus );
+					$fields[$keyForCirrus] = Utils::isNumericField( $param ) ? $builder->newLongField( $keyForCirrus ) : $builder->newKeywordField( $keyForCirrus );
 				}
 			}
 			if ( $conf->get( 'StructuredSearchAddFilesContentToIncludingPages' ) ) {
