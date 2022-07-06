@@ -207,9 +207,14 @@ class Results extends Component {
     if(result.snippetReplaced){
       return;
     }
+    console.log("<<<",result.snippet);
     let arraySpllitSnippet=this.spllit(result.snippet);
     let wordSearch = document.querySelector('.field-wrp-name-search');
     let wordInput = wordSearch.getElementsByTagName('input');// Find the search text
+
+    console.log("zzzz",wordInput.value);
+
+  
     let arrayWordsInputValue = this.spllit(wordInput[0].value);
     let locationToLinkWithTag = this.findTheLocationOfSearchStringWithTag(arrayWordsInputValue, arraySpllitSnippet)
     let arrayWithReplcaeSpanWithA=[];
@@ -237,6 +242,7 @@ class Results extends Component {
     if( stringFix ){
        result.snippet=stringFix;
        result.snippetReplaced = true;
+       console.log(stringFix);
     }
 
   }
