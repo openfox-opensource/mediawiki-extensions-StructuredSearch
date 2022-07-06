@@ -135,7 +135,7 @@ class Results extends Component {
     }
     for (var i = 0; i < locationWordSearch.length; i ++) {
       for (var j = 0, x = 0, index = 0; j < arrayWordsInputValue.length; j++, x++, index += 2) {
-        if (arrayStringSnippet[locationWordSearch[i] + index].includes(arrayWordsInputValue[j])) {
+        if (arrayStringSnippet[locationWordSearch[i] + index] && arrayStringSnippet[locationWordSearch[i] + index].includes(arrayWordsInputValue[j])) {
           if (x + 1 === arrayWordsInputValue.length) {
             locationOfStartStringToLink.push(locationWordSearch[i])
           }
