@@ -124,25 +124,27 @@ class Results extends Component {
     for (let index = 0; index < arrayWordsInputValue.length; index++) {
       stringSpan+='<span class="searchmatch">'+arrayWordsInputValue[index]+'</span> ';
     }
-    console.log(stringSpan);
     let host = window.location.host;
     let protocol = window.location.protocol;
     let title = result.full_title;
-    var strLink='<a href="'+'/'+title+'#:~:text=';
-    for (let index = 0; index < arrayWordsInputValue.length; index++) {
-      strLink+=arrayWordsInputValue[index];
-      if(index!=arrayWordsInputValue.length-1)
-      strLink+='%20';
-    }
-    strLink+='">';
-    for (let index = 0; index < arrayWordsInputValue.length; index++) {
-       strLink+=arrayWordsInputValue[index]+" ";
-    }
-    strLink+= '</a>';
-    console.log(result.snippet.includes(stringSpan));
-    result.snippet= result.snippet.replaceAll(stringSpan,strLink ); 
+    let a = document.createElement('a');
+    console.log({"stringSpan":stringSpan,snipet:result.snippet});
+    a.href = title + '#:~:text=' + arrayWordsInputValue.join('%20');  
+    a.innerHTML = arrayWordsInputValue.join(' ');
+    // var strLink='<a href="'+'/'+title.replace(/"/g,'\\"')+;
+    // for (let index = 0; index < arrayWordsInputValue.length; index++) {
+    //   strLink+=arrayWordsInputValue[index].replace(/"/g,'\\"');
+    //   if(index!=arrayWordsInputValue.length-1)
+    //   strLink+='%20';
+    // }
+    // strLink+='">';
+    // for (let index = 0; index < arrayWordsInputValue.length; index++) {
+    //    strLink+=arrayWordsInputValue[index]+" ";
+    // }
+    // strLink+= '</a>';
+    //console.log(result.snippet.includes(stringSpan));
+    result.snippet= result.snippet.replaceAll(stringSpan," " + a.outerHTML + " " ); 
     result.snippetReplaced = true;
-    console.log(result.snippet);
   }
   getResultJsx(result) {
     let template = this.getTempalteByResult(result);
