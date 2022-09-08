@@ -86,7 +86,13 @@ class FormInput extends Component {
 		return optionsStructured;
 	}
 	valueChanged( key, value ){
-		FormMain.setValue( key, value );
+		console.log("key, value",key, value);
+		if(!value){
+			FormMain.removeValueByKey( key );
+		}
+		else{
+			FormMain.setValue( key, value );
+		}			
 	}
 	checkboxChanges( fieldName, value, event){
 		if(event.target.checked){
@@ -117,7 +123,7 @@ class FormInput extends Component {
 				filteredOptions : this.filterAlreadyChosenOptions( filteredOptions )
 			});
 		}
-		else if( this.isSearchAutomplete() ){
+		else if( this.isSearchAutocomplete() ){
 			this.searchAutocomplete(typed);
 		}
 		else{
@@ -188,7 +194,7 @@ class FormInput extends Component {
 		}
 	}
 	autocompleteSelected( fieldName, itemLabel, autocompleteItem){
-		if( this.isSearchAutomplete() ){
+		if( this.isSearchAutocomplete() ){
 			FormMain.fireGlobalEvent( {title:autocompleteItem.value}, "StructuredSearchPageClicked" );
 			window.location.href = autocompleteItem.value;
 		}
@@ -202,20 +208,23 @@ class FormInput extends Component {
 	onAutocompleteMenuVisibilityChange( isOpen ){
 		EventEmitter.emit('autocompleteMenuOpen',isOpen);
 	}
-	isSearchAutomplete( ){
+	isSearchAutocomplete( ){
 		return fieldsDetector.isSearch(this.state.inputData);
 	}
 	selectChanged( fieldName, value){
-		
 		this.setState({selected : value});
 		
 		if('<select>' === value.value ){
-			if(this.state.inputData.widget['is_not_multiple']){
-				FormMain.clearField( fieldName );
+			if(!this.state.inputData.widget['is_not_multiple']){
+				if(FormMain.clearField( fieldName )){
+					FormMain.fireChangeEvent();
+				}
+				
 			}
 		}
 		else if(this.state.inputData.widget['is_not_multiple']){
 			FormMain.setValue(fieldName, [value]);
+
 		}
 		//filter case of empty string but not the number zero
 		else if('' + value.value){
@@ -233,7 +242,6 @@ class FormInput extends Component {
 			FormMain.removeValueByKey( fieldName, key );
 			return;
 		}
-		console.log("dateSelected",dateSelected);
 		let formatStr = baseDateFormat,
 			dateFormatted = format(dateSelected, formatStr);
 			//dateFormatted = Moment(dateSelected).format(format);
@@ -258,7 +266,6 @@ class FormInput extends Component {
 				label = this.getLabel( inputData ),
 				wrpClass = 'field-wrp field-wrp-type-' + inputData.widget.type + ' field-wrp-name-' + inputData.field,
 				html = '';
-
 			switch( inputData.widget.type){
 				case 'text':
 				case 'select':
@@ -463,7 +470,7 @@ class FormInput extends Component {
 					onChange={this.inputChanges.bind(this, inputData.field)} />;
 	}
 	autocompleteBuild (inputData){
-			let submitButton = this.isSearchAutomplete() ? <button type='button' onClick={this.submitClicked.bind(this)} dangerouslySetInnerHTML={{__html:this.state['structuredsearch-search-label']}}></button> : '',///
+			let submitButton = this.isSearchAutocomplete() ? <button type='button' onClick={this.submitClicked.bind(this)} dangerouslySetInnerHTML={{__html:this.state['structuredsearch-search-label']}}></button> : '',///
 				placeholder = this.getPlaceholder( inputData );
 			return   <div className="autocomplete-wrp"><Autocomplete
 						  aria-label={placeholder||inputData.field}
@@ -484,8 +491,8 @@ class FormInput extends Component {
 	}
 	autocompleteRender (item, isHighlighted){
 
-		///let nsWrapper = this.isSearchAutomplete() && item.ns ? <span className="ns-wrapper">{item.ns}</span> : '',*/
-		let	innerHtml = item.label;//this.isSearchAutomplete() ? <a href={item.href}>{nsWrapper}<span className="label-wrapper">{item.label}</span></a> : item.label;
+		///let nsWrapper = this.isSearchAutocomplete() && item.ns ? <span className="ns-wrapper">{item.ns}</span> : '',*/
+		let	innerHtml = item.label;//this.isSearchAutocomplete() ? <a href={item.href}>{nsWrapper}<span className="label-wrapper">{item.label}</span></a> : item.label;
 		return <div className={ 'autocomplete-item ' + (isHighlighted ? 'highlighted' : 'regular') } key={item.label}>
 				     {innerHtml}
 				</div>;

@@ -67,6 +67,14 @@
 		"StructuredSearchThumbSize": {
 			"description": "Thumns dismensions",
 			"value": "150X150"
+		},
+		"StructuredSearchAddFilesContentToIncludingPages": {
+			"description": "If set to true, file content would added to page includes it, and omit from search",
+			"value": true
+		},
+		"StructuredSearchDevelHost":{
+			"description": "Set host (e.g. http://localhost:3002) when developing",
+			"value": false
 		}
 		
 	},
@@ -75,8 +83,10 @@
 			"i18n"
 		]
 	},
-	"Hooks": {
-		
+	"ExtensionFunctions" : [
+		"MediaWiki\\Extension\\StructuredSearch\\Hooks::overrideWikitextContentHandler"
+	],
+	"Hooks": {	
     	"SearchIndexFields": [
         	"MediaWiki\\Extension\\StructuredSearch\\Hooks::onSearchIndexFields"
     	],
@@ -88,6 +98,9 @@
         ],
     	"SearchDataForIndex": [
         	"MediaWiki\\Extension\\StructuredSearch\\Hooks::onSearchDataForIndex"
+		],
+		"StructuredSearchSearchDataForIndexAfterWikiText": [
+			"MediaWiki\\Extension\\StructuredSearch\\Hooks::onStructuredSearchSearchDataForIndexAfterWikiText"
     	]
 	},
 	"ExtensionMessagesFiles": {
@@ -96,12 +109,14 @@
 	},
 	"AutoloadClasses": {
 		"MediaWiki\\Extension\\StructuredSearch\\Utils": "includes/StructuredSearchUtils.php",
+		"MediaWiki\\Extension\\StructuredSearch\\StructuredSearchWikitextContentHandler": "includes/StructuredSearchWikitextContentHandler.php",
 		"MediaWiki\\Extension\\StructuredSearch\\ApiParams": "includes/StructuredSearchApiParams.php",
 		"MediaWiki\\Extension\\StructuredSearch\\ApiSearch": "includes/StructuredSearchApiSearch.php",
 		"MediaWiki\\Extension\\StructuredSearch\\SpecialStructuredSearch": "includes/SpecialStructuredSearch.php",
 		"MediaWiki\\Extension\\StructuredSearch\\ApiAutocomplete": "includes/StructuredSearchApiAutocomplete.php",
 		"MediaWiki\\Extension\\StructuredSearch\\Hooks": "includes/StructuredSearchHooks.php",
-		"MediaWiki\\Extension\\StructuredSearch\\InCargoFeature": "includes/InCargoFeature.php"
+		"MediaWiki\\Extension\\StructuredSearch\\InCargoFeature": "includes/InCargoFeature.php",
+		"MediaWiki\\Extension\\StructuredSearch\\NotIncludedFileFeature": "includes/NotIncludedFileFeature.php"
 	},
 	"AutoloadNamespaces": {
 		"MediaWiki\\Extension\\StructuredSearch\\": "includes/"
@@ -123,6 +138,7 @@
 	"ResourceModules": {
 		"ext.StructuredSearch": {
 			"styles": [
+				"ext.StructuredSearch/variables.less",
 				"ext.StructuredSearch/styles.less"
 			],
 			"messages" : [
