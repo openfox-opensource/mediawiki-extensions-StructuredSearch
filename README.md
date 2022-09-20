@@ -42,7 +42,7 @@ No key needed, the field would be unieqe identifier
 	    ],
 	    'to_indexing_function' => callable_string,
 	    'autocomplete_callback' => callable_string,
-	    'search_callbak' => callable_string,
+	    'search_callback' => callable_string,
 ]
 ```  
 
@@ -73,7 +73,7 @@ For example see:
 ```MediaWiki\Extension\StructuredSearch\Utils::categoryAutocomplete```
 
 
-```search_callbak``` -  The search is by string sended to elasticsearch server. If you want to proccess by yourself this param and how it would send to search api, use this function.  
+```search_callback``` -  The search is by string sended to elasticsearch server. If you want to proccess by yourself this param and how it would send to search api, use this function.  
 The function gets two variables: &$params, $fieldName  
 Add values to $params['search'] (string)
 Example - this function is checking what the value of "duration_type" (could be days, hours or minutes) and modify search in accordance.   
@@ -246,5 +246,5 @@ Steps:
 1. Add your field to elastic indexing defination - use SearchIndexFields hook (see MediaWiki\Extension\StructuredSearch\hooks::onSearchIndexFields for inspiration).  
 2. Add your field data to elastic indexing - use SearchDataForIndex hook (see MediaWiki\Extension\StructuredSearch\hooks::onSearchDataForIndex for inspiration).  
 3. Add UI defintion by ```StructuredSearchParams``` or add straight to ```$wgStructuredSearchParams```.  
-4. In this defination, add the search to elasticsearch string by using ```search_callbak``` option for field.  
+4. In this defination, add the search to elasticsearch string by using ```search_callback``` option for field.  
 5. Add your field to results by ```StructuredSearchResults``` hook.  
