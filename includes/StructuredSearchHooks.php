@@ -269,16 +269,16 @@ class Hooks {
 			$defaultParams = [ 'namespaces', 'category' ];
 		}
 		foreach ( $defaultParams as $keyParam => $defaultParam ) {
-			// suppot both keyed array (without settings overriding)
+			// support both keyed array (without settings overriding)
 			if ( is_string( $defaultParam ) ) {
 				$pName = $defaultParam;
 				$pAdditionalSettings = null;
 			}
-			// and assoiative param, with settings overriding
- else {
+			// and associative param, with settings overriding
+ 			else {
 				$pName = $keyParam;
 				$pAdditionalSettings = $defaultParam;
-	}
+			}
 			switch ( $pName ) {
 				case 'namespaces':
 				case 'category':
