@@ -62,7 +62,6 @@ class ApiSearch extends \ApiBase {
 		unset( $params['namespaces'] );
 		$params = self::extractSearchStringFromFields( $params );
 		$srParams = [];
-
 		$params['limit'] = 10;
 
 		if ( !isset( $params['search'] ) ) {
@@ -82,6 +81,7 @@ class ApiSearch extends \ApiBase {
 		} );
 		$params['action'] = 'query';
 		$params['list'] = 'search';
+		
 		$callApiParams = new \DerivativeRequest(
 			$this->getRequest(),
 				$params
@@ -98,8 +98,17 @@ class ApiSearch extends \ApiBase {
 		$searchParams = Utils::getSearchParams();
 		$searchParamsKeys = array_column( $searchParams, 'field' );
 		foreach ( $params as $pKey => $pValue ) {
-			if ( in_array( $pKey, $searchParamsKeys ) && isset( $searchParams[$pKey]['search_callbak'] ) && function_exists( $searchParams[$pKey]['search_callbak'] ) ) {
-					call_user_func_array( $searchParams[$pKey]['search_callbak'], [ &$params, $pKey ] );
+			if ( in_array( $pKey, $searchParamsKeys ) 
+				&& isset( $searchParams[$pKey]['search_callback'] ) 
+				&& (
+					( 
+						is_string($searchParams[$pKey]['search_callback']) 
+						&& function_exists( $searchParams[$pKey]['search_callback'] ) 
+					) 
+					|| is_callable( $searchParams[$pKey]['search_callback'] )
+				)
+			) {
+					call_user_func_array( $searchParams[$pKey]['search_callback'], [ &$params, $pKey ] );
 			}
 		}
 		foreach ( $params as $pKey => $pValue ) {
@@ -135,7 +144,7 @@ class ApiSearch extends \ApiBase {
 		$titles = array_column( $results['query']['search'], 'title' );
 		$resultsData = self::getResultsAdditionalFieldsFromTitles( $titles, $results['query']['search'] );
 		\Hooks::run( 'StructuredSearchResultsView', [ &$resultsData ] );
-		$results['query']['searchinfo']['totalhits'] = count( $resultsData );
+		//$results['query']['searchinfo']['totalhits'] = count( $resultsData );
 		return [
 			'continue' => isset( $results['continue'] ) ? $results['continue'] : '',
 			'searchinfo' => $results['query']['searchinfo'],

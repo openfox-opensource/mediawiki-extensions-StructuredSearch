@@ -104,6 +104,10 @@ class Utils {
 	public static function getSearchParamsFiltered() {
 		$params = self::getSearchParams();
 		foreach ( $params as &$param ) {
+			//back compatibility. For mistakes and typos, we have to pay :(
+			if( isset($param['search_callbak']) ){
+				$param['search_callback'] = $param['search_callbak'];
+			}
 			if ( isset( $param['widget']['autocomplete_callback'] ) ) {
 				unset( $param['widget']['autocomplete_callback'] );
 			}
