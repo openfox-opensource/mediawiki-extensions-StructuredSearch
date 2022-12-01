@@ -35,7 +35,7 @@ class ApiParams extends \ApiBase {
 		// }
 		$params = $this->extractRequestParams();
 		$result = $this->getResult();
-		$searchParams = Utils::getSearchParams();
+		$searchParams = Utils::getSearchParamsFiltered();
 		$result->addValue( null, 'params',  $searchParams );
 		$result->addValue( null, 'binds',  Utils::getSearchBinds( $searchParams ) );
 		$result->addValue( null, 'templates', self::getResultsTemplates() );
