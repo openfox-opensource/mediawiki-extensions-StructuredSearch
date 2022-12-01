@@ -124,8 +124,8 @@ class Results extends Component {
     for (let index = 0; index < arrayWordsInputValue.length; index++) {
       stringSpan+='<span class="searchmatch">'+arrayWordsInputValue[index]+'</span> ';
     }
-    let host = window.location.host;
-    let protocol = window.location.protocol;
+    // let host = window.location.host;
+    // let protocol = window.location.protocol;
     let title = result.full_title;
     let a = document.createElement('a');
     console.log({"stringSpan":stringSpan,snipet:result.snippet});

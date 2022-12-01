@@ -509,7 +509,7 @@ class FormInput extends Component {
 		let inputHtml = this.getInputHtml();
 	let idInput = this.state.inputData.field.replace(/:/g,'-');
 	return (
-	  <div className={"form-input form-input-wrp-" + this.state.inputData.field.replace(/:/g,'-')}>
+	  <div className={"form-input form-input-wrp-" + idInput}>
 		{inputHtml}
 	</div>
 	);
