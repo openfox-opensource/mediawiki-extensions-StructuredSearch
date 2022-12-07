@@ -144,7 +144,7 @@ class ApiSearch extends \ApiBase {
 		$titles = array_column( $results['query']['search'], 'title' );
 		$resultsData = self::getResultsAdditionalFieldsFromTitles( $titles, $results['query']['search'] );
 		\Hooks::run( 'StructuredSearchResultsView', [ &$resultsData ] );
-		$results['query']['searchinfo']['totalhits'] = count( $resultsData );
+		//$results['query']['searchinfo']['totalhits'] = count( $resultsData );
 		return [
 			'continue' => isset( $results['continue'] ) ? $results['continue'] : '',
 			'searchinfo' => $results['query']['searchinfo'],
