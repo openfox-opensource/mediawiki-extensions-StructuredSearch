@@ -99,6 +99,8 @@ class Hooks {
 		$weightCount = 1;
 		foreach ( $NSOverride as $NSData ) {
 			$NSKey = $NSData['ns'];
+			$returnedNamespaces[ $NSKey ]['value'] = $NSData['ns'];
+			
 			foreach ( [ 'show', 'defaultChecked', 'label','weight' ] as $key ) {
 				if ( isset( $NSData[ $key ] ) ) {
 					$returnedNamespaces[ $NSKey ][ $key ] = $NSData[ $key ];

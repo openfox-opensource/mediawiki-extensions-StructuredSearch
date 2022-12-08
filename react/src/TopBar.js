@@ -97,9 +97,9 @@ class TopBar extends Component {
     FormMain.submitData();
   }
   refreshAllInputsByData( allData ) {
-      let newLabels = {}, alreadyIcluded = [],binds = [].concat( FormMain.binds );
+      let newLabels = {}, alreadyIncluded = [],binds = [].concat( FormMain.binds );
       for(let fieldKey of Object.keys(allData)){
-        if( alreadyIcluded.includes(fieldKey)){
+        if( alreadyIncluded.includes(fieldKey)){
           continue;
         }
         if(allData[fieldKey] && utils.safeGet(this, 'state.inputs') && !this.state.inputs[fieldKey].withoutLabels ){
@@ -140,7 +140,7 @@ class TopBar extends Component {
                     else{
                       newLabels[fieldKey][0].label += ' ' + allData[boundFieldKey][0].label;
                     }
-                    alreadyIcluded.push( boundFieldKey );
+                    alreadyIncluded.push( boundFieldKey );
                   }
                 }
               }
