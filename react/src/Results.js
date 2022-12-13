@@ -69,7 +69,7 @@ class Results extends Component {
         else {
           newResults = results;
         }
-        let newTotal = (data.searchinfo?.totalhits || 0) + (data.reset ? 0 : this.state.total);
+        let newTotal = (data.searchinfo?.totalhits || 0);
         this.setState({
           offset: data.continue ? data.continue.sroffset : null,
           total: newTotal,
