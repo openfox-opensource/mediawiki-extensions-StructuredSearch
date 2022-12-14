@@ -5,14 +5,14 @@
   "dependencies": {
     "axios": "^0.21.4",
     "query-string": "^6.8.1",
-    "react": "^18.0.0",
+    "react": "^18.2.0",
     "react-autocomplete": "^1.8.1",
-    "react-datepicker": "^4.7.0",
-    "react-dom": "^18.0.0",
+    "react-datepicker": "^4.8.0",
+    "react-dom": "^18.2.0",
     "react-mustache": "^0.1.5",
-    "react-scripts": "^5.0.0",
-    "react-select": "^5.2.2",
-    "react-tooltip": "^4.2.21"
+    "react-scripts": "^5.0.1",
+    "react-select": "^5.7.0",
+    "react-tooltip": "^4.5.1"
   },
   "scripts": {
     "start": "PORT=3003 react-scripts start",
