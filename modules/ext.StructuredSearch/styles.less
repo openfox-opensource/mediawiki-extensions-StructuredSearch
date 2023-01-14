@@ -28,7 +28,10 @@
 	#side-bar {
 	      max-width: var(--sts-sb-maxw, 24.4%);
 	      min-width: var(--sts-sb-minw, 250px);
-	    }
+	      box-shadow: var(--search-bar-boxshadow);    
+	      padding: var(--sts-sb-padd, 3em 2em);
+    		.select .css-kj6f9i-menu {z-index: 3;}
+	}
 	.top-and-results-wrp {
 	    width: var(--sts-main-width, 74.5%);
 	    max-width: var(--sts-main-maxw, ~"calc(100% - 250px)");
@@ -45,14 +48,7 @@
     border: 1px solid #ccc;
     border-radius: 2px;
 }
-.side-bar {
-    
-    padding: 3em 2em;
-    box-shadow: var(--search-bar-boxshadow);    
-    .select .css-kj6f9i-menu {
-        z-index: 3;
-    }
-}
+
 
 .label-wrp{
   display: inline-block;
