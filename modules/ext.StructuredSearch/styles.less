@@ -10,16 +10,29 @@
 .hide-on-desktop{
     display: none;
 }
+.skin-spni {
+	#mw-content-text .all-app-wrp {
+	  & * {
+	    box-sizing: border-box;
+	  }
+	    display: block !important;
+		#side-bar {
+			float: left;
+		}
+	}
+	.top-and-results-wrp {
+	    float: left;
+	}
+}
 #mw-content-text .all-app-wrp {
-  & * {
-    box-sizing: border-box;
-  }
-    display: block !important;
-    #side-bar {
-      float: left;
-      max-width: 24.4%;
-      min-width: 250px;
-    }
+	#side-bar {
+	      max-width: var(--sts-sb-maxw, 24.4%);
+	      min-width: var(--sts-sb-minw, 250px);
+	    }
+	.top-and-results-wrp {
+	    width: var(--sts-main-width, 74.5%);
+	    max-width: var(--sts-main-maxw, ~"calc(100% - 250px)");
+	}
 }
 .all-app-wrp input {
     height: 34px;
@@ -39,12 +52,6 @@
     .select .css-kj6f9i-menu {
         z-index: 3;
     }
-}
-
-.top-and-results-wrp {
-    width: 74.5%;
-    float: left;
-    max-width: ~"calc(100% - 250px)";
 }
 
 .label-wrp{
