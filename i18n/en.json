@@ -23,6 +23,6 @@
 	"structuredsearch-clear": "Clear",
 	"structuredsearch-toggle-sidebar": "Filter",
 	"structuredsearch-on-search-text": "Searching",
-	"structuredsearch-results-sum": "Sum $1 results",
+	"structuredsearch-results-sum": "$1 search results",
 	"structuredsearch-show-more": "Click to show more options"
 }
