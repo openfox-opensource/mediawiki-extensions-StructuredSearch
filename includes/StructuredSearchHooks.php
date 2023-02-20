@@ -63,7 +63,7 @@ class Hooks {
 			if ( 0 === $namespaceId ) {
 				$namespaceStr = trim( wfMessage( 'blanknamespace' )->plain(), '()' );
 			} else {
-				$namespaceStr = isset( $wgExtraNamespaces[ $namespaceId ] ) ? $wgExtraNamespaces[ $namespaceId ] : $localizedNamespaces[ $namespaceId ];
+				$namespaceStr = isset( $wgExtraNamespaces[ $namespaceId ] ) ? $wgExtraNamespaces[ $namespaceId ] : (isset($localizedNamespaces[ $namespaceId ]) ? $localizedNamespaces[ $namespaceId ]: '');
 			}
 			if ( $namespaceStr ) {
 				$namespaceIdsNames[$namespaceStr] = $namespaceId;
