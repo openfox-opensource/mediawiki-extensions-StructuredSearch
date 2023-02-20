@@ -76,6 +76,7 @@ class ApiSearch extends \ApiBase {
 		if ( !isset( $srParams['srsearch' ] ) || !$srParams['srsearch' ] ) {
 			$srParams['srsearch' ] = '*';
 		}
+		
 		$params = array_filter( $srParams, function ( $val ){
 			return !is_null( $val );
 		} );
@@ -175,7 +176,7 @@ class ApiSearch extends \ApiBase {
 					'namespace' => $titleClass->getNsText(),
 					'namespaceId' => $titleClass->getNamespace(),
 					'title_key' => $titleKey,
-					'text_has_search_results_inside' => (bool)strpos( $fullResults[$key]['snippet'], 'class="searchmatch"' ) ? "1" : ""
+					'text_has_search_results_inside' => isset($fullResults[$key]['snippet']) && (bool)strpos( $fullResults[$key]['snippet'], 'class="searchmatch"' ) ? "1" : ""
 			];
 
 			$resultsTitlesForCheck[$titleKey] = array_merge( $resultsTitlesForCheck[$titleKey], $fullResults[$key] );
