@@ -93,11 +93,11 @@ class Results extends Component {
     // console.log("resultClicked StructuredSearchResultclicked", title, event);
     FormMain.fireGlobalEvent({ title: title }, 'StructuredSearchResultclicked');
   }
-  getTempalteByResult(result) {
+  getTemplateByResult(result) {
     let ns = result.namespaceId;
     return this.templates['template_' + ns] || this.templates['default'];
   }
-  spllit(words) {
+  split(words) {
     let wordArray = words.split(' ');
     return wordArray;
   }
@@ -105,49 +105,27 @@ class Results extends Component {
     if(result.snippetReplaced){
       return;
     }
-    console.log(result.snippet);
-    let wordSearch = document.querySelector('.field-wrp-name-search');
-    let wordInput = wordSearch.getElementsByTagName('input');
-    let arrayWordsInputValue = this.spllit(wordInput[0].value);
-    // var strRegex='^.*(?=^.*(<span.*'
-    // for (let index = 0; index < arrayWordsInputValue.length; index++) {
-    //   strRegex+=arrayWordsInputValue[index]
-    //   if(index+1<arrayWordsInputValue.length)
-    //       strRegex+='.*'
-    // }
-    // strRegex+='<\/span>))'
-    // console.log(strRegex);
-    // const regex = new RegExp( strRegex, 'gm' );
-    // console.log(regex);
-
-    var stringSpan=""
-    for (let index = 0; index < arrayWordsInputValue.length; index++) {
-      stringSpan+='<span class="searchmatch">'+arrayWordsInputValue[index]+'</span> ';
-    }
-    // let host = window.location.host;
-    // let protocol = window.location.protocol;
+    //console.log(result.snippet);
+    //let wordSearch = document.querySelector('.field-wrp-name-search');
+    // let wordInput = wordSearch.getElementsByTagName('input');
+    // let arrayWordsInputValue = this.split(wordInput[0].value);
+    let tempContainer = document.createElement('div');
+    tempContainer.innerHTML = result.snippet;
+    let allSpansInResultSnippet = tempContainer.querySelectorAll('.searchmatch');
     let title = result.full_title;
-    let a = document.createElement('a');
-    console.log({"stringSpan":stringSpan,snipet:result.snippet});
-    a.href = title + '#:~:text=' + arrayWordsInputValue.join('%20');  
-    a.innerHTML = arrayWordsInputValue.join(' ');
-    // var strLink='<a href="'+'/'+title.replace(/"/g,'\\"')+;
-    // for (let index = 0; index < arrayWordsInputValue.length; index++) {
-    //   strLink+=arrayWordsInputValue[index].replace(/"/g,'\\"');
-    //   if(index!=arrayWordsInputValue.length-1)
-    //   strLink+='%20';
-    // }
-    // strLink+='">';
-    // for (let index = 0; index < arrayWordsInputValue.length; index++) {
-    //    strLink+=arrayWordsInputValue[index]+" ";
-    // }
-    // strLink+= '</a>';
-    //console.log(result.snippet.includes(stringSpan));
-    result.snippet= result.snippet.replaceAll(stringSpan," " + a.outerHTML + " " ); 
+    //replace all the spans with links of title + '#:~:text=' + span.textContent
+    for (let index = 0; index < allSpansInResultSnippet.length; index++) {
+      let a = document.createElement('a');
+      a.text = allSpansInResultSnippet[index].textContent;
+      a.href = title + '#:~:text=' + allSpansInResultSnippet[index].textContent;
+      allSpansInResultSnippet[index].replaceWith(a);
+    }
+    
+    result.snippet= result.snippet = tempContainer.innerHTML; 
     result.snippetReplaced = true;
   }
   getResultJsx(result) {
-    let template = this.getTempalteByResult(result);
+    let template = this.getTemplateByResult(result);
     this.linkToTheSearchTerms(result);
     // this.linkToWordSearch(result);
     return <ReactMustache template={template} data={result} onClick={this.resultClicked.bind(result.full_title, this)} />;
