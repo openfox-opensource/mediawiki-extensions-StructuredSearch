@@ -21,6 +21,7 @@
 	"structuredsearch-search-label": "<i class='far fa-search'></i>",
 	"structuredsearch-no-results-error": "Error during search",
 	"structuredsearch-clear": "Clear",
+	"structuredsearch-next": "Load more results",
 	"structuredsearch-toggle-sidebar": "Filter",
 	"structuredsearch-on-search-text": "Searching",
 	"structuredsearch-results-sum": "$1 search results",
