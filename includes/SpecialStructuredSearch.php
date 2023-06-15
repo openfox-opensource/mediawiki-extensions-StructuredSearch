@@ -19,7 +19,10 @@ class SpecialStructuredSearch extends \SpecialPage {
 		$structuredSearchDevelHost = $conf->get('StructuredSearchDevelHost');
 		$this->setHeaders();
 		$out->setPageTitle( wfMessage( 'structuredsearch' ) );
-		$out->addModules( [ 'ext.StructuredSearch' ] );
+		$out->addModuleStyles( [ 'ext.StructuredSearch' ] );
+		
+		
+
 		// redirect old IE to simple search
 		$out->addHeadItem( "ie-polyfill", '<script type="text/javascript">
             if( /MSIE \d|Trident.*rv:/.test(navigator.userAgent) ){
