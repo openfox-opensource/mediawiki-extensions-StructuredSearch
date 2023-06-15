@@ -13,15 +13,40 @@ class settingsGetter{
 	}
 	static get(){
 		return new Promise( (resolve) => {
-			if(!settingsGetter.onCall){
-					settingsGetter.getFromRemote().then(data => {
-						settingsGetter.data = settingsGetter.fixData(data);
-						resolve(settingsGetter.data)
-					});
+			let allSettings
+			if(window.mw && window.mw.config){
+				allSettings = window.mw.config.get('structuredSearchSettings');
+				resolve( settingsGetter.fixData(allSettings) );
 			}
 			else{
-				settingsGetter.waitForResponse().then( data => resolve(data));
+				//wait for mw.config to be ready
+				setInterval(function(){
+					if(window.mw && window.mw.config){
+						allSettings = window.mw.config.get('structuredSearchSettings');
+						clearInterval(this);
+						if(allSettings){
+							resolve( settingsGetter.fixData(allSettings) );
+						}
+						else{
+							if(!settingsGetter.onCall){
+								settingsGetter.getFromRemote().then(data => {
+									settingsGetter.data = settingsGetter.fixData(data);
+									console.log("settingsGetter.data",settingsGetter.data);
+									resolve(settingsGetter.data)
+								});
+							}
+							else{
+								settingsGetter.waitForResponse().then( data => resolve(data));
+							}
+						}
+					}
+				},100);
 			}
+			
+			
+			
+			
+			
 		});
 	}
 	static getFromRemote(){

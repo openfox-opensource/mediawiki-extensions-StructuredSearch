@@ -56,7 +56,18 @@ class SpecialStructuredSearch extends \SpecialPage {
 				}
 			}
 		}
+		$this->addSearchParams( $out );
 		$out->addHTML( file_get_contents( __DIR__ . '/../templates/search-page.html' ) . $scripts );
+	}
+	function addSearchParams( $out ) {
+		$searchParams = Utils::getSearchParamsFiltered();
+		$out->addJsConfigVars( 'structuredSearchSettings', [
+			'params'=> $searchParams,
+			'binds'=> Utils::getSearchBinds( $searchParams ),
+			'templates'=> ApiParams::getResultsTemplates(),
+			'translations'=> ApiParams::getTranslates(),
+		] );
+		
 	}
 	function getGroupName() {
 		return 'pages';

@@ -261,7 +261,7 @@ class Hooks {
 			'widget' => [
 				'type' => 'autocomplete',
 				'position' => 'topbar',
-				'placeholder' => wfMessage( "structuredsearch-search-placeholder" ),
+				'placeholder' => wfMessage( "structuredsearch-search-placeholder" )->text(),
 			],
 		];
 
@@ -311,7 +311,7 @@ class Hooks {
 				}
 				if ( 'select' === $param['widget']['type'] ) {
 					array_unshift( $options, [
-						'label' => wfMessage( 'structuredsearch-choose' ),
+						'label' => wfMessage( 'structuredsearch-choose' )->text(),
 						'value' => '<select>',
 					] );
 				}

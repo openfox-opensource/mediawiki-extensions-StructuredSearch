@@ -69,6 +69,7 @@ class App extends Component {
 
   } 
   componentDidMount() {
+    
     this.hide();
     EventEmitter.on("FormDataChanged", allData => {
       if(this.state && 'undefined' != typeof this.state.inputs ){
