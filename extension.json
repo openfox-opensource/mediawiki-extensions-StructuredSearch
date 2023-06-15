@@ -72,6 +72,10 @@
 			"description": "If set to true, file content would added to page includes it, and omit from search",
 			"value": true
 		},
+		"StructuredSearchInitialAppHtml": {
+			"description": "Initial html inside <div id=\"results\"> app",
+			"value": "<i class=\"search-loader fa-lg fa-solid fa-spinner fa-spin-pulse fa-spin-reverse\"></i>"
+		},
 		"StructuredSearchDevelHost":{
 			"description": "Set host (e.g. http://localhost:3002) when developing",
 			"value": false
@@ -136,11 +140,13 @@
 		"localBasePath": "modules/"
 	},
 	"ResourceModules": {
-		"ext.StructuredSearch": {
+		"ext.StructuredSearch.styles": {
 			"styles": [
 				"ext.StructuredSearch/variables.less",
 				"ext.StructuredSearch/styles.less"
-			],
+			]
+		},
+		"ext.StructuredSearch": {
 			"messages" : [
 				"structuredsearch-from-label",
 				"structuredsearch-to-label"
