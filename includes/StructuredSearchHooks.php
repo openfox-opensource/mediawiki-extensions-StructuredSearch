@@ -147,6 +147,18 @@ class Hooks {
 			if ( $conf->get( 'StructuredSearchAddFilesContentToIncludingPages' ) ) {
 				$fields['is_included_file'] = $builder->newLongField( 'is_included_file' );
 			}
+			foreach([
+				'full_title',
+				'short_title',
+				'title_dash',
+				'title_dash_short',
+				'page_link',
+				'title_key',
+				'page_image_ext',
+			] as $fieldKey){
+				//echo $fieldKey . "\n";
+				$fields[$fieldKey] = $builder->newKeywordField( $fieldKey );
+			}
 
 		}
 	}
@@ -179,8 +191,47 @@ class Hooks {
 				$fields[ $keyForCirrus ] = isset( $vals[ $fieldName ] ) ? Utils::getFieldValueForIndex( $vals[$fieldName ], $param ) : '';
 			}
 		}
-
+		$titleClass = $page->getTitle();
+		$namespaceId = $titleClass->getNamespace();
+		$fields['full_title'] = $titleClass->getFullText();
+		$fields['short_title'] = $titleClass->getText();
+		$fields['title_dash'] = $titleClass->getPrefixedDBkey();
+		$fields['title_dash_short'] = $titleClass->getDBkey();
+		$fields['page_link'] = $titleClass->getLinkURL();
+		$fields['namespace'] = $titleClass->getNsText();
+		$fields['namespaceId'] = $titleClass->getNamespace();
+		$fields['title_key'] = ($namespaceId ? $namespaceId : '0' ) . ':' . $fields['title_dash'];
+		$fields['page_image_ext'] = self::addPageImageInSearch( $page,$fields );
+		//print_r($fields);
 		// die(print_r(['$fields ' . "\n", $fields[ 'text' ]]));
+	}
+	public static function addPageImageInSearch( $page,&$fields ) {
+		if ( class_exists( 'PageImages' ) || class_exists( 'PageImages\PageImages' ) ) {
+		
+			$title = $page->getTitle();
+			$dbr = wfGetDB( DB_REPLICA );
+			$res = $dbr->select(
+				[ 'imagelinks','page' ],
+				[ 'il_from','il_to','CONCAT(page_namespace,":",page_title) as concatKey', ],
+				[
+					'CONCAT(page_namespace,":",page_title) = ' . $dbr->addQuotes( $title->getNamespace() . ':' . $title->getText() )
+				],
+				__METHOD__,
+				[],
+				[ 'page' => [ 'INNER JOIN', [ 'page_id=il_from' ] ],
+				]
+			);
+			$image = null;
+			while ( $row = $dbr->fetchObject( $res ) ) {
+				$image = self::fixImageToThumbs( 'file:' . $row->il_to );
+				//echo $fields['full_title'] . "   _________ " .  $image . "--------\n";
+				break;
+			}
+			return $image;
+		}
+		else{
+			return null;
+		}
 	}
 	public static function onStructuredSearchSearchDataForIndexAfterWikiText(
 		array &$fields,
@@ -239,7 +290,7 @@ class Hooks {
 			}
 
 		}
-		// print_r($fields);
+		
 		// die();
 	}
 	public static function onCirrusSearchMappingConfig( array &$config, MappingConfigBuilder $builder ) {
@@ -314,6 +365,9 @@ class Hooks {
 						'label' => wfMessage( 'structuredsearch-choose' )->text(),
 						'value' => '<select>',
 					] );
+					if(isset($_GET['dssddasdasadsasdsddsasadsadasd'])){
+						die(print_r([wfMessage( 'structuredsearch-choose' )->text()]));
+					}
 				}
 				$param['widget']['options'] = $options;
 			}

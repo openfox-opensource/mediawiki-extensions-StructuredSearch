@@ -114,6 +114,7 @@
 		"MediaWiki\\Extension\\StructuredSearch\\ApiSearch": "includes/StructuredSearchApiSearch.php",
 		"MediaWiki\\Extension\\StructuredSearch\\SpecialStructuredSearch": "includes/SpecialStructuredSearch.php",
 		"MediaWiki\\Extension\\StructuredSearch\\ApiAutocomplete": "includes/StructuredSearchApiAutocomplete.php",
+		"MediaWiki\\Extension\\StructuredSearch\\QuerySearch": "includes/StructuredSearchQuerySearch.php",
 		"MediaWiki\\Extension\\StructuredSearch\\Hooks": "includes/StructuredSearchHooks.php",
 		"MediaWiki\\Extension\\StructuredSearch\\InCargoFeature": "includes/InCargoFeature.php",
 		"MediaWiki\\Extension\\StructuredSearch\\NotIncludedFileFeature": "includes/NotIncludedFileFeature.php"
@@ -125,6 +126,9 @@
 		"structuredsearchparams": "MediaWiki\\Extension\\StructuredSearch\\ApiParams",
 		"structuredsearchautocomplete": "MediaWiki\\Extension\\StructuredSearch\\ApiAutocomplete",
 		"structuredsearchsearch": "MediaWiki\\Extension\\StructuredSearch\\ApiSearch"
+	},
+	"APIListModules": {
+		"search": "MediaWiki\\Extension\\StructuredSearch\\QuerySearch"
 	},
 	"_ContentHandlers": {
 		"xmldata": "MediaWiki\\Extension\\StructuredSearch\\XmlContentHandler"

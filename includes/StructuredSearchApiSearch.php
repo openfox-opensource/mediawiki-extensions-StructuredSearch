@@ -63,7 +63,13 @@ class ApiSearch extends \ApiBase {
 		$params = self::extractSearchStringFromFields( $params );
 		$srParams = [];
 		$params['limit'] = 10;
-		
+		$params['prop'] = implode('|',[
+			'extensiondata',
+			"size",
+			"wordcount",
+			"snippet",
+			"timestamp"
+		]);
 		if ( !isset( $params['search'] ) ) {
 			$params['search'] = '*';
 		}
@@ -144,6 +150,16 @@ class ApiSearch extends \ApiBase {
 
 	protected function getResultsAdditionalFields( $results ) {
 		$titles = array_column( $results['query']['search'], 'title' );
+		$results['query']['search'] = array_map( function($res){
+			if(isset($res['extensiondata']['extra_fields'])){
+				$res = array_merge($res, $res['extensiondata']['extra_fields']);
+				unset($res['extensiondata']);
+				$res['namespaceId']  = $res['namespace'];
+				$res['namespace']  = $res['namespace_text'];
+
+			}
+			return $res;
+		},$results['query']['search']);
 		$resultsData = self::getResultsAdditionalFieldsFromTitles( $titles, $results['query']['search'] );
 		\Hooks::run( 'StructuredSearchResultsView', [ &$resultsData ] );
 		//$results['query']['searchinfo']['totalhits'] = count( $resultsData );
@@ -158,28 +174,32 @@ class ApiSearch extends \ApiBase {
 		if ( !count( $titles ) ) {
 			return $titles;
 		}
-		$conf = \MediaWiki\MediaWikiServices::getInstance()->getMainConfig();
-		$wgArticlePath = $conf->get( 'ArticlePath' );
+		// $conf = \MediaWiki\MediaWikiServices::getInstance()->getMainConfig();
+		// $wgArticlePath = $conf->get( 'ArticlePath' );
 		$resultsTitlesForCheck = [];
 		$resultsTitlesAliases = [];
-		$namespaceIds = self::getNamespaces();
+		//$namespaceIds = self::getNamespaces();
 		foreach ( $titles as $key => $val ) {
 			$titleClass = \Title::newFromText( $val );
 
 			$namespace = $titleClass->getNamespace();
 			$titleKey = ( $namespace ? $namespace : '0' ) . ':' . preg_replace( '/\s/', '_', $titleClass->getText() );
 			$resultsTitlesForCheck[$titleKey] = [
-					'full_title' => $titleClass->getFullText(),
-					'short_title' => $titleClass->getText(),
-					'title_dash' => $titleClass->getPrefixedDBkey(),
-					'title_dash_short' => $titleClass->getDBkey(),
-					'page_link' => $titleClass->getLinkURL(),
-					'namespace' => $titleClass->getNsText(),
-					'namespaceId' => $titleClass->getNamespace(),
-					'title_key' => $titleKey,
+					// 
 					'text_has_search_results_inside' => isset($fullResults[$key]['snippet']) && (bool)strpos( $fullResults[$key]['snippet'], 'class="searchmatch"' ) ? "1" : ""
 			];
-
+			$fieldsOutOfElasticSearch = !isset($fullResults[$key]['title_dash_short']);
+			//old case,  new  fields are not in extensiondata
+			if( $fieldsOutOfElasticSearch ){
+				$resultsTitlesForCheck[$titleKey]['full_title'] = $titleClass->getFullText();
+				$resultsTitlesForCheck[$titleKey]['short_title'] = $titleClass->getText();
+				$resultsTitlesForCheck[$titleKey]['title_dash'] = $titleClass->getPrefixedDBkey();
+				$resultsTitlesForCheck[$titleKey]['title_dash_short'] = $titleClass->getDBkey();
+				$resultsTitlesForCheck[$titleKey]['page_link'] = $titleClass->getLinkURL();
+				$resultsTitlesForCheck[$titleKey]['namespace'] = $titleClass->getNsText();
+				$resultsTitlesForCheck[$titleKey]['namespaceId'] = $titleClass->getNamespace();
+				$resultsTitlesForCheck[$titleKey]['title_key'] = $titleKey;
+			}
 			$resultsTitlesForCheck[$titleKey] = array_merge( $resultsTitlesForCheck[$titleKey], $fullResults[$key] );
 			$resultsTitlesAliases[$val] = &$resultsTitlesForCheck[$titleKey];
 			if ( isset( $resultsTitlesAliases[$val]['timestamp'] ) ) {
@@ -196,10 +216,10 @@ class ApiSearch extends \ApiBase {
 		if ( !count( $resultsTitlesForCheck ) ) {
 			return $titles;
 		}
+		//cats in ES are including hidden cats so we need to write solution for this
+		self::addCategories( $resultsTitlesForCheck );
+		if ( count( $resultsTitlesForCheck ) && $fieldsOutOfElasticSearch ) {
 
-		if ( count( $resultsTitlesForCheck ) ) {
-
-			self::addCategories( $resultsTitlesForCheck );
 			self::addCargoFields( $resultsTitlesForCheck, $resultsTitlesAliases );
 			if ( class_exists( 'PageImages' ) || class_exists( 'PageImages\PageImages' ) ) {
 				self::addPageImage( $resultsTitlesForCheck );
@@ -227,6 +247,7 @@ class ApiSearch extends \ApiBase {
 			$resultsTitlesForCheck[$row->concatKey]['page_image_ext'] = Hooks::fixImageToThumbs( 'file:' . $row->il_to );
 		}
 	}
+	
 	public static function addCargoFields( &$resultsTitlesForCheck, &$resultsTitlesAliases ) {
 		$dbr = wfGetDB( DB_REPLICA );
 		$dbrCargo = \CargoUtils::getDB();
