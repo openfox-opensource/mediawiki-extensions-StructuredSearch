@@ -198,7 +198,6 @@ class Hooks {
 		$fields['title_dash'] = $titleClass->getPrefixedDBkey();
 		$fields['title_dash_short'] = $titleClass->getDBkey();
 		$fields['page_link'] = $titleClass->getLinkURL();
-		$fields['namespace'] = $titleClass->getNsText();
 		$fields['namespaceId'] = $titleClass->getNamespace();
 		$fields['title_key'] = ($namespaceId ? $namespaceId : '0' ) . ':' . $fields['title_dash'];
 		$fields['page_image_ext'] = self::addPageImageInSearch( $page,$fields );

@@ -29,6 +29,7 @@ class QuerySearch extends \ApiQuerySearch {
             'title_dash_short',
             'page_link',
             'namespace',
+            'page_image_ext',
             'namespaceId',
             'title_key',
         ]);
