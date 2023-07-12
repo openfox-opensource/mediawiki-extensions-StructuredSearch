@@ -98,6 +98,7 @@ class ApiSearch extends \ApiBase {
 		$api->execute();
 
 		$results = $api->getResult()->getResultData();
+		
 		return $this->getResultsAdditionalFields( $results );
 	}
 	public static function extractSearchStringFromFields( $params ) {
@@ -217,7 +218,36 @@ class ApiSearch extends \ApiBase {
 			return $titles;
 		}
 		//cats in ES are including hidden cats so we need to write solution for this
-		self::addCategories( $resultsTitlesForCheck );
+		//thats' a little bit hack but to check if visible_categories are set, we'll check if even one title has this field
+		$visibleCategoriesExists = count(array_filter(array_column( $resultsTitlesForCheck, 'visible_categories' )));
+		if($visibleCategoriesExists){
+			//rename visible_categories to categories
+			foreach ( $resultsTitlesForCheck as $key => &$val ) {
+				//die(print_r($val['visible_categories'], true));
+				if ( isset( $val['visible_categories'] ) ) {
+					//filter from visible categories all values their keys starting with _ 
+					//because they are not categories but some other fields
+
+					$visibleCategories = array_filter( $val['visible_categories'], function ( $key ){
+						return strpos( $key, '_' ) !== 0;
+					}, ARRAY_FILTER_USE_KEY ); 
+					$val['categories'] = array_map( function ( $part ){
+						$splitted = explode( ':', $part );
+						return [
+							'name' => preg_replace( '/_/', ' ', $splitted[1] ),
+							'key' => $splitted[1],
+							'link' => '/category:' . $splitted[1],
+							'id' => $splitted[0],
+						];
+					},  $visibleCategories );
+					unset( $val['visible_categories']  );
+				}
+			}
+		}
+		else{
+			self::addCategories( $resultsTitlesForCheck );
+		}
+		
 		if ( count( $resultsTitlesForCheck ) && $fieldsOutOfElasticSearch ) {
 
 			self::addCargoFields( $resultsTitlesForCheck, $resultsTitlesAliases );

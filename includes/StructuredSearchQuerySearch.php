@@ -32,6 +32,7 @@ class QuerySearch extends \ApiQuerySearch {
             'page_image_ext',
             'namespaceId',
             'title_key',
+            'visible_categories'
         ]);
         //die(print_r($params, true));
         return $engine;
