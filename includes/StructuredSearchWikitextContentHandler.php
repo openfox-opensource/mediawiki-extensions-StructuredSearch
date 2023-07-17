@@ -8,7 +8,8 @@ class StructuredSearchWikitextContentHandler extends \WikitextContentHandler {
 	public function getDataForSearchIndex(
 		\WikiPage $page,
 		\ParserOutput $parserOutput,
-		\SearchEngine $engine
+		\SearchEngine $engin,
+		?\MediaWiki\Revision\RevisionRecord $revision = null
 	) {
 		$fields = parent::getDataForSearchIndex( $page, $parserOutput, $engine );
 		$hookContainer = MediaWikiServices::getInstance()->getHookContainer();

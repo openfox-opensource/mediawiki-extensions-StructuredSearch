@@ -376,7 +376,7 @@ class Hooks {
 		$conf = \MediaWiki\MediaWikiServices::getInstance()->getMainConfig();
 		if ( $conf->get( 'StructuredSearchAddFilesContentToIncludingPages' ) ) {
 
-			$wgContentHandlers[CONTENT_MODEL_WIKITEXT] = StructuredSearchWikitextContentHandler::class;
+			$wgContentHandlers[CONTENT_MODEL_WIKITEXT]['class'] = StructuredSearchWikitextContentHandler::class;
 
 			// if(isset($_GET['ddd'])){
 			// }
