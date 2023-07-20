@@ -37,7 +37,7 @@ class Utils {
 		}
 
 		$results = [];
-		while ( $row = $dbrCargo->fetchObject( $res ) ) {
+		while ( $row = $res->fetchObject( ) ) {
 			$results[$row->val] = $row->val;
 		}
 
@@ -121,15 +121,18 @@ class Utils {
 		$dbrCargo = \CargoUtils::getDB();
 		$res = $dbr->select( 'cargo_tables', [ 'field_tables' ],
 			[ 'main_table' => $tableName ] );
-		$row = $dbr->fetchRow( $res );
+		//get IResultWrapper
+		$row = $res->fetchRow();
+		//$row = $dbr->fetchRow( $res );
 		if( !$row || !count($row) ){
 			return [];
 		}
 		$tables = unserialize( $row[0] );
 		$allDefinedTables = $dbrCargo->query( 'show tables' );
+		
 		$tablesFromShow = [];
 		$cargoPrefix = $conf->get( 'DBprefix' ) . 'cargo__';
-		while ( $table = $dbr->fetchObject( $allDefinedTables ) ) {
+		while ( $table = $allDefinedTables->fetchRow( $allDefinedTables ) ) {
 			$tableAsArr = (array)$table;
 			$tablesFromShow[] = preg_replace( '/' . $cargoPrefix . '/', '', array_pop( $tableAsArr ) );
 		}

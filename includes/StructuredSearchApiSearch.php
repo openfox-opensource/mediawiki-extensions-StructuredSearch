@@ -23,6 +23,10 @@ class ApiSearch extends \ApiBase {
 	use \SearchApi;
 	public function __construct( $query, $moduleName ) {
 		parent::__construct( $query, $moduleName );
+		//we are using \SearchApi just to get default params
+		//it's require searchEngineFactory and searchEngine to beset, let's mock it
+		$this->searchEngineFactory = \MediaWiki\MediaWikiServices::getInstance()->getService( 'SearchEngineFactory' );
+		$this->searchEngineConfig = \MediaWiki\MediaWikiServices::getInstance()->getService( 'SearchEngineConfig' );
 	}
 
 	public function execute() {
