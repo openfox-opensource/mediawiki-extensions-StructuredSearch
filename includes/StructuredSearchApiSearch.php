@@ -226,7 +226,7 @@ class ApiSearch extends \ApiBase {
 			]
 		);
 		$allImages = [];
-		while ( $row = $dbr->fetchObject( $res ) ) {
+		while ( $row = $res->fetchObject( ) ) {
 			$resultsTitlesForCheck[$row->concatKey]['page_image_ext'] = Hooks::fixImageToThumbs( 'file:' . $row->il_to );
 		}
 	}
@@ -263,7 +263,7 @@ class ApiSearch extends \ApiBase {
 			$conditions[] = '_pageName IN (' . $dbr->makeList( array_column( $resultsTitlesForCheck, 'full_title' ) ) . ')';
 			$res = $dbrCargo->select( $tableName, $fields, $conditions );
 
-			while ( $row = $dbrCargo->fetchObject( $res ) ) {
+			while ( $row = $res->fetchObject( )) {
 				$addToArr = &$resultsTitlesAliases[$row->_pageName];
 				foreach ( $row as $key => $value ) {
 					$keySplitted = explode( '__', $key );
@@ -298,7 +298,7 @@ class ApiSearch extends \ApiBase {
 			"_pageName",
 			"_pageNamespace",
 		];
-		while ( $row = $dbr->fetchObject( $res ) ) {
+		while ( $row = $res->fetchObject( ) ) {
 			$dbrCargo = \CargoUtils::getDB();
 			$res2 = $dbrCargo->query( "DESCRIBE " . $dbrCargo->tablePrefix() . $row->main_table );
 			$r = [];
@@ -328,7 +328,7 @@ class ApiSearch extends \ApiBase {
 			]
 		);
 		$allCategories = [];
-		while ( $row = $dbr->fetchObject( $res ) ) {
+		while ( $row = $res->fetchObject( ) ) {
 			$allCategories[] = (array)$row;
 		}
 		$catTitles = array_column( $allCategories, 'cl_to' );
@@ -349,7 +349,7 @@ class ApiSearch extends \ApiBase {
 
 				]
 			);
-			while ( $row = $dbr->fetchObject( $res ) ) {
+			while ( $row = $res->fetchObject( ) ) {
 				$categoriesToExclude[] = $row->page_title;
 			}
 		}
@@ -375,7 +375,7 @@ class ApiSearch extends \ApiBase {
 		$res = $dbrCargo->select( $subtableName, [ '*' ], [
 			'_rowID' => $row->_ID
 		] );
-		while ( $row = $dbrCargo->fetchObject( $res ) ) {
+		while ( $row = $res->fetchObject( ) ){
 			$results[] = $row->_value;
 		}
 		return $results;

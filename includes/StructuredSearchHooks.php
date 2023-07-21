@@ -2,8 +2,11 @@
 
 namespace MediaWiki\Extension\StructuredSearch;
 
+use \Mediawiki\MediaWikiServices;
 use CirrusSearch\Search\CirrusSearchIndexFieldFactory;
 use CirrusSearch\SearchConfig;
+#add SlotRecord
+use MediaWiki\Revision\SlotRecord;
 use SearchEngine;
 use ParserOutput;
 use WikiPage;
@@ -24,7 +27,7 @@ class Hooks {
 	}
 	public static function tryGetNSReplace() {
 		global $wgContLang;
-		$conf = \MediaWiki\MediaWikiServices::getInstance()->getMainConfig();
+		$conf = MediaWikiServices::getInstance()->getMainConfig();
 		$manualNamespaces = $conf->get( 'StructuredSearchNSReplace' );
 
 		foreach ( $manualNamespaces as &$manualNamespace ) {
@@ -39,7 +42,7 @@ class Hooks {
 		return $included && count( $included ) ? $included : array_values( self::getNamespacesDefaultWithOverrides() );
 	}
 	public static function namespacesExtract( &$params ) {
-		$conf = \MediaWiki\MediaWikiServices::getInstance()->getMainConfig();
+		$conf = MediaWikiServices::getInstance()->getMainConfig();
 		$topOrSide = $conf->get( 'StructuredSearchNSTopOrSide' );
 		$params['namespaces'] = [
 			'label' => wfMessage( 'structuredsearch-namespace-label' )->text(),
@@ -53,8 +56,8 @@ class Hooks {
 		];
 	}
 	public static function getNamespacesDefaultWithOverrides() {
-		$contLang = \Mediawiki\MediaWikiServices::getInstance()->getContentLanguage();
-		$conf = \MediaWiki\MediaWikiServices::getInstance()->getMainConfig();
+		$contLang = MediaWikiServices::getInstance()->getContentLanguage();
+		$conf = MediaWikiServices::getInstance()->getMainConfig();
 		$namespaceIds = $conf->get( 'ContentNamespaces' );
 		$wgExtraNamespaces = $conf->get( 'ExtraNamespaces' );
 		$localizedNamespaces = $contLang->getNamespaces();
@@ -77,7 +80,7 @@ class Hooks {
 		return self::namespacesProcess( $namespaceIdsNames );
 	}
 	public static function namespacesProcess( $namespaces ) {
-		$conf = \MediaWiki\MediaWikiServices::getInstance()->getMainConfig();
+		$conf = MediaWikiServices::getInstance()->getMainConfig();
 		$includeTalkPagesType = $conf->get( 'StructuredSearchNSIncludeTalkPagesType' );
 		$showDefault = $conf->get( 'StructuredSearchNSDefaultPosition' );
 		$returnedNamespaces = [];
@@ -134,7 +137,7 @@ class Hooks {
 			/**
 			 * @var \CirrusSearch $engine
 			 */
-			$conf = \MediaWiki\MediaWikiServices::getInstance()->getMainConfig();
+			$conf = MediaWikiServices::getInstance()->getMainConfig();
 			$params = Utils::getSearchParams();
 			$builder = new CirrusSearchIndexFieldFactory( $engine->getConfig() );
 			foreach ( $params as $param ) {
@@ -167,7 +170,7 @@ class Hooks {
 		ParserOutput $parserOutput,
 		SearchEngine $searchEngine
 	) {
-		$conf = \MediaWiki\MediaWikiServices::getInstance()->getMainConfig();
+		$conf = MediaWikiServices::getInstance()->getMainConfig();
 
 		$params = Utils::getSearchParams();
 		$vals = ApiSearch::getResultsAdditionalFieldsFromTitles( [ $page->getTitle()->getPrefixedText() ], [ [] ] );
@@ -188,7 +191,7 @@ class Hooks {
 		ParserOutput $parserOutput,
 		SearchEngine $searchEngine
 	) {
-		$conf = \MediaWiki\MediaWikiServices::getInstance()->getMainConfig();
+		$conf = MediaWikiServices::getInstance()->getMainConfig();
 		$addIncludedFilesField = $conf->get( 'StructuredSearchAddFilesContentToIncludingPages' );
 		// if( $addIncludedFilesField ){
 		// $fields['is_included_files'] = 0;
@@ -201,15 +204,24 @@ class Hooks {
 				$imagePage = \ImagePage::newFromID( $image );
 
 				if ( $imagePage ) {
-					$pageContent = $imagePage->getPage()->getRevision()->getContent()->getText();
+					$pageContent = $imagePage->getPage()->getRevisionRecord()->getContent( SlotRecord::MAIN )->getText();
 					$fileContent = "";
 					try {
 						$file = $imagePage->getFile();
-						$mimeType = $file->getMimeType() ?? 'unknown';
-						$fileHandler = $file->getHandler( $mimeType );
-						if ( $fileHandler ) {
-							$fileContent = $fileHandler->getEntireText( $file );
+						$mimeType = $file->getMimeType();
+						if( $mimeType ){
+							$fileHandler = $file->getHandler( $mimeType );
+							if ( $fileHandler ) {
+								$fileContent = $fileHandler->getEntireText( $file );
+							}
 						}
+						else{
+							print_r([
+								"can't get mime type for file " . $imagePage->getTitle()->getPrefixedText(),
+
+							]);
+						}
+						
 					} catch ( \Throwable $th ) {
 						error_log( "Error on StructuredSearch::onSearchDataForIndex " . $th->getMessage() );
 					}
@@ -265,7 +277,7 @@ class Hooks {
 			],
 		];
 
-		$conf = \MediaWiki\MediaWikiServices::getInstance()->getMainConfig();
+		$conf = MediaWikiServices::getInstance()->getMainConfig();
 		$defaultParams = $conf->get( 'StructuredSearchDefaultParams' );
 		if ( !count( $defaultParams ) ) {
 			$defaultParams = [ 'namespaces', 'category' ];
@@ -345,7 +357,7 @@ class Hooks {
 			[ 'il_to IN (' . $dbr->makeList( $imagesIds ) . ')' ],
 		);
 		$allImagesIncluded = [];
-		while ( $row = $dbr->fetchObject( $res ) ) {
+		while ( $row = $res->fetchObject() ) {
 			$allImagesIncluded[] = $row->il_to;
 		}
 		return $allImagesIncluded;
@@ -366,14 +378,14 @@ class Hooks {
 		);
 
 		$allImages = [];
-		while ( $row = $dbr->fetchObject( $res ) ) {
+		while ( $row = $res->fetchObject( ) ) {
 			$allImages[] = $row->page_id;
 		}
 		return $allImages;
 	}
 	public static function overrideWikitextContentHandler() {
 		global $wgContentHandlers;
-		$conf = \MediaWiki\MediaWikiServices::getInstance()->getMainConfig();
+		$conf = MediaWikiServices::getInstance()->getMainConfig();
 		if ( $conf->get( 'StructuredSearchAddFilesContentToIncludingPages' ) ) {
 
 			$wgContentHandlers[CONTENT_MODEL_WIKITEXT]['class'] = StructuredSearchWikitextContentHandler::class;
@@ -385,11 +397,12 @@ class Hooks {
 	}
 
 	public static function fixImageToThumbs( $file ) {
-		$conf = \MediaWiki\MediaWikiServices::getInstance()->getMainConfig();
+		$conf = MediaWikiServices::getInstance()->getMainConfig();
 		$wgScriptPath = $conf->get( 'ScriptPath' );
 		$wgStructuredSearchThumbSize = $conf->get( 'StructuredSearchThumbSize' );
 		$dimensions = explode( 'X', $wgStructuredSearchThumbSize );
-		$fileClass = wfFindFile( \Title::newFromText( $file ) );
+
+		$fileClass = MediaWikiServices::getInstance()->getRepoGroup()->findFile( \Title::newFromText( $file ) );
 		$thumb = $fileClass ? $fileClass->transform( [ 'width' => $dimensions[0], 'height' => $dimensions[1] ] ) : null;
 		$thumbUrl = null;
 		if ( $thumb ) {

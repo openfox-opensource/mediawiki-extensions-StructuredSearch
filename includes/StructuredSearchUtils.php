@@ -92,7 +92,7 @@ class Utils {
 			__METHOD__
 		);
 		$categoriesToReturn = [];
-		while ( $row = $dbr->fetchObject( $res ) ) {
+		while ( $row = $res->fetchObject( ) ) {
 			if ( in_array( $row->cat_title, $categoryExclude ) ) {
 				continue;
 			}
