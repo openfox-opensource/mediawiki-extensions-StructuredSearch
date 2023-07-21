@@ -19,7 +19,9 @@ class SpecialStructuredSearch extends \SpecialPage {
 		$structuredSearchDevelHost = $conf->get('StructuredSearchDevelHost');
 		$this->setHeaders();
 		$out->setPageTitle( wfMessage( 'structuredsearch' ) );
-		$out->addModuleStyles( [ 'ext.StructuredSearch' ] );
+		$out->addModuleStyles( [ 'ext.StructuredSearch.styles' ] );
+		$out->addModules( [ 'ext.StructuredSearch' ] );
+		
 		
 		
 
@@ -60,7 +62,16 @@ class SpecialStructuredSearch extends \SpecialPage {
 			}
 		}
 		$this->addSearchParams( $out );
-		$out->addHTML( file_get_contents( __DIR__ . '/../templates/search-page.html' ) . $scripts );
+		$html = file_get_contents( __DIR__ . '/../templates/search-page.html' );
+		$loader = $this->getConfig()->get( 'StructuredSearchInitialAppHtml' );
+		$html = preg_replace( "/LOADER/", $loader, $html );
+		if(isset($_GET['dsfdsfdfsdf'])){
+			die(print_r([
+				$loader,
+				$html,
+			]));
+		}
+		$out->addHTML( $html  . $scripts );
 	}
 	function addSearchParams( $out ) {
 		$searchParams = Utils::getSearchParamsFiltered();
