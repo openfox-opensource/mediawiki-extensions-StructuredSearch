@@ -14,7 +14,8 @@ class Results extends Component {
     super();
 
     this.state = {
-      searchStarted: params.advanced_search ? true : false
+      searchStarted: params.advanced_search ? true : false,
+      searchReturned: false,
     };
 
     translate('structuredsearch-no-results').then(translatedStr => {

@@ -11,7 +11,7 @@
 	"structuredsearch-search-label": "Search",
 	"structuredsearch-category-label": "Categories",
 	"structuredsearch-namespace-label": "Page's namespace",
-	"structuredsearch-search-placeholder": "Add text to search",
+	"structuredsearch-search-placeholder": "Search {{SITENAME}}",
 	"structuredsearch-choose": "Choose",
 	"structuredsearch-from-label": "From",
 	"structuredsearch-to-label": "To",
@@ -21,8 +21,9 @@
 	"structuredsearch-search-label": "<i class='far fa-search'></i>",
 	"structuredsearch-no-results-error": "Error during search",
 	"structuredsearch-clear": "Clear",
+	"structuredsearch-next": "Show more results",
 	"structuredsearch-toggle-sidebar": "Filter",
-	"structuredsearch-on-search-text": "Searching",
+	"structuredsearch-on-search-text": "<i class=\"search-loader fa-lg fa-solid fa-spinner fa-spin-pulse fa-spin-reverse\"></i>",
 	"structuredsearch-results-sum": "$1 search results",
 	"structuredsearch-show-more": "Click to show more options"
 }

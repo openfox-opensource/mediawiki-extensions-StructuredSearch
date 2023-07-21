@@ -19,7 +19,10 @@ class SpecialStructuredSearch extends \SpecialPage {
 		$structuredSearchDevelHost = $conf->get('StructuredSearchDevelHost');
 		$this->setHeaders();
 		$out->setPageTitle( wfMessage( 'structuredsearch' ) );
-		$out->addModules( [ 'ext.StructuredSearch' ] );
+		$out->addModuleStyles( [ 'ext.StructuredSearch' ] );
+		
+		
+
 		// redirect old IE to simple search
 		$out->addHeadItem( "ie-polyfill", '<script type="text/javascript">
             if( /MSIE \d|Trident.*rv:/.test(navigator.userAgent) ){
@@ -39,7 +42,7 @@ class SpecialStructuredSearch extends \SpecialPage {
 		// $path_to_static = 'react/build/static/js';
 		$scripts = '';
 		if( $structuredSearchDevelHost ){
-			$scripts .= "<script src='$structuredSearchDevelHost/static/js/bundle.js'></script>";
+			$scripts .= "<script class='search-dev' src='$structuredSearchDevelHost/static/js/bundle.js'></script>";
 		}
 		else{
 			$all_files = scandir( __DIR__ . '/../' . $path_to_static );
@@ -56,7 +59,18 @@ class SpecialStructuredSearch extends \SpecialPage {
 				}
 			}
 		}
+		$this->addSearchParams( $out );
 		$out->addHTML( file_get_contents( __DIR__ . '/../templates/search-page.html' ) . $scripts );
+	}
+	function addSearchParams( $out ) {
+		$searchParams = Utils::getSearchParamsFiltered();
+		$out->addJsConfigVars( 'structuredSearchSettings', [
+			'params'=> $searchParams,
+			'binds'=> Utils::getSearchBinds( $searchParams ),
+			'templates'=> ApiParams::getResultsTemplates(),
+			'translations'=> ApiParams::getTranslates(),
+		] );
+		
 	}
 	function getGroupName() {
 		return 'pages';

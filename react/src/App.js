@@ -16,14 +16,22 @@ class App extends Component {
     EventEmitter.on("toggleSidebar", allData => {
       this.toggle( );
     });
-    EventEmitter.on("hideSidebar", allData => {
+
+    let hideSidebar = ()=>{
       this.hide( );
       if( utils.isMobile() ){
+
         FormMain.submitData();
       }
-    });    
-    EventEmitter.on("showSidebar", allData => {
-      this.show( );
+    }
+    document.addEventListener('hideSidebar', hideSidebar);
+    document.addEventListener('showSidebar', ()=>{
+      this.show()
+    });
+
+    EventEmitter.on("hideSidebar", hideSidebar);    
+    EventEmitter.on("showSidebar",()=>{
+      this.show()
     });    
     EventEmitter.on("dataRecieved", allData => {
       this.hide( );
@@ -39,7 +47,7 @@ class App extends Component {
 
   }
   toggle(){
-    //give other compoments know hiding/showing
+    //give other components know hiding/showing
     if(this.state.hide){
       EventEmitter.emit("showSidebar");
     }
@@ -51,14 +59,17 @@ class App extends Component {
       this.setState({hide:true});
       document.body.classList.add('sidebar-hidden');
       document.body.classList.remove('sidebar-visible');
+      
   } 
   show(){
+    console.log("show");
       this.setState({hide:false});
       document.body.classList.remove('sidebar-hidden')
       document.body.classList.add('sidebar-visible');
 
   } 
   componentDidMount() {
+    
     this.hide();
     EventEmitter.on("FormDataChanged", allData => {
       if(this.state && 'undefined' != typeof this.state.inputs ){
