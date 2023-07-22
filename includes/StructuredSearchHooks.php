@@ -228,7 +228,7 @@ class Hooks {
 			]
 		);
 		$visibleCategories = [];
-		while ( $row = $dbr->fetchObject( $res ) ) {
+		while ( $row = $res->fetchObject( ) ) {
 			$visibleCategories[] = [
 				'page_id' => $row->page_id,
 				'title' => $row->cl_to,
@@ -249,7 +249,7 @@ class Hooks {
 				__METHOD__,
 				[]
 			);
-			while ( $row = $dbr->fetchObject( $res ) ) {
+			while ( $row = $res->fetchObject( ) ) {
 				$hiddenCategories[] = $row->pp_page;
 			}
 		}
@@ -279,7 +279,7 @@ class Hooks {
 				]
 			);
 			$image = null;
-			while ( $row = $dbr->fetchObject( $res ) ) {
+			while ( $row = $res->fetchObject( ) ) {
 				$image = self::fixImageToThumbs( 'file:' . $row->il_to );
 				//echo $fields['full_title'] . "   _________ " .  $image . "--------\n";
 				break;

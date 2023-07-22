@@ -18,9 +18,29 @@
  */
 
 namespace MediaWiki\Extension\StructuredSearch;
-
+use \MediaWiki\MediaWikiServices;
 class QuerySearch extends \ApiQuerySearch {
-    public function buildSearchEngine($params) {
+    public function __construct(
+        $query,
+        $moduleName
+        
+    ) { 
+        $services =  MediaWikiServices::getInstance();
+        $searchEngineConfig = $services->getService('SearchEngineConfig');
+        $searchEngineFactory = $services->getService('SearchEngineFactory');
+        $titleMatcher = $services->getService('TitleMatcher');
+        parent::__construct(
+            $query,
+            $moduleName,
+            $searchEngineConfig,
+            $searchEngineFactory,
+            $titleMatcher
+        );
+        // Services needed in SearchApi trait
+        $this->searchEngineConfig = $searchEngineConfig;
+        $this->searchEngineFactory = $searchEngineFactory;
+    }
+    public function buildSearchEngine(?array $params = null) {
         $engine = parent::buildSearchEngine($params);
         $engine->setFeatureData('extra-fields-to-extract', [
             'full_title',
