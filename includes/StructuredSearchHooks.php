@@ -280,11 +280,30 @@ class Hooks {
 			);
 			$image = null;
 			while ( $row = $res->fetchObject( ) ) {
-				$image = self::fixImageToThumbs( 'file:' . $row->il_to );
-				//echo $fields['full_title'] . "   _________ " .  $image . "--------\n";
+				$image = $row->il_to;
+				//echo $title->getText() . __LINE__.  "  _________  $image --------\n";
 				break;
 			}
-			return $image;
+			if( !$image && class_exists( 'PageImages\PageImages' ) ){
+				$dbr = wfGetDB( DB_REPLICA );
+				$image = $dbr->selectField( 'page_props',
+					'pp_value',
+					[
+						'pp_page' => $page->getId(),
+						'pp_propname' => [ \PageImages\PageImages::PROP_NAME, \PageImages\PageImages::PROP_NAME_FREE ]
+					],
+					__METHOD__,
+					[ 'ORDER BY' => 'pp_propname' ]
+				);
+				
+				//echo $title->getText() .   __LINE__.  "  _________  $image --------\n";
+			}
+			$imageAsUrl = self::fixImageToThumbs( $image );
+			if(!$imageAsUrl || $imageAsUrl == $image){
+				$imageAsUrl = self::fixImageToThumbs( 'file:' . $image );
+			}
+			//echo $title->getText() .   __LINE__.  "  _________  $imageAsUrl --------\n";
+			return $imageAsUrl ? $imageAsUrl : null;
 		}
 		else{
 			return null;
@@ -518,5 +537,16 @@ class Hooks {
 		}
 		return $thumbUrl ? $thumbUrl : $file;
 	}
+	public static function testImages($pageNames){
+		echo get_class( MediaWikiServices::getInstance()->getRepoGroup() ) . "\n";
+		$stubFields = [];
+		foreach( $pageNames as $pageName ){
 
+			$wikiPage = \WikiPage::factory( \Title::newFromText( $pageName ) );
+			echo "test image " . $pageName . "\n";
+			echo print_r(self::addPageImageInSearch(  $wikiPage, $stubFields  ),1) . "\n";
+			echo "finn test image " . $pageName . "\n";
+		}
+
+	}
 }

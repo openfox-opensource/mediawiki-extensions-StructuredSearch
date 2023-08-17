@@ -84,14 +84,14 @@ class InCargoFeature extends SimpleKeywordFeature {
 	 *
 	 * @param string $tableDef table defination to use as elastic field
 	 * @param string[] $values cargo values to match
-	 * @return \Elastica\Query\Match|null A null return value means all values are filtered
+	 * @return \Elastica\Query\MatchQuery|null A null return value means all values are filtered
 	 *  and an empty result set should be returned.
 	 */
 	private function matchCargoQuery( string $tableDef, array $values ) {
 		$filter = new \Elastica\Query\BoolQuery();
 
 		foreach ( $values as $value ) {
-			$match = new \Elastica\Query\Match();
+			$match = new \Elastica\Query\MatchQuery();
 			$match->setFieldQuery( $tableDef, $value );
 			$filter->addShould( $match );
 		}
