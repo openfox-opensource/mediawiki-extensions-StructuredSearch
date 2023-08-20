@@ -298,8 +298,8 @@ class Hooks {
 				
 				//echo $title->getText() .   __LINE__.  "  _________  $image --------\n";
 			}
-			$imageAsUrl = self::fixImageToThumbs( $image );
-			if(!$imageAsUrl || $imageAsUrl == $image){
+			$imageAsUrl = $image ? self::fixImageToThumbs( $image ): null;
+			if( $image && (!$imageAsUrl || $imageAsUrl == $image)){
 				$imageAsUrl = self::fixImageToThumbs( 'file:' . $image );
 			}
 			//echo $title->getText() .   __LINE__.  "  _________  $imageAsUrl --------\n";
@@ -528,7 +528,14 @@ class Hooks {
 		$wgScriptPath = $conf->get( 'ScriptPath' );
 		$wgStructuredSearchThumbSize = $conf->get( 'StructuredSearchThumbSize' );
 		$dimensions = explode( 'X', $wgStructuredSearchThumbSize );
-
+		if('cli' == php_sapi_name()){
+			print_r([
+				$wgScriptPath,
+				$wgStructuredSearchThumbSize,
+				$dimensions,
+				$file,
+			]);
+		}
 		$fileClass = MediaWikiServices::getInstance()->getRepoGroup()->findFile( \Title::newFromText( $file ) );
 		$thumb = $fileClass ? $fileClass->transform( [ 'width' => $dimensions[0], 'height' => $dimensions[1] ] ) : null;
 		$thumbUrl = null;
