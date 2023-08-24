@@ -40,7 +40,13 @@ class ApiSearch extends \ApiBase {
 	}
 	public static function getNamespaces() {
 		$contLang = \Mediawiki\MediaWikiServices::getInstance()->getContentLanguage();
+		
 		return $contLang->getNamespaceIds();
+	}
+	public static function getNamespace( $ns ) {
+		$contLang = \Mediawiki\MediaWikiServices::getInstance()->getContentLanguage();
+		
+		return $contLang->getNsText($ns);
 	}
 	public function getSearchParams() {
 		$params = $this->extractRequestParams();
@@ -77,6 +83,7 @@ class ApiSearch extends \ApiBase {
 		if ( !isset( $params['search'] ) ) {
 			$params['search'] = '*';
 		}
+		
 		foreach ( $params as $pKey => $pValue ) {
 			if ( !in_array( $pKey, [ 'action','list' ] ) ) {
 				$srParams['sr' . $pKey ] = $pValue;
@@ -92,8 +99,10 @@ class ApiSearch extends \ApiBase {
 		} );
 		$params['action'] = 'query';
 		$params['list'] = 'search';
-		$queryString = http_build_query( $params );
-		//die( $queryString );
+		if( $_GET['intitle'] ){
+			$queryString = http_build_query( $params );
+			die( $queryString );
+		}
 		$callApiParams = new \DerivativeRequest(
 			$this->getRequest(),
 				$params
@@ -102,12 +111,35 @@ class ApiSearch extends \ApiBase {
 		$api->execute();
 
 		$results = $api->getResult()->getResultData();
+		$resultsFiltered = array_filter( $results['query']['search'], function ( $key ){
+			//remove keys starting with _
+			return strpos( $key, '_' ) !== 0;
+		} , ARRAY_FILTER_USE_KEY);
 		
+		//if no results and search type is in_title and alternative search is enabled
+		if(!count($resultsFiltered) 
+			&& isset($params['srsearch_type']) && 'intitle' == $params['srsearch_type']
+			&& isset($params['srintitle_alternatives']) && $params['srintitle_alternatives']
+		){
+			$params['srsearch'] = $params['srsource_search'];
+			unset($params['srsource_search']);
+			$callApiParams = new \DerivativeRequest(
+				$this->getRequest(),
+					$params
+			);
+			$api = new \ApiMain( $callApiParams );
+			$api->execute();
+	
+			$results = $api->getResult()->getResultData();
+		}
 		return $this->getResultsAdditionalFields( $results );
 	}
 	public static function extractSearchStringFromFields( $params ) {
 		$conf = \MediaWiki\MediaWikiServices::getInstance()->getMainConfig();
-
+		if(isset($params['search_type']) && 'intitle' == $params['search_type']){
+			$params['source_search'] = $params['search'];
+			$params['search'] = 'intitle:' . $params['search'] . '*';
+		}
 		$searchParams = Utils::getSearchParams();
 		$searchParamsKeys = array_column( $searchParams, 'field' );
 		foreach ( $params as $pKey => $pValue ) {
@@ -150,6 +182,14 @@ class ApiSearch extends \ApiBase {
 		foreach ( $searchParams as $key => $value ) {
 			$newParams[$key] = null;
 		}
+		$newParams['search_type'] = [
+			\ApiBase::PARAM_TYPE => 'string',
+			\ApiBase::PARAM_REQUIRED => false,
+		];
+		$newParams['intitle_alternatives'] = [
+			\ApiBase::PARAM_TYPE => 'boolean',
+			\ApiBase::PARAM_REQUIRED => false,
+		];
 		return $newParams;
 	}
 
@@ -157,6 +197,13 @@ class ApiSearch extends \ApiBase {
 		$titles = array_column( $results['query']['search'], 'title' );
 		$results['query']['search'] = array_map( function($res){
 			if(isset($res['extensiondata']['extra_fields'])){
+				//replace all keys in $res['extensiondata']['extra_fields'] containing __ with :
+				$res['extensiondata']['extra_fields'] = array_combine(
+					array_map(function($key){
+						return str_replace('__', ':', $key);
+					}, array_keys($res['extensiondata']['extra_fields'])),
+					array_values($res['extensiondata']['extra_fields'])
+				);
 				$res = array_merge($res, $res['extensiondata']['extra_fields']);
 				unset($res['extensiondata']);
 				$res['namespaceId']  = $res['namespace'];
@@ -225,6 +272,8 @@ class ApiSearch extends \ApiBase {
 		//thats' a little bit hack but to check if visible_categories are set, we'll check if even one title has this field
 		$visibleCategoriesExists = count(array_filter(array_column( $resultsTitlesForCheck, 'visible_categories' )));
 		if($visibleCategoriesExists){
+			//get category NS prefix in current lang
+			$catNsText = self::getNamespace( NS_CATEGORY );
 			//rename visible_categories to categories
 			foreach ( $resultsTitlesForCheck as $key => &$val ) {
 				//die(print_r($val['visible_categories'], true));
@@ -235,12 +284,14 @@ class ApiSearch extends \ApiBase {
 					$visibleCategories = array_filter( $val['visible_categories'], function ( $key ){
 						return strpos( $key, '_' ) !== 0;
 					}, ARRAY_FILTER_USE_KEY ); 
-					$val['categories'] = array_map( function ( $part ){
+					$val['category'] = array_map( function ( $part ) use($catNsText){
 						$splitted = explode( ':', $part );
+						
 						return [
 							'name' => preg_replace( '/_/', ' ', $splitted[1] ),
 							'key' => $splitted[1],
 							'link' => '/category:' . $splitted[1],
+							'full_name' => $catNsText . ':' . $splitted[1],
 							'id' => $splitted[0],
 						];
 					},  $visibleCategories );
@@ -278,6 +329,8 @@ class ApiSearch extends \ApiBase {
 		);
 		$allImages = [];
 		while ( $row = $res->fetchObject( ) ) {
+
+			$resultsTitlesForCheck[$row->concatKey]['page_image_ext_source'] = $resultsTitlesForCheck[$row->concatKey]['page_image_ext']; 
 			$resultsTitlesForCheck[$row->concatKey]['page_image_ext'] = Hooks::fixImageToThumbs( 'file:' . $row->il_to );
 		}
 	}

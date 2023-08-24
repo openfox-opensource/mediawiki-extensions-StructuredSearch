@@ -18,11 +18,39 @@
  */
 
 namespace MediaWiki\Extension\StructuredSearch;
-
+use \MediaWiki\MediaWikiServices;
 class QuerySearch extends \ApiQuerySearch {
-    public function buildSearchEngine($params) {
+    public function __construct(
+        $query,
+        $moduleName
+        
+    ) { 
+        $services =  MediaWikiServices::getInstance();
+        $searchEngineConfig = $services->getService('SearchEngineConfig');
+        $searchEngineFactory = $services->getService('SearchEngineFactory');
+        $titleMatcher = $services->getService('TitleMatcher');
+        parent::__construct(
+            $query,
+            $moduleName,
+            $searchEngineConfig,
+            $searchEngineFactory,
+            $titleMatcher
+        );
+        // Services needed in SearchApi trait
+        $this->searchEngineConfig = $searchEngineConfig;
+        $this->searchEngineFactory = $searchEngineFactory;
+    }
+    public function buildSearchEngine(?array $params = null) {
         $engine = parent::buildSearchEngine($params);
-        $engine->setFeatureData('extra-fields-to-extract', [
+        $allParams = Utils::getSearchParamsFiltered();
+        $allKeys = array_keys($allParams);
+        $allCargoFields = array_filter($allKeys, function($key){
+            return Utils::isCargoField($key);
+        });
+        $allCargoFieldsConvertedToElastic = array_map(function($key){
+            return Utils::replaceCargoFieldToElasticField($key);
+        }, $allCargoFields);
+        $keysToAdd = array_merge([
             'full_title',
             'short_title',
             'title_dash',
@@ -33,8 +61,9 @@ class QuerySearch extends \ApiQuerySearch {
             'namespaceId',
             'title_key',
             'visible_categories'
-        ]);
-        //die(print_r($params, true));
+        ] , $allCargoFieldsConvertedToElastic);
+        $engine->setFeatureData('extra-fields-to-extract',  $keysToAdd );
+        
         return $engine;
     }
 }
