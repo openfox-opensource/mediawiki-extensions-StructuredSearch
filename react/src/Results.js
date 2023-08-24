@@ -37,6 +37,7 @@ class Results extends Component {
       let paramsToChange = {
         searchStarted: true,
         onTop: data.reset,
+        searchReturned: false
       };
       if (data.reset) {
         paramsToChange.results = [];
