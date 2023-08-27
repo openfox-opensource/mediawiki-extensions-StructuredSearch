@@ -31,7 +31,7 @@ class historySearch{
 			//for case of index.php?title=special:advanced_search
 			if(searchParamsFromLocation.title){
 				pathname = (new window.mw.Title('special:advanced_search')).getUrl();
-				pathname += searchParamsFromLocation.title;
+				//pathname += searchParamsFromLocation.title;
 				console.log(pathname, "pathname2");
 			}
 			let query = utils.toQueryStr( FormMain.filterParams( state) );
