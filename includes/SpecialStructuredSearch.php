@@ -41,7 +41,7 @@ class SpecialStructuredSearch extends \SpecialPage {
 
 		$path_from_root = preg_replace( '%' . $_SERVER["DOCUMENT_ROOT"] . '%', '', __DIR__ );
 		//the path contains /w/ but sometimes it would be wiki. depends on $wgScriptPath
-		$path_from_root = preg_replace( '%/w/%', "/".$scriptPath."/", $path_from_root );
+		$path_from_root = preg_replace( '%/w/%', $scriptPath."/", $path_from_root );
 
 		$path_to_static = 'react/dist';
 		// $path_to_static = 'react/build/static/js';
