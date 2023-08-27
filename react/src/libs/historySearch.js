@@ -13,6 +13,12 @@ class historySearch{
 		}, 80 );
 	}
 	static doSetHistoryFromSearch( paramsSettings ){
+		if('undefined' === typeof window.mw || 'undefined' === typeof window.mw.Title){
+			setTimeout( function(){
+				historySearch.doSetHistoryFromSearch( paramsSettings );
+			}, 100 );
+			return;
+		}
 		if( historySearch.isFreezed ){
 			return;
 		}
@@ -23,7 +29,8 @@ class historySearch{
 
 			//for case of index.php?title=special:advanced_search
 			if(searchParamsFromLocation.title){
-				pathname = '/' +searchParamsFromLocation.title;
+				pathname = (new window.mw.Title('special:advanced_search')).getUrl();
+				pathname += searchParamsFromLocation.title;
 			}
 			let query = utils.toQueryStr( FormMain.filterParams( state) );
 			if( historySearch.isSearchEquleToDefault( paramsSettings, state ) ){
