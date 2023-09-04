@@ -201,8 +201,7 @@ class Hooks {
 		$fields['namespaceId'] = $titleClass->getNamespace();
 		$fields['title_key'] = ($namespaceId ? $namespaceId : '0' ) . ':' . $fields['title_dash'];
 		$fields['page_image_ext'] = self::addPageImageInSearch( $page,$fields );
-		//print_r($fields);
-		// die(print_r(['$fields ' . "\n", $fields[ 'text' ]]));
+
 	}
 	public static function addPageImageInSearch( $page,&$fields ) {
 		if ( class_exists( 'PageImages' ) || class_exists( 'PageImages\PageImages' ) ) {
@@ -213,7 +212,7 @@ class Hooks {
 				[ 'imagelinks','page' ],
 				[ 'il_from','il_to','CONCAT(page_namespace,":",page_title) as concatKey', ],
 				[
-					'CONCAT(page_namespace,":",page_title) = ' . $dbr->addQuotes( $title->getNamespace() . ':' . $title->getText() )
+					'CONCAT(page_namespace,":",page_title) = ' . $dbr->addQuotes( $title->getNamespace() . ':' . $title->getDBkey() )
 				],
 				__METHOD__,
 				[],
@@ -226,9 +225,13 @@ class Hooks {
 				//echo $fields['full_title'] . "   _________ " .  $image . "--------\n";
 				break;
 			}
+			// if(!$image){
+			// 	echo 'CONCAT(page_namespace,":",page_title) = ' . $dbr->addQuotes( $title->getNamespace() . ':' . $title->getText() );
+			// }
 			return $image;
 		}
 		else{
+			error_log( "PageImages not installed" );
 			return null;
 		}
 	}
@@ -364,9 +367,7 @@ class Hooks {
 						'label' => wfMessage( 'structuredsearch-choose' )->text(),
 						'value' => '<select>',
 					] );
-					if(isset($_GET['dssddasdasadsasdsddsasadsadasd'])){
-						die(print_r([wfMessage( 'structuredsearch-choose' )->text()]));
-					}
+					
 				}
 				$param['widget']['options'] = $options;
 			}
@@ -448,7 +449,12 @@ class Hooks {
 		if ( $thumb ) {
 			$thumbUrl = $thumb->getUrl();
 		}
-		return $thumbUrl ? $thumbUrl : $file;
+		
+		//if not thumb, try to get original image
+		if(!$thumbUrl){
+			$thumbUrl = $fileClass ? $fileClass->getUrl() : null;
+		}
+		return $thumbUrl;
 	}
 
 }
