@@ -155,6 +155,7 @@ class Hooks {
 				'page_link',
 				'title_key',
 				'page_image_ext',
+				'visible_categories'
 			] as $fieldKey){
 				//echo $fieldKey . "\n";
 				$fields[$fieldKey] = $builder->newKeywordField( $fieldKey );
@@ -202,6 +203,62 @@ class Hooks {
 		$fields['title_key'] = ($namespaceId ? $namespaceId : '0' ) . ':' . $fields['title_dash'];
 		$fields['page_image_ext'] = self::addPageImageInSearch( $page,$fields );
 
+		$fields['visible_categories'] = self::getVisibleCategories( $page );
+		
+		
+		
+	}
+	public static function getVisibleCategories( $page ) {
+		$dbr = wfGetDB( DB_REPLICA );
+		$res = $dbr->select(
+			[ 'categorylinks','page', 'category' ],
+			[ 'cl_to', 'page_id',  'cat_id' ],
+			[  
+				'cl_from=' . $page->getId(),
+				'cl_type="page"',
+				'page_namespace=' . NS_CATEGORY,
+			],
+			__METHOD__,
+			[],
+			[
+				'page' => [ 'INNER JOIN', [ 'page_title=cl_to' ] ],
+				'category' => [ 'INNER JOIN', [ 'cat_title=cl_to' ] ],
+			]
+		);
+		$visibleCategories = [];
+		while ( $row = $dbr->fetchObject( $res ) ) {
+			$visibleCategories[] = [
+				'page_id' => $row->page_id,
+				'title' => $row->cl_to,
+				'cat_id' => $row->cat_id,
+			];
+		}
+		//check if category is hidden using page_props
+		
+		$hiddenCategories = [];
+		if(count($visibleCategories)){
+			$res = $dbr->select(
+				[ 'page_props' ],
+				[ 'pp_page' ],
+				[
+					'pp_page IN (' . $dbr->makeList( array_column( $visibleCategories, 'page_id' ) ) . ')',
+					'pp_propname="hiddencat"',
+				],
+				__METHOD__,
+				[]
+			);
+			while ( $row = $dbr->fetchObject( $res ) ) {
+				$hiddenCategories[] = $row->pp_page;
+			}
+		}
+		
+		$visibleCategories = array_filter( $visibleCategories, function( $category ) use ( $hiddenCategories ){
+			return !in_array( $category['page_id'], $hiddenCategories );
+		} );
+		//return array of cat_id:cat_title
+		return array_map( function( $category ){
+			return $category['cat_id'] . ':' . $category['title'];
+		}, $visibleCategories );
 	}
 	public static function addPageImageInSearch( $page,&$fields ) {
 		if ( class_exists( 'PageImages' ) || class_exists( 'PageImages\PageImages' ) ) {
