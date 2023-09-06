@@ -31,6 +31,7 @@
 	      box-shadow: var(--search-bar-boxshadow);    
 	      padding: var(--sts-sb-padd, 3em 2em);
 	      background: var(--search-bar-bg);
+	      display: var(--sts-sb-display);
     		.select .css-kj6f9i-menu {z-index: 3;}
 	}
 	.top-and-results-wrp {
@@ -160,7 +161,7 @@
     height: auto;
     border-width: 2px;
     border-color: var(--search-light-border);
-    border-radius: 23px;
+    border-radius: var(--sts-input-radius);
     &:hover {
       box-shadow: 0 1px 6px 0 var(--search-input-shadow);
     }
@@ -172,7 +173,10 @@
     height: 100%;
     right: 0;
     top: 0;
-    border-radius: 0 23px 23px 0;
+    border-top-left-radius: 0;
+    border-top-right-radius: var(--sts-input-radius);
+    border-bottom-right-radius: var(--sts-input-radius);
+    border-bottom-left-radius: 0;
     border: transparent solid;
     border-left: none;
     position: absolute;
@@ -183,7 +187,17 @@
     transition: all ease .2s;
   }
 }
-
+.TopBar.search-suggestions-open {
+	.field-wrp-name-search {
+		input {
+			border-bottom-right-radius: var(--sts-input-radius-suggest);
+			border-bottom-left-radius: var(--sts-input-radius-suggest);
+		}
+		button {
+			border-bottom-right-radius: var(--sts-input-radius-suggest);
+		}
+	}
+}
 .regular {
     background: #fff;
 }
@@ -611,10 +625,12 @@ span.label-wrp {
 
 /* mobile hide*/
 @media (max-width: 992px) {
- .main-and-advanced-wrp button {display: none;}
-}
+    .main-and-advanced-wrp button {display: none;}
 /* mobile */
-@media (max-width: 992px) {
+    #contentwrapper {
+	padding-right: 0;
+	padding-left: 0;
+    }
     .mw-special-StructuredSearch #contentwrapper {
       	position: static;
 	margin: 36px -15px;
@@ -627,7 +643,7 @@ span.label-wrp {
       width: 100%;
       top: 47px;
       top: var(--sidebar-height);
-      padding-top: 6em;
+      padding: 6em .5em 1em;
       &.show {
         left: 0;
       }
@@ -646,10 +662,13 @@ span.label-wrp {
     .top-and-results-wrp {
       width: 100%;
     }
-    .field-wrp-name-search {
+    #top-bar .field-wrp-name-search {
       input {
       padding: 0px 1em;
-      border-radius: 23px 0 0 23px;
+      border-top-right-radius: 0;
+      border-top-left-radius: var(--sts-hover-mobile-radius);
+      border-bottom-right-radius: 0;
+      border-bottom-left-radius: var(--sts-hover-mobile-radius);
       }
       button {
           background: transparent !important;
@@ -898,6 +917,7 @@ td[class*="mw-search-ns"], #mw-searchoptions h4,
   .TopBar form:focus-within .field-wrp-name-search button, .TopBar.search-suggestions-open .field-wrp-name-search button, .TopBar .field-wrp-name-search button:hover {
       background: var(--search-button);
       border-color: var(--search-button);
+      color: var(--sts-hover-color);
   }
   span.label-wrp, .TopBar > header > button {
     color:  var(--search-button);

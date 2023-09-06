@@ -16,8 +16,23 @@
 	--search-result-shadow: radial-gradient(circle,rgba(0,0,0,0) 45%,rgba(0,0,0,0.6) 100%);
 	--sts-sb-maxw: 24.4%;
 	--sts-sb-minw: 250px;
+	--sts-sb-dispay: unset;
 	--sts-sb-padd: 3em 2em;
 	--sts-main-width: 74.5%;
-	--sts-main-maxw: ~"calc(100% - 250px)";;	
+	--sts-main-maxw: ~"calc(100% - 250px)";	
 	--sts-input-padd: 8px 3.5em 8px 5px;
+	--sts-hover-color: #fff;
+	--sts-input-radius: 23px;
+	--sts-input-radius-suggest: 0;
+}
+
+@media (max-width: 767px) {
+	:root {
+        --sts-main-width: 100%;
+        --sts-main-maxw: 100%;
+	--sts-sb-padd: 0;
+	--sts-input-padd: 8px 5px 8px 3.5em;
+	--sts-hover-color: var(--search-trans-blue);
+	--sts-hover-mobile-radius: var(--sts-input-radius);
+	}
 }
