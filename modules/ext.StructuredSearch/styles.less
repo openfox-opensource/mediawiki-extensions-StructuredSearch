@@ -192,6 +192,7 @@
 		input {
 			border-bottom-right-radius: var(--sts-input-radius-suggest);
 			border-bottom-left-radius: var(--sts-input-radius-suggest);
+			border-bottom: 0;
 		}
 		button {
 			border-bottom-right-radius: var(--sts-input-radius-suggest);
@@ -610,10 +611,13 @@ span.label-wrp {
 
 /* autocomplete */
 .search-suggestions-open .form-input.form-input-wrp-search .autocomplete-wrp > div > div {
-    border-radius: 0 0 23px 23px;
+    border-top-right-radius: 0;
+    border-top-left-radius: 0;
+    border-bottom-right-radius: var(--sts-input-radius);
+    border-bottom-left-radius: var(--sts-input-radius);
     overflow: hidden;
-    box-shadow: var(--search-input-shadow);
-    border: solid var(--search-light-border) 2px;
+    box-shadow: 0 3px 6px 0 var(--light-bg1);
+    border: solid var(--search-trans-blue) 2px;
     border-top: none;
     .autocomplete-item {
     padding: 9px 19px;
@@ -730,7 +734,10 @@ span.label-wrp {
         color: var(--search-button);
         border: var(--search-light-blue) solid 2px;
 	right: 4px;
-        border-radius: 0 23px 23px 0;
+        border-top-right-radius: var(--sts-mobile-radius);
+        border-top-left-radius: 0; 
+        border-bottom-right-radius: var(--sts-mobile-radius);
+        border-bottom-left-radius: 0;
 	display:block;
         i {
           margin: 0 3px;
