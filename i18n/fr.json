@@ -1,0 +1,29 @@
+{
+	"@metadata": {
+		"authors": [
+			"[[mw:user:Anysite|Anysite]]",
+			"[[mw:user:Yacohen|Yacohen]]"
+		]
+	},
+	"structuredsearch": "Recherche avancée",
+	"structuredsearch-desc": "Est-ce une extension de recherche avancée",
+	"structuredsearch-main-namesapce": "Principal",
+	"structuredsearch-search-label": "Rechercher",
+	"structuredsearch-category-label": "Catégories",
+	"structuredsearch-namespace-label": "Espace de noms de la page",
+	"structuredsearch-search-placeholder": "Rechercher{{SITENAME}}",
+	"structuredsearch-choose": "Choisir",
+	"structuredsearch-from-label": "De",
+	"structuredsearch-to-label": "À",
+	"structuredsearch-no-results": "Aucun résultat trouvé",
+	"structuredsearch-more-label": "Plus",
+	"structuredsearch-less-label": "Fermer",
+	"structuredsearch-search-label": "<i class='far fa-search'></i>",
+	"structuredsearch-no-results-error": "Erreur lors de la recherche",
+	"structuredsearch-clear": "Effacer",
+	"structuredsearch-next": "Afficher plus de résultats",
+	"structuredsearch-toggle-sidebar": "Filtrer",
+	"structuredsearch-on-search-text": "<i class=\"search-loader fa-lg fa-solid fa-spinner fa-spin-pulse fa-spin-reverse\"></i>",
+	"structuredsearch-results-sum": "$1 search results",
+	"structuredsearch-show-more": "Cliquez pour voir plus d'options"
+}
