@@ -40,7 +40,13 @@ class ApiSearch extends \ApiBase {
 	}
 	public static function getNamespaces() {
 		$contLang = \Mediawiki\MediaWikiServices::getInstance()->getContentLanguage();
+		
 		return $contLang->getNamespaceIds();
+	}
+	public static function getNamespace( $ns ) {
+		$contLang = \Mediawiki\MediaWikiServices::getInstance()->getContentLanguage();
+		
+		return $contLang->getNsText($ns);
 	}
 	public function getSearchParams() {
 		$params = $this->extractRequestParams();
@@ -266,6 +272,8 @@ class ApiSearch extends \ApiBase {
 		//thats' a little bit hack but to check if visible_categories are set, we'll check if even one title has this field
 		$visibleCategoriesExists = count(array_filter(array_column( $resultsTitlesForCheck, 'visible_categories' )));
 		if($visibleCategoriesExists){
+			//get category NS prefix in current lang
+			$catNsText = self::getNamespace( NS_CATEGORY );
 			//rename visible_categories to categories
 			foreach ( $resultsTitlesForCheck as $key => &$val ) {
 				//die(print_r($val['visible_categories'], true));
@@ -276,12 +284,14 @@ class ApiSearch extends \ApiBase {
 					$visibleCategories = array_filter( $val['visible_categories'], function ( $key ){
 						return strpos( $key, '_' ) !== 0;
 					}, ARRAY_FILTER_USE_KEY ); 
-					$val['category'] = array_map( function ( $part ){
+					$val['category'] = array_map( function ( $part ) use($catNsText){
 						$splitted = explode( ':', $part );
+						
 						return [
 							'name' => preg_replace( '/_/', ' ', $splitted[1] ),
 							'key' => $splitted[1],
 							'link' => '/category:' . $splitted[1],
+							'full_name' => $catNsText . ':' . $splitted[1],
 							'id' => $splitted[0],
 						];
 					},  $visibleCategories );
