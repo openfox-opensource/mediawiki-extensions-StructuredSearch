@@ -24,6 +24,6 @@
 	"structuredsearch-next": "Afficher plus de résultats",
 	"structuredsearch-toggle-sidebar": "Filtrer",
 	"structuredsearch-on-search-text": "<i class=\"search-loader fa-lg fa-solid fa-spinner fa-spin-pulse fa-spin-reverse\"></i>",
-	"structuredsearch-results-sum": "$1 search results",
+	"structuredsearch-results-sum": "$1 résultats de recherche",
 	"structuredsearch-show-more": "Cliquez pour voir plus d'options"
 }
