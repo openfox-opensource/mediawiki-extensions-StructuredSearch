@@ -14,6 +14,9 @@ import {format, parse} from 'date-fns'
 import "react-datepicker/dist/react-datepicker.css";
 const baseDateFormat = 'dd/MM/yyyy';
 //Moment.locale('he-IL');
+
+	
+
 class FormInput extends Component {
 	constructor(props) {
 		super(props);
@@ -39,6 +42,7 @@ class FormInput extends Component {
 		}
 
 	}
+
 	componentDidMount() {
 		for(let key of [
 			'structuredsearch-to-label',
@@ -63,6 +67,54 @@ class FormInput extends Component {
 			}
 		}
 	}
+	// componentDidMount() {
+	// 	const structuredSearchProps = window.mw?.config.get('structuredSearchProps') || {};
+	
+	// 	for (let key of [
+	// 		'structuredsearch-to-label',
+	// 		'structuredsearch-from-label',
+	// 		'structuredsearch-search-label',
+	// 		'structuredsearch-more-label',
+	// 		'structuredsearch-less-label',
+	// 		'structuredsearch-show-more'
+	// 	]) {
+	// 		translate(key).then(val => {
+	// 			this.setState({ [key]: val });
+	// 		});
+	// 	}
+	
+	// 	// Apply filters dynamically, handling single or multiple values
+	// 	const applyFilter = (fieldName, values) => {
+	// 		if (Array.isArray(values)) {
+	// 			values.forEach(value => this.checkboxChanges(fieldName, value, { target: { checked: true } }));
+	// 		} else {
+	// 			this.checkboxChanges(fieldName, values, { target: { checked: true } });
+	// 		}
+	// 	};
+	
+	// 	if (structuredSearchProps.namespaces) {
+	// 		console.log("Namespaces filter found:", structuredSearchProps.namespaces);
+	// 		applyFilter("namespaces", structuredSearchProps.namespaces);
+	// 	}
+	
+	// 	if (structuredSearchProps.category) {
+	// 		console.log("Category filter found:", structuredSearchProps.category);
+	// 		applyFilter("category", structuredSearchProps.category);
+	// 	}
+	
+	// 	if (structuredSearchProps.pageType) {
+	// 		console.log("Page type filter found:", structuredSearchProps.pageType);
+	// 		applyFilter("in_kit", structuredSearchProps.pageType);
+	// 	}
+	
+	// 	// Add default checked values from options
+	// 	this.state.options.forEach(option => {
+	// 		if (option.defaultChecked) {
+	// 			FormMain.addValue(this.state.inputData.field, option);
+	// 		}
+	// 	});
+	// }
+	
 	extractOptions( options){
 		options = utils.fixObjectToArray( options );
 		let optionsStructured = [];
@@ -94,7 +146,10 @@ class FormInput extends Component {
 			FormMain.setValue( key, value );
 		}			
 	}
+	
 	checkboxChanges( fieldName, value, event){
+		console.log("filed", fieldName);
+		console.log("value", value);
 		if(event.target.checked){
 			FormMain.addValue( fieldName, value );
 		}
@@ -255,6 +310,8 @@ class FormInput extends Component {
 		this.valueChanged( fieldName, event.target.value);
 	}
 	radioChanges( fieldName, value, event){
+		console.log(fieldName);
+		
 		this.valueChanged( fieldName, value);
 	}
 	getInputHtml(){

@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "axios": "^0.21.4",
+    "mustache": "^4.2.0",
     "query-string": "^6.8.1",
     "react": "^18.2.0",
     "react-autocomplete": "^1.8.1",

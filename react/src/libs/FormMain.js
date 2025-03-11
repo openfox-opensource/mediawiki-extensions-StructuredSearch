@@ -52,7 +52,7 @@ class FormMain{
 	static fireChangeEvent(){
 		EventEmitter.emit("FormDataChanged", FormMain.getAllValuesRaw());
 		delete(FormMain.offset);
-		if( !FormMain.freezed && !utils.isMobile() ){
+		if( !FormMain.freezed  ){
 	      FormMain.delayedSubmitData();
 	    }
 	}
@@ -125,6 +125,12 @@ class FormMain{
 	    // 	return;
 	    // }
 	    params.action = 'structuredsearchsearch';
+		// if( FormMain.limit ){
+			const structuredSearchProps = window.mw?.config.get("structuredSearchProps")||{};
+	    	params.limit = structuredSearchProps.limit;
+		// 	console.log(FormMain.limit );
+			
+	    // }
 	    if( FormMain.offset ){
 	    	params.offset = FormMain.offset;
 	    }
@@ -140,7 +146,7 @@ class FormMain{
 	    FormMain.fireGlobalEvent( params );
 
 	    ajaxCall.get(urlSuffix).then(data=>{
-	      //console.log(data, "data");
+	      console.log(data, "data");
 	      let eventData = data.data.error ? { results: {error:true}} : data.data.StructuredSearchSearch;
 	      eventData.reset = reset;
 	      EventEmitter.emit('dataRecieved', eventData);

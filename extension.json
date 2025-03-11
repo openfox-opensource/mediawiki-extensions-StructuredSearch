@@ -91,9 +91,16 @@
 		"MediaWiki\\Extension\\StructuredSearch\\Hooks::overrideWikitextContentHandler"
 	],
 	"Hooks": {	
+		
     	"SearchIndexFields": [
         	"MediaWiki\\Extension\\StructuredSearch\\Hooks::onSearchIndexFields"
     	],
+		"BeforePageDisplay": [
+			"MediaWiki\\Extension\\StructuredSearch\\Hooks::onBeforePageDisplay"
+		 ],
+		"ParserFirstCallInit":[    
+			"MediaWiki\\Extension\\StructuredSearch\\Hooks::onParserFirstCallInit"
+		 ],
     	"StructuredSearchResults": [
             "MediaWiki\\Extension\\StructuredSearch\\Hooks::onStructuredSearchResults"
         ],
@@ -105,6 +112,9 @@
 		],
 		"StructuredSearchSearchDataForIndexAfterWikiText": [
 			"MediaWiki\\Extension\\StructuredSearch\\Hooks::onStructuredSearchSearchDataForIndexAfterWikiText"
+    	],
+		"SkinAfterContent": [
+			"MediaWiki\\Extension\\StructuredSearch\\Hooks::onSkinAfterContent"
     	]
 	},
 	"ExtensionMessagesFiles": {
@@ -150,6 +160,7 @@
 				"ext.StructuredSearch/styles.less"
 			]
 		},
+		
 		"ext.StructuredSearch": {
 			"messages" : [
 				"structuredsearch-from-label",

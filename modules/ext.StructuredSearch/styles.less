@@ -7,8 +7,42 @@
     	margin: 64px auto;
 	}
 }
+#parser-search-title {
+  text-align: center;
+    font-size: 30px;
+    font-weight: bolder;
+}
+.parser-search{
+  .hide-on-desktop {
+    display: none !important;
+  }
+  #side-bar .checkbox-wrp input {
+    display: none !important;
+  }
+  //background: var(--search-bar-bg);
+  //padding: 20px;
+  .row {
+    align-items: center;
+    align-content: center;
+  }
+  .card-body{
+    height: 200px;
+    overflow: hidden;
+  }
+}
 .hide-on-desktop{
     display: none;
+}
+
+
+
+#bodyContent #mw-content-text .parser-search{
+  display: flex;
+}
+#bodyContent #mw-content-text .parser-search .top-and-results-wrp {
+  max-width: 100%;
+  //width: 100%;
+  div:has(button){ width:100%;}
 }
 .skin-spni {
 	#mw-content-text .all-app-wrp {

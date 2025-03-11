@@ -64,7 +64,7 @@ class SpecialStructuredSearch extends \SpecialPage {
 				}
 			}
 		}
-		$this->addSearchParams( $out );
+		self::addSearchParams( $out );
 		$html = file_get_contents( __DIR__ . '/../templates/search-page.html' );
 		$loader = $this->getConfig()->get( 'StructuredSearchInitialAppHtml' );
 		$html = preg_replace( "/LOADER/", $loader, $html );
@@ -76,7 +76,7 @@ class SpecialStructuredSearch extends \SpecialPage {
 		}
 		$out->addHTML( $html  . $scripts );
 	}
-	function addSearchParams( $out ) {
+	public static function addSearchParams( $out ) {
 		$searchParams = Utils::getSearchParamsFiltered();
 		$out->addJsConfigVars( 'structuredSearchSettings', [
 			'params'=> $searchParams,
