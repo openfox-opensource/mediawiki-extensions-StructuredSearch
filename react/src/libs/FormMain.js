@@ -128,7 +128,7 @@ class FormMain{
 		// if( FormMain.limit ){
 			const structuredSearchProps = window.mw?.config.get("structuredSearchProps")||{};
 	    	params.limit = structuredSearchProps.limit;
-		// 	console.log(FormMain.limit );
+	 	console.log( structuredSearchProps.limit );
 			
 	    // }
 	    if( FormMain.offset ){

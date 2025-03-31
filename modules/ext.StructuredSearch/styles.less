@@ -7,12 +7,68 @@
     	margin: 64px auto;
 	}
 }
+#mw-content-text:has(.mw-parser-output){
+  .mw-category-generated {
+    display: none;
+  }
+}
+.parser-search:not(.side-bar){
+  .top-and-results-wrp { width: 100%; }
+}
 #parser-search-title {
   text-align: center;
     font-size: 30px;
     font-weight: bolder;
 }
 .parser-search{
+  .results-table{
+    margin: 10px;
+    width: 100%;
+    .result-img-link{
+      width: 100px;
+    }
+  }
+ 
+  .topbar-filters {
+    width: 70%;
+    display: inline-block;
+  }
+  .topbar-filters > div {
+  max-width: 120px;}
+  .display-buttons{
+    width: 30%;
+    display: inline-block;
+  }
+  .TopBar.with-labels {
+    padding: 1em 4em 1em;
+}
+  .loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.9);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  .spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid #ddd;
+    border-top: 5px solid #007bff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
   .hide-on-desktop {
     display: none !important;
   }
@@ -29,6 +85,10 @@
     height: 200px;
     overflow: hidden;
   }
+  .results-sum-message{
+    padding-left: 10px;
+    padding-right: 10px;
+  }
 }
 .hide-on-desktop{
     display: none;
@@ -42,7 +102,7 @@
 #bodyContent #mw-content-text .parser-search .top-and-results-wrp {
   max-width: 100%;
   //width: 100%;
-  div:has(button){ width:100%;}
+ .load-results  { width:100%;}
 }
 .skin-spni {
 	#mw-content-text .all-app-wrp {
@@ -646,6 +706,11 @@ span.label-wrp {
 /* mobile hide*/
 @media (max-width: 992px) {
  .main-and-advanced-wrp button {display: none;}
+ .results-table .results-table-categories , .results-table .results-table-year {
+  display: none;
+ }
+ .parser-search .TopBar.with-labels {
+  padding: 0px;}
 }
 /* mobile */
 @media (max-width: 992px) {

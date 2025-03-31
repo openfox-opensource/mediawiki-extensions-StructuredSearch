@@ -11,8 +11,18 @@ import './App.css';
 
 class TopBar extends Component {
   constructor() {
-    super();
-    this.state = { labels: [], chevronDir:'down'};
+   
+      super();
+      const structuredSearchProps = window.mw?.config.get('structuredSearchProps') || {};
+      
+      this.state = {
+        labels: [],
+        chevronDir: 'down',
+        useTableView: false, // <-- Track the selected view
+        enableDisplayToggle: Object.keys(structuredSearchProps).length > 0
+      };
+    
+    
     EventEmitter.on("FormDataChanged", allData => {
       this.refreshAllInputsByData( allData );
     });
@@ -29,6 +39,9 @@ class TopBar extends Component {
     });
   }
   componentDidMount() {
+    EventEmitter.on("toggleDisplayView", (useTableView) => {
+      this.setState({ useTableView });
+    });
     for(let key of [
       'structuredsearch-clear',
       'structuredsearch-toggle-sidebar'
@@ -58,6 +71,9 @@ class TopBar extends Component {
       EventEmitter.on("showSidebar", allData => {
         this.setState( {chevronDir : 'up'});
       });
+  }
+  componentWillUnmount(){
+    EventEmitter.off("toggleDisplayView");
   }
   setStickyCheck( ) {
     const observer = new IntersectionObserver((records, observer) => {
@@ -168,14 +184,60 @@ class TopBar extends Component {
   toggleSidebar(){
     EventEmitter.emit('toggleSidebar');
   }
+  renderSimpleFilters() {
+    let allInputs = [];
+  
+    if (this.state && typeof this.state.inputs !== 'undefined') {
+      let inputsSorted = Object.values(this.state.inputs).sort(utils.sortByWeight);
+  
+      for (let inputData of inputsSorted) {
+        const fieldName = inputData.field;
+  
+        // Skip 'category' field entirely
+        if (fieldName === 'category' || fieldName === 'in_kit') continue;
+  
+        if (!['topbar', 'hide'].includes(inputData.widget.position)) {
+          let inputCopy = { ...inputData };
+  
+          // Change checkboxes to dropdowns
+          if (inputCopy.widget.type === 'checkboxes') {
+            inputCopy = {
+              ...inputCopy,
+              widget: {
+                ...inputCopy.widget,
+                type: 'select',
+                is_not_multiple: false // allow multiple selections
+              }
+            };
+          }
+  
+          allInputs.push(
+            <FormInput key={inputCopy.field} inputData={inputCopy} />
+          );
+        }
+      }
+    }
+  
+    return allInputs.length ? (
+      <div className="topbar-filters">
+        {allInputs}
+      </div>
+    ) : <div className="topbar-filters"></div>;
+    
+  }
+  
+  
+  
   render() {
     const structuredSearchProps = window.mw?.config.get('structuredSearchProps');
     const isInputHidden = structuredSearchProps?.input === "hidden";
-  
+    const isFilterHidden = structuredSearchProps?.filter === "hidden";
+    const isLabelsHidden = structuredSearchProps?.labels === "hidden";
     // If input=hidden, do not render the TopBar at all
     if (isInputHidden) {
       return null; // Prevents rendering
     }
+  
     let allInputs = [],
         //labelsKeyed = [],
         labels = [],
@@ -215,13 +277,43 @@ class TopBar extends Component {
         <header className="App-header">
           <form onSubmit={this.submitClicked.bind(this)}>
             {allInputs}{toggleSidebar}
-            <div className={'lables-wrp'}>{labels}</div>
+            {!isLabelsHidden && ( <div className={'lables-wrp'}>{labels}</div>  )}
           </form>
+         {isFilterHidden && this.renderSimpleFilters()} 
+          {!isFilterHidden && (
           <button type="button" onClick={this.clearClicked.bind( this )}  dangerouslySetInnerHTML={{__html:this.state['structuredsearch-clear']}} ></button>
-        </header>
+        )}
+        {this.state.enableDisplayToggle && (
+  <div className="display-buttons" style={{ marginTop: '10px', display: 'inline-block' }}>
+    <button
+      type="button"
+      id="grid-button"
+      className="flex-grow"
+      style={{ marginRight: '10px' }}
+      onClick={() => EventEmitter.emit('toggleDisplayView', false)}
+    >
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path fillRule="evenodd" clipRule="evenodd" d="M3 3V11H11V3H3ZM9 9H5V5H9V9ZM3 13V21H11V13H3ZM9 19H5V15H9V19ZM13 3V11H21V3H13ZM19 9H15V5H19V9ZM13 13V21H21V13H13ZM19 19H15V15H19V19Z" fill="#5F6368"></path>
+      </svg>
+    </button>
+    <button
+      type="button"
+      id="card-button"
+      className="isDisplay flex-grow"
+      onClick={() => EventEmitter.emit('toggleDisplayView', true)}
+    >
+        <svg width="17" height="16" viewBox="0 0 17 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path fillRule="evenodd" clipRule="evenodd" d="M0.5 2C0.5 2.82843 1.17157 3.5 2 3.5C2.82843 3.5 3.5 2.82843 3.5 2C3.5 1.17157 2.82843 0.5 2 0.5C1.17157 0.5 0.5 1.17157 0.5 2ZM7 1C6.44772 1 6 1.44772 6 2C6 2.55228 6.44771 3 7 3H16C16.5523 3 17 2.55228 17 2C17 1.44772 16.5523 1 16 1H7ZM7 7C6.44772 7 6 7.44772 6 8C6 8.55228 6.44771 9 7 9H16C16.5523 9 17 8.55228 17 8C17 7.44772 16.5523 7 16 7H7ZM6 14C6 13.4477 6.44772 13 7 13H16C16.5523 13 17 13.4477 17 14C17 14.5523 16.5523 15 16 15H7C6.44771 15 6 14.5523 6 14ZM2 9.5C1.17157 9.5 0.5 8.82843 0.5 8C0.5 7.17157 1.17157 6.5 2 6.5C2.82843 6.5 3.5 7.17157 3.5 8C3.5 8.82843 2.82843 9.5 2 9.5ZM0.5 14C0.5 14.8284 1.17157 15.5 2 15.5C2.82843 15.5 3.5 14.8284 3.5 14C3.5 13.1716 2.82843 12.5 2 12.5C1.17157 12.5 0.5 13.1716 0.5 14Z" fill="black"></path>
+      </svg>
+      
+    </button>
+  </div>
+)}
+          </header>
 
     </div> : <div className='TopBar TopBar-loader'></div>;
   }
+  
 }
 
 export default TopBar;

@@ -52,9 +52,25 @@ class Hooks {
 					if ( $value === 'hidden' ) {
 						$pageProps['structured-search-input'] = htmlspecialchars( $value );
 					}
+				} elseif ( str_starts_with( $param, 'resultsSumMessage=' ) ) {
+						$value = substr( $param, strlen( 'resultsSumMessage=' ) );
+						if ( $value === 'hidden' ) {
+							$pageProps['structured-search-resultsSumMessage'] = htmlspecialchars( $value );
+						}
+					} elseif ( str_starts_with( $param, 'labels=' ) ) {
+						$value = substr( $param, strlen( 'labels=' ) );
+						if ( $value === 'hidden' ) {
+							$pageProps['structured-search-labels'] = htmlspecialchars( $value );
+						}
+						
 				}  elseif ( str_starts_with( $param, 'class=' ) ) {
 					$value = substr( $param, strlen( 'class=' ) );
 					$pageProps['structured-search-class'] = htmlspecialchars( $value );
+						
+				}
+				elseif ( str_starts_with( $param, 'placeholder=' ) ) {
+					$value = substr( $param, strlen( 'placeholder=' ) );
+					$pageProps['structured-search-placeholder'] = htmlspecialchars( $value );
 						
 				}
 				elseif ( str_starts_with( $param, 'title=' ) ) {
@@ -98,6 +114,10 @@ class Hooks {
 						$value = substr( $param, strlen( 'display=' ) );
 						$pageProps['structured-search-display'] = htmlspecialchars( $value );
 					}
+					elseif ( str_starts_with( $param, 'table=' ) ) {
+						$value = substr( $param, strlen( 'table=' ) );
+						$pageProps['structured-search-table'] = htmlspecialchars( $value );
+					}
 					
 			}
 		}
@@ -126,7 +146,7 @@ class Hooks {
 				<div class="top-and-results-wrp">
 					<div class="checking-sticky"></div>
 					<div id="top-bar" class="sticky-top"></div>
-					<div id="results"><i class="search-loader fa-lg fa-solid fa-spinner fa-spin-pulse fa-spin-reverse"></i></div>
+					<div id="results"></div>
 				</div>
 			</div>
 				</div>
@@ -424,7 +444,7 @@ class Hooks {
 		$fields['title_key'] = ($namespaceId ? $namespaceId : '0' ) . ':' . $fields['title_dash'];
 		$fields['page_image_ext'] = self::addPageImageInSearch( $page,$fields );
 		$fields['visible_categories'] = self::getVisibleCategories( $page );
-		
+		//wfDebugLog( 'mh-log', print_r(array_keys($fields),1). " ====>>>>>======" . $fields['display_title'] . " ==========");
 		
 		
 	}
@@ -746,14 +766,14 @@ class Hooks {
 		$wgScriptPath = $conf->get( 'ScriptPath' );
 		$wgStructuredSearchThumbSize = $conf->get( 'StructuredSearchThumbSize' );
 		$dimensions = explode( 'X', $wgStructuredSearchThumbSize );
-		if('cli' == php_sapi_name()){
-			print_r([
-				$wgScriptPath,
-				$wgStructuredSearchThumbSize,
-				$dimensions,
-				$file,
-			]);
-		}
+		// if('cli' == php_sapi_name()){
+		// 	print_r([
+		// 		$wgScriptPath,
+		// 		$wgStructuredSearchThumbSize,
+		// 		$dimensions,
+		// 		$file,
+		// 	]);
+		// }
 		$fileClass = MediaWikiServices::getInstance()->getRepoGroup()->findFile( \Title::newFromText( $file ) );
 		$thumb = $fileClass ? $fileClass->transform( [ 'width' => $dimensions[0], 'height' => $dimensions[1] ] ) : null;
 		$thumbUrl = null;

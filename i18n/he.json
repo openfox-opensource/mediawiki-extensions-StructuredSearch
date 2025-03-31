@@ -5,6 +5,11 @@
 			"[[mw:user:Yacohen|Yacohen]]"
 		]
 	},
+	"structuredsearch-table-title": "כותרת",
+	"structuredsearch-table-category": "קטגוריות",
+	"structuredsearch-table-date": "תאריך",
+	"structuredsearch-table-ns": "סוג דף",
+	"structuredsearch-table-author": "מחבר",
 	"structuredsearch": "חיפוש מתקדם",
 	"structuredsearch-desc": "הרחבה המספקת חיפוש מתקדם",
 	"structuredsearch-main-namesapce": "ראשי",

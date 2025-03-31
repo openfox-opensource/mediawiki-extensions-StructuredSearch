@@ -112,6 +112,11 @@ class ApiSearch extends \ApiBase {
 		$api->execute();
 
 		$results = $api->getResult()->getResultData();
+		if(isset($_GET['sdasdaasddasdsaasdsda'])){
+            die("<pre>". print_r([
+                $results
+            ],1));
+        } 
 		$resultsFiltered = array_filter( $results['query']['search'], function ( $key ){
 			//remove keys starting with _
 			return strpos( $key, '_' ) !== 0;

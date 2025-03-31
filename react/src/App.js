@@ -71,9 +71,22 @@ class App extends Component {
 
   } 
   componentDidMount() {
+  
+      
+    this.retryInterval = setInterval(() => {
+      this.checkStructuredSearchProps();
+  }, 500);
+  // Stop checking after 60 seconds
+  setTimeout(() => {
+      if (this.retryInterval) {
+          clearInterval(this.retryInterval);
+      }
+  }, 6000);
+  
+
     if (window.mw && window.mw.config.get("structuredSearchProps")) {
       const structuredSearchProps = window.mw.config.get("structuredSearchProps");
-      console.log("structuredSearchProps:", structuredSearchProps);
+      console.log("structuredSearchPropsApp:", structuredSearchProps);
 
       // Helper function to apply filters
       const applyFilter = (fieldName, filterValue) => {
@@ -110,9 +123,9 @@ class App extends Component {
         }
       }
      // Apply limit
-      // if (structuredSearchProps.limit) {
-      //   let limit = structuredSearchProps.limit;
-      //   console.log("Setting limit:", limit);
+      if (structuredSearchProps.limit) {
+        let limit = structuredSearchProps.limit;
+        console.log("Setting limit:", limit);}
 
       //   if (typeof limit === "string") {
       //     limit = parseInt(limit, 10); // Ensure limit is a number
@@ -154,7 +167,22 @@ class App extends Component {
       
   }
 
+  // Ensure `checkStructuredSearchProps` is defined as a class method
+  checkStructuredSearchProps = () => {
+    const structuredSearchProps = window.mw?.config.get("structuredSearchProps");
 
+    if (structuredSearchProps && Object.keys(structuredSearchProps).length > 0) {
+        console.log("structuredSearchProps received in App:", structuredSearchProps);
+
+        this.setState({
+            structuredSearchProps
+        });
+
+        if (this.retryInterval) {
+            clearInterval(this.retryInterval);
+        }
+    }
+};
   render() {
     const structuredSearchProps = window.mw?.config.get('structuredSearchProps');
     const isFilterHidden = structuredSearchProps?.filter === "hidden";

@@ -20,7 +20,9 @@ const baseDateFormat = 'dd/MM/yyyy';
 class FormInput extends Component {
 	constructor(props) {
 		super(props);
-		//console.log("props",props);
+		  const structuredSearchProps = window.mw?.config.get('structuredSearchProps') || {};
+		  console.log("input", structuredSearchProps);
+		  
 		let initOptions = props.inputData.widget.options|| [],
 			initValue = FormMain.getValue(props.inputData.field);
 		initOptions = this.extractOptions( initOptions );
@@ -28,7 +30,8 @@ class FormInput extends Component {
 			inputData : props.inputData,
 			filteredOptions : initOptions,
 			options : initOptions,
-			typed: initValue && initValue.length ? initValue[0].value : '' 
+			typed: initValue && initValue.length ? initValue[0].value : '' ,
+			 placeholder: structuredSearchProps.placeholder || ""
 		};
 		if( "select" === props.inputData.widget.type ){
 			let selected = props.inputData.widget.default || initOptions[0];
@@ -344,7 +347,8 @@ class FormInput extends Component {
 		this.setState({showAdvanced : !this.state.showAdvanced});
 	}
 	getPlaceholder( inputData ){
-		return inputData.widget.placeholder ? inputData.widget.placeholder : utils.stripHtml( inputData.label);
+		return this.state.placeholder || inputData.widget.placeholder || utils.stripHtml(inputData.label);
+		//return inputData.widget.placeholder ? inputData.widget.placeholder : utils.stripHtml( inputData.label);
 	}
 	checkboxesBuild (inputData){
 		let checkboxesMain = [],

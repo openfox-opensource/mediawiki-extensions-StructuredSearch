@@ -5,6 +5,11 @@
 			"[[mw:user:Yacohen|Yacohen]]"
 		]
 	},
+	"structuredsearch-table-title": "Title",
+	"structuredsearch-table-category": "Categories",
+	"structuredsearch-table-date": "Date",
+	"structuredsearch-table-ns": "Namespace",
+	"structuredsearch-table-author": "Author",
 	"structuredsearch": "Advanced search",
 	"structuredsearch-desc": "This is an advanced search extension",
 	"structuredsearch-main-namesapce": "Main",

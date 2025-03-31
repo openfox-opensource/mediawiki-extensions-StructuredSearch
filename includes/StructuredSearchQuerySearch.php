@@ -50,6 +50,12 @@ class QuerySearch extends \ApiQuerySearch {
         $allCargoFieldsConvertedToElastic = array_map(function($key){
             return Utils::replaceCargoFieldToElasticField($key);
         }, $allCargoFields);
+        $simpleKeysToAdd = [];
+        foreach($allParams as $key => $value){
+            if($value['add_to_results'] ?? false){
+                $simpleKeysToAdd[] = $key; 
+            }
+        }
         $keysToAdd = array_merge([
             'full_title',
             'short_title',
@@ -61,7 +67,8 @@ class QuerySearch extends \ApiQuerySearch {
             'namespaceId',
             'title_key',
             'visible_categories'
-        ] , $allCargoFieldsConvertedToElastic);
+        ] , $allCargoFieldsConvertedToElastic, $simpleKeysToAdd);
+        
         $engine->setFeatureData('extra-fields-to-extract',  $keysToAdd );
         
         return $engine;

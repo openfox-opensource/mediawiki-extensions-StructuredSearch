@@ -164,7 +164,12 @@
 		"ext.StructuredSearch": {
 			"messages" : [
 				"structuredsearch-from-label",
-				"structuredsearch-to-label"
+				"structuredsearch-to-label",
+				"structuredsearch-table-title",
+	"structuredsearch-table-category",
+	"structuredsearch-table-date",
+	"structuredsearch-table-namespace",
+	"structuredsearch-table-author"
 			]
 			
 		}
