@@ -30,5 +30,6 @@
 	"structuredsearch-toggle-sidebar": "Filter",
 	"structuredsearch-on-search-text": "<i class=\"search-loader fa-lg fa-solid fa-spinner fa-spin-pulse fa-spin-reverse\"></i>",
 	"structuredsearch-results-sum": "$1 search results",
-	"structuredsearch-show-more": "Click to show more options"
+	"structuredsearch-show-more": "Click to show more options",
+	"structuredsearch-on-results-error": "An error occurred during the search, apologies"
 }
