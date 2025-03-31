@@ -40,7 +40,9 @@ class App extends Component {
       if(this.state.inputs){
         FormMain.reset();
         FormMain.setDefaults( this.state.inputs );
-        historySearch.setSearchFromHistory( this.state.inputs );
+       
+            historySearch.setSearchFromHistory(this.state.inputs);
+        
       }
     };
     
@@ -69,7 +71,62 @@ class App extends Component {
 
   } 
   componentDidMount() {
+    if (window.mw && window.mw.config.get("structuredSearchProps")) {
+      const structuredSearchProps = window.mw.config.get("structuredSearchProps");
+      console.log("structuredSearchProps:", structuredSearchProps);
+
+      // Helper function to apply filters
+      const applyFilter = (fieldName, filterValue) => {
+        const value = { value: filterValue, label: filterValue };
+        if (FormMain && typeof FormMain.addValue === "function") {
+          console.log(`Applying filter - Field: ${fieldName}, Value:`, value);
+          FormMain.addValue(fieldName, value);
+        } else {
+          console.warn(`FormMain or FormMain.addValue is not defined for field: ${fieldName}`);
+        }
+      };
+      if (structuredSearchProps.namespaces) {
+        console.log("namespaces filter found:", structuredSearchProps.namespaces);
+        applyFilter("namespaces", structuredSearchProps.namespaces);
+      }
+      // Apply category filter
     
+      if (structuredSearchProps.category) {
+        console.log("Category filter found:", structuredSearchProps.category);
+        applyFilter("category", structuredSearchProps.category);
+      }
+      // Apply pageType filter
+      if (structuredSearchProps.pageType) {
+        console.log("Page type filter found:", structuredSearchProps.pageType);
+        applyFilter("in_kit", structuredSearchProps.pageType);
+      }
+    
+    
+      if (structuredSearchProps.title) {
+        console.log("title found:", structuredSearchProps.title);
+        const titleElement = document.getElementById("parser-search-title");
+        if (titleElement) {
+          titleElement.textContent = structuredSearchProps.title;
+        }
+      }
+     // Apply limit
+      // if (structuredSearchProps.limit) {
+      //   let limit = structuredSearchProps.limit;
+      //   console.log("Setting limit:", limit);
+
+      //   if (typeof limit === "string") {
+      //     limit = parseInt(limit, 10); // Ensure limit is a number
+      //   }
+
+      //   if (FormMain && typeof FormMain.addValue === "function") {
+      //     FormMain.addValue("limit", limit);
+      //   } else {
+      //     console.warn(" FormMain or FormMain.addValue is not defined to set the limit.");
+      //   }
+      // }
+    } else {
+      console.warn("No structuredSearchProps found in mw.config.");
+    }
     this.hide();
     EventEmitter.on("FormDataChanged", allData => {
       if(this.state && 'undefined' != typeof this.state.inputs ){
@@ -87,6 +144,7 @@ class App extends Component {
           inputs: data.params
         }, ()=>{       
           FormMain.setDefaults( data.params );
+         
           historySearch.setSearchFromHistory( data.params );
         });
         
@@ -98,6 +156,13 @@ class App extends Component {
 
 
   render() {
+    const structuredSearchProps = window.mw?.config.get('structuredSearchProps');
+    const isFilterHidden = structuredSearchProps?.filter === "hidden";
+  
+    // If filter=hidden, do not render the sidebar at all
+    if (isFilterHidden) {
+      return null; // This prevents rendering anything
+    }
     let allInputs = [];
     if(this.state && 'undefined' != typeof this.state.inputs ){
       let inputsSorted = Object.values(this.state.inputs).sort( utils.sortByWeight );

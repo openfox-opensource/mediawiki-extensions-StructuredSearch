@@ -1,6 +1,6 @@
 import ajaxCall from './ajaxCall';
 import utils from './utils';
-
+console.log("settingsGetter.js loaded");
 class settingsGetter{
 	static fixData( data ){
 		for( let fieldName of Object.keys(data.params)){

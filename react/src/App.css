@@ -21,6 +21,14 @@ body {
   border-left: 1px solid;
   margin-left: 10px;
 }
+.parser-search{
+background: var(--search-bar-bg);}
+.parser-search .side-bar .checkbox-wrp label {
+  gap: 10px;
+}
+.parser-search #content span.label-wrp {
+  display: none;
+}
 .results{
   width: 68%;
 }

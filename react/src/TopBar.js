@@ -169,6 +169,13 @@ class TopBar extends Component {
     EventEmitter.emit('toggleSidebar');
   }
   render() {
+    const structuredSearchProps = window.mw?.config.get('structuredSearchProps');
+    const isInputHidden = structuredSearchProps?.input === "hidden";
+  
+    // If input=hidden, do not render the TopBar at all
+    if (isInputHidden) {
+      return null; // Prevents rendering
+    }
     let allInputs = [],
         //labelsKeyed = [],
         labels = [],

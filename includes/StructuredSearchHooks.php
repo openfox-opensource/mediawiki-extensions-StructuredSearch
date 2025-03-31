@@ -11,8 +11,225 @@ use SearchEngine;
 use ParserOutput;
 use WikiPage;
 use ContentHandler;
-
+use Parser;
 class Hooks {
+	  /**
+     * Register parser functions.
+     *
+     * @param Parser $parser
+     */
+    public static function onParserFirstCallInit( \Parser $parser ) {
+        // Register thestructuresearch parser function
+        $parser->setFunctionHook( 'structuresearch', [ self::class, 'renderstructureSearch' ] );
+    }
+
+    /**
+     * Parser function for {{#structuresearch:}}
+     *
+     * @param Parser $parser
+     * @return array
+      */
+	
+	public static function renderstructureSearch( \Parser $parser, ...$params ) {
+		
+		$pageProps = [];
+		$pageProps['structured-search-limit'] = 100;
+		// Parse parameters
+		if ( !empty( $params ) ) {
+			
+			foreach ( $params as $param ) {
+				$param = trim( $param );
+	
+				// Handle inline CSS dynamically
+				if ( str_starts_with( $param, 'filter=' ) ) {
+					$value = substr( $param, strlen( 'filter=' ) );
+					if ( $value === 'hidden' ) {
+						
+						$pageProps['structured-search-filter'] = htmlspecialchars( $value );
+					}
+				} elseif ( str_starts_with( $param, 'input=' ) ) {
+					$value = substr( $param, strlen( 'input=' ) );
+					if ( $value === 'hidden' ) {
+						$pageProps['structured-search-input'] = htmlspecialchars( $value );
+					}
+				}  elseif ( str_starts_with( $param, 'class=' ) ) {
+					$value = substr( $param, strlen( 'class=' ) );
+					$pageProps['structured-search-class'] = htmlspecialchars( $value );
+						
+				}
+				elseif ( str_starts_with( $param, 'title=' ) ) {
+					$value = substr( $param, strlen( 'title=' ) );
+					$pageProps['structured-search-title'] = htmlspecialchars( $value );
+						
+				}
+				elseif ( str_starts_with( $param, 'page-filter=' ) ) {
+					$value = substr( $param, strlen( 'page-filter=' ) );
+					if ( $value === 'hidden' ) {
+						$pageProps['structured-search-page-filter'] = htmlspecialchars( $value );
+					}
+				} elseif ( str_starts_with( $param, 'category-filter=' ) ) {
+					$value = substr( $param, strlen( 'category-filter=' ) );
+					if ( $value === 'hidden' ) {
+						$pageProps['structured-search-category-filter'] = htmlspecialchars( $value );
+					}
+				}
+	
+				elseif ( str_starts_with( $param, 'category=' ) ) {
+					$value = substr( $param, strlen( 'category=' ) );
+					$pageProps['structured-search-category'] = htmlspecialchars( $value );
+				} elseif ( str_starts_with( $param, 'pageType=' ) ) {
+					$value = substr( $param, strlen( 'pageType=' ) );
+					$pageProps['structured-search-pageType'] = htmlspecialchars( $value );
+				}
+				elseif ( str_starts_with( $param, 'namespaces=' ) ) {
+					$value = substr( $param, strlen( 'namespaces=' ) );
+					$pageProps['structured-search-namespaces'] = (int) $value;;
+				}
+				elseif ( str_starts_with( $param, 'limit=' ) ) {
+					$value = substr( $param, strlen( 'limit=' ) );
+					if ( is_numeric( $value ) ) {
+						$pageProps['structured-search-limit'] = (int) $value; // Ensure it's a valid integer
+					} else {
+						wfDebugLog('StructuredSearch', "Invalid limit value: $value");
+					}
+				}
+				
+					elseif ( str_starts_with( $param, 'display=' ) ) {
+						$value = substr( $param, strlen( 'display=' ) );
+						$pageProps['structured-search-display'] = htmlspecialchars( $value );
+					}
+					
+			}
+		}
+	
+		// Save the props in the parser output
+		$parserOutput = $parser->getOutput();
+	
+		if ( !empty( $pageProps ) ) {
+			foreach ( $pageProps as $key => $value ) {
+				$parserOutput->setPageProperty( $key, $value );
+			}
+		}
+	
+		// Global CSS for other elements
+		
+	
+		// Build the dynamic HTML
+		$scriptPath = MediaWikiServices::getInstance()->getMainConfig()->get('ScriptPath');
+
+		$htmlContent = ' 
+			<div class="parser-search-container">
+		<div id="parser-search-title" ></div>
+			<div class="parser-search">
+			
+				<div id="side-bar" ></div>
+				<div class="top-and-results-wrp">
+					<div class="checking-sticky"></div>
+					<div id="top-bar" class="sticky-top"></div>
+					<div id="results"><i class="search-loader fa-lg fa-solid fa-spinner fa-spin-pulse fa-spin-reverse"></i></div>
+				</div>
+			</div>
+				</div>
+			';
+		
+		return [
+			$htmlContent,
+			'isHTML' => true
+		];
+	}
+	public static function getStructuredSearchProps( $title, $user){
+		if(!$title || $title->isSpecialPage() || $title->isExternal()){
+			return;
+		}
+		$wikiPage = MediaWikiServices::getInstance()->getWikiPageFactory()->newFromTitle( $title );
+	
+		if ( !$wikiPage || !$wikiPage->exists() ) {
+			wfDebugLog( 'StructuredSearch', 'WikiPage does not exist for title: ' . $title->getPrefixedText() );
+			return; // Exit early if the page does not exist
+		}
+
+		// Get the ParserOutput for the current page
+		$parserOutput = $wikiPage->getParserOutput( $wikiPage->makeParserOptions( $user ) );
+	
+		if ( !$parserOutput ) {
+			wfDebugLog( 'StructuredSearch', 'Failed to retrieve ParserOutput for page: ' . $title->getPrefixedText() );
+			return;
+		}
+	
+		// Retrieve page properties
+		$props = $parserOutput->getPageProperties();
+	
+		if ( !empty( $props ) ) {
+			//get the structured search props, filter by keys
+			$structuredSearchProps = array_filter( $props, function( $key ){
+				return strpos( $key, 'structured-search-' ) === 0;
+			}, ARRAY_FILTER_USE_KEY );
+		}
+		//remove the structured search prefix
+		
+		if($structuredSearchProps && count($structuredSearchProps)){
+			$newPropsArray = [];
+			foreach($structuredSearchProps as $key => $value){
+				$newPropsArray[substr($key, strlen('structured-search-'))] = $value;
+			}
+			$structuredSearchProps = $newPropsArray;
+		}
+		
+		return $structuredSearchProps ? $structuredSearchProps : [];
+	}
+	public static function onSkinAfterContent( &$data,  $skin ) { 
+		
+			//get the structured search props, filter by keys
+			$scriptPath = MediaWikiServices::getInstance()->getMainConfig()->get('ScriptPath');
+			$structuredSearchProps = self::getStructuredSearchProps( $skin->getTitle(), $skin->getUser() );
+			if($structuredSearchProps && count($structuredSearchProps)){
+				//get all files in __DIR__ . '/../react/dist'
+				//add them to the as script and link tags
+				$files = scandir( __DIR__ . '/../react/dist' );
+				foreach($files as $file){
+					//ignore map files
+					if( strpos( $file, '.map' ) !== false ){
+						continue;
+					}
+					if( strpos( $file, '.js' ) !== false ){
+						$data .= '<script src="' . htmlspecialchars($scriptPath) . '/extensions/StructuredSearch/react/dist/' . $file . '"></script>';
+					}
+					if( strpos( $file, '.css' ) !== false ){
+						$data .= '<link rel="stylesheet" href="' . htmlspecialchars($scriptPath) . '/extensions/StructuredSearch/react/dist/' . $file . '">';
+					}
+				}
+			}
+	 }
+
+	public static function onBeforePageDisplay( \OutputPage $out, \Skin $skin ) {
+		// Get the current page's title
+		
+		$title = $out->getTitle();
+	
+		// Check if the title is valid and not a special or external page
+		if ( !$title || $title->isSpecialPage() || $title->isExternal() ) {
+			wfDebugLog( 'StructuredSearch', 'Skipping invalid or special page: ' . $title->getPrefixedText() );
+			return; // Exit early for invalid or special pages
+		}
+	
+		$props = self::getStructuredSearchProps( $title, $out->getUser() );
+		
+		if ( !empty( $props ) ) {
+			
+			// Pass the properties to JavaScript
+			$out->addJsConfigVars( 'structuredSearchProps', $props );
+			SpecialStructuredSearch::addSearchParams( $out );
+			$out->addModuleStyles( [ 'ext.StructuredSearch.styles' ] );
+		} else {
+			wfDebugLog( 'StructuredSearch', 'No structuredSearchProps found for this page.' );
+		}
+		
+	}
+	
+	
+	
+	
+	
 	public static function categoryExtract( &$params ) {
 		$params['category'] = [
 			'label' => wfMessage( 'structuredsearch-category-label' )->text(),
@@ -131,6 +348,7 @@ class Hooks {
 	*
 	* @param array $fields
 	* @param SearchEngine $engine
+	
 	*/
 	public static function onSearchIndexFields( array &$fields, SearchEngine $engine ) {
 		if ( $engine instanceof \CirrusSearch\CirrusSearch ) {

@@ -72,7 +72,8 @@ class ApiSearch extends \ApiBase {
 		unset( $params['namespaces'] );
 		$params = self::extractSearchStringFromFields( $params );
 		$srParams = [];
-		$params['limit'] = 10;
+		$params['limit'] = $params['limit']  ?? 10;
+		
 		$params['prop'] = implode('|',[
 			'extensiondata',
 			"size",

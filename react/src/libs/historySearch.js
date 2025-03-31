@@ -26,27 +26,39 @@ class historySearch{
 			let state = this.getState(),
 				searchParamsFromLocation = queryString.parse(window.location.search),
 				pathname = window.location.pathname;
-				console.log(pathname, "pathname1");
+				
 
 			//for case of index.php?title=special:advanced_search
 			if(searchParamsFromLocation.title){
 				pathname = (new window.mw.Title('special:advanced_search')).getUrl();
 				//pathname += searchParamsFromLocation.title;
-				console.log(pathname, "pathname2");
+				
 			}
 			let query = utils.toQueryStr( FormMain.filterParams( state) );
 			if( historySearch.isSearchEquleToDefault( paramsSettings, state ) ){
 				query = '';
 			}
 			if(query){
+				const props = window.mw && window.mw.config.get('structuredSearchProps');
+				
+				
+				if (!props) {
+				
 				if(searchParamsFromLocation.debug){
 					state.debug = searchParamsFromLocation.debug;
 				}
-				query = utils.toQueryStr( FormMain.filterParams( state) );
+				query = utils.toQueryStr( FormMain.filterParams( state) );}
 			}
 			if( historySearch.lastQuery !== query){
 				historySearch.lastQuery = query;
+				const props = window.mw && window.mw.config.get('structuredSearchProps');
+				
+				
+				if (!props) {
+					
+				
 				window.history.pushState(state, '',  pathname + '?' + query)
+			}
 			}
 		}
 	}

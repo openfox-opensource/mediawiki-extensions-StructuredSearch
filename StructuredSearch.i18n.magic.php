@@ -4,7 +4,12 @@
  *
  * @file
  */
+$magicWords = [];
 
+/** English (English) */
+$magicWords['en'] = [
+	'structuresearch' => [ 0, 'structuresearch' ]
+];
 // $magicWords = [];
 
 // /** English (English) */
