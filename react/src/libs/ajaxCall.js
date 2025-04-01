@@ -1,4 +1,3 @@
-import axios from 'axios';
 
 class ajaxCall{
 	static get( urlSuffix, dontAddApi ){
