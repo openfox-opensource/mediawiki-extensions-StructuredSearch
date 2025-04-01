@@ -128,9 +128,9 @@ class FormInput extends Component {
 		}
 		else{
 			ajaxCall.get(`action=structuredsearchautocomplete&field=${this.state.inputData.field}&search=${typed}`).then(data => {
-				if(data.data.values){
+				if(data.values){
 					let valuesAsArray = [],
-						vals = data.data.values;
+						vals = data.values;
 					for(let valKey of Object.keys(vals) ){
 						valuesAsArray.push({
 							label:vals[valKey],
@@ -150,7 +150,7 @@ class FormInput extends Component {
 			namespaces = values['namespace'];
 		FormMain.setValue( this.state.inputData.field, typed );
 		ajaxCall.get(`action=opensearch&formatversion=2&search=${typed}&namespace=${namespaces}&limit=10&suggest=true`).then(data => {
-			let allData = data.data,
+			let allData = data,
 				titles = allData[1],
 				links = allData[3],
 				filteredOptions = [];

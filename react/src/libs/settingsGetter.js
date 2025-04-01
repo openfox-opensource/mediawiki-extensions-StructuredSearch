@@ -54,7 +54,7 @@ class settingsGetter{
 			settingsGetter.onCall = true;
 			ajaxCall.get('action=structuredsearchparams').then(data => {
 				settingsGetter.onCall = false;
-				resolve( data ? data.data : null );
+				resolve( data ? data : null );
 			});
 
 		});
