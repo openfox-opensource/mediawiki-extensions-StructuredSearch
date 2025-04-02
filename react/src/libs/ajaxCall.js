@@ -1,17 +1,26 @@
-import axios from 'axios';
 
 class ajaxCall{
 	static get( urlSuffix, dontAddApi ){
 		return new Promise( (resolve) => {
 			ajaxCall.getUrl(dontAddApi).then( urlPrefix =>{
-				axios.get( urlPrefix + urlSuffix).then(data => resolve(data));
+				fetch(urlPrefix + urlSuffix)
+					.then(response => response.json())
+					.then(data => resolve(data));
 			});
 		});
 	}
 	static post(urlSuffix, postBody, dontAddApi){
 		return new Promise( (resolve) => {
 			ajaxCall.getUrl(dontAddApi).then( urlPrefix =>{
-				axios.post( urlPrefix + urlSuffix, postBody ).then(data => resolve(data));
+				fetch(urlPrefix + urlSuffix, {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify(postBody)
+				})
+				.then(response => response.json())
+				.then(data => resolve(data));
 			});
 		});
 	}
