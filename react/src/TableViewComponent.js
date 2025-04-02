@@ -22,7 +22,8 @@ const TableViewComponent = ({ results }) => {
     const fetchAllLabels = async () => {
       const entries = await Promise.all(
         allFields.map(async (field) => {
-          const key = structuredsearch-table-${field};
+          const key = `structuredsearch-table-${field}`;
+
           const translated = await translate(key);
           return [field, translated];
         })
@@ -87,77 +88,97 @@ const TableViewComponent = ({ results }) => {
   }
   return (
     <table style={{ backgroundColor: 'white' }} className="results-table table-auto w-full border-collapse border border-gray-300 dark:border-gray-700">
-      <thead className="bg-gray-100 dark:bg-gray-800">
-        <tr>
-          <th className="border p-2"></th>
-          {allFields.map((field, i) => (
-            <th
-              key={i}
-              onClick={() => handleSort(field)}
-              className="border p-2 capitalize cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700"
-            >
-              {getLabel(field)}
-              <i className={`fal ml-1 ${sortConfig.key === field
-                ? sortConfig.direction === 'asc'
-                  ? 'fa-caret-up'
-                  : 'fa-caret-down'
-                : 'fa-sort'}`} />
-            </th>
-          ))}
-        </tr>
-      </thead>
-      <tbody>
-        {sortedResults.map((result, index) => (
-          <tr key={index} className="border-t hover:bg-gray-50 dark:hover:bg-gray-900">
-            <td className="border p-2 text-center">
-              <a
-                src={result.page_image_ext || DEFAULT_IMAGE}
-                alt={result.short_title}
-                className="w-20 h-20 object-cover rounded border dark:border-gray-600 result-img-link"
-              >
-              </a>
+    <thead className="bg-gray-100 dark:bg-gray-800">
+  <tr>
+    <th className="border p-2"></th> {/* Image */}
+    <th
+  onClick={() => handleSort('title')}
+  className="border p-2 capitalize cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700"
+>
+  {getLabel('title')}
+  <i className={`fal ml-1 ${sortConfig.key === 'title'
+    ? sortConfig.direction === 'asc'
+      ? 'fa-caret-up'
+      : 'fa-caret-down'
+    : 'fa-sort'}`} />
+</th>
+
+    {dynamicFields.map((field, i) => (
+      <th
+        key={i}
+        onClick={() => handleSort(field)}
+        className={`border p-2 capitalize cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700 dynamicfields sm:table-cell`}
+      >
+        {getLabel(field)}
+        <i className={`fal ml-1 ${sortConfig.key === field
+          ? sortConfig.direction === 'asc'
+            ? 'fa-caret-up'
+            : 'fa-caret-down'
+          : 'fa-sort'}`} />
+      </th>
+    ))}
+  </tr>
+</thead>
+
+<tbody>
+  {sortedResults.map((result, index) => (
+    <tr key={index} className="border-t hover:bg-gray-50 dark:hover:bg-gray-900">
+      {/* Image */}
+      <td className="border p-2 text-center">
+      <div
+  style={result.page_image_ext ? {  backgroundImage: `url(${result.page_image_ext})` } : {}}
+
+    className={`result-img w-20 h-20 bg-center bg-cover rounded border dark:border-gray-600 ${!result.page_image_ext ? 'result-img-default' : ''}`}
+    role="img"
+    aria-label={result.short_title}
+  ></div>
+      </td>
+
+      {/* Title */}
+      <td className="border p-2 align-top text-sm text-blue-600 dark:text-blue-300">
+        <a href={result.full_title} className="hover:underline font-semibold">
+          {result.short_title}
+        </a>
+      </td>
+
+      {/* Dynamic Fields (hidden on mobile) */}
+      {dynamicFields.map((field, i) => {
+        let value = result[field];
+
+        if (field === 'date' && typeof result.timestamp === 'string') {
+          const [year, month, day] = result.timestamp.slice(0, 10).split("-");
+          value = `${day}/${month}/${year}`;
+        }
+
+        if (field === 'category' && Array.isArray(value)) {
+          return (
+            <td key={i} className="border p-2 align-top text-sm dynamicfields sm:table-cell">
+              <div className="flex flex-wrap gap-2">
+                {value.map((cat, j) => (
+                  <a
+                    key={j}
+                    href={`/${cat.link}`}
+                    className="px-2 py-0.5 bg-blue-100 text-blue-700 rounded text-xs hover:underline dark:bg-blue-800 dark:text-blue-200"
+                    title={`Category: ${cat.name}`}
+                  >
+                    {cat.name}
+                  </a>
+                ))}
+              </div>
             </td>
-            <td className="border p-2 align-top text-sm text-blue-600 dark:text-blue-300">
-              <a href={result.full_title} className="hover:underline font-semibold">
-                {result.short_title}
-              </a>
-            </td>
-            {dynamicFields.map((field, i) => {
-              let value = result[field];
+          );
+        }
 
-              if (field === 'date' && typeof result.timestamp === 'string') {
-                const [year, month, day] = result.timestamp.slice(0, 10).split("-");
-                value = `${day}/${month}/${year}`;
-              }
+        return (
+          <td key={i} className="border p-2 align-top text-sm text-gray-700 dark:text-gray-300 dynamicfields sm:table-cell">
+            {value || <span className="text-gray-400 italic"></span>}
+          </td>
+        );
+      })}
+    </tr>
+  ))}
+</tbody>
 
-              if (field === 'category' && Array.isArray(value)) {
-                return (
-                  <td key={i} className="border p-2 align-top text-sm">
-                    <div className="flex flex-wrap gap-2">
-                      {value.map((cat, j) => (
-                        <a
-                          key={j}
-                          href={`/${cat.link}`}
-                          className="px-2 py-0.5 bg-blue-100 text-blue-700 rounded text-xs hover:underline dark:bg-blue-800 dark:text-blue-200"
-                          title={`Category: ${cat.name}`}
-                        >
-                          {cat.name}
-                        </a>
-                      ))}
-                    </div>
-                  </td>
-                );
-              }
-
-              return (
-                <td key={i} className="border p-2 align-top text-sm text-gray-700 dark:text-gray-300">
-                  {value || <span className="text-gray-400 italic"></span>}
-                </td>
-              );
-            })}
-          </tr>
-        ))}
-      </tbody>
     </table>
   );
 };

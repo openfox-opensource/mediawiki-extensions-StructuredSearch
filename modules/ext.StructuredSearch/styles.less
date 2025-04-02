@@ -21,11 +21,17 @@
     font-weight: bolder;
 }
 .parser-search{
+
   .results-table{
     margin: 10px;
     width: 100%;
-    .result-img-link{
-      width: 100px;
+    .result-img{
+     min-width: 100px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 170px
+      
     }
   }
  
@@ -37,7 +43,22 @@
   max-width: 120px;}
   .display-buttons{
     width: 30%;
+    min-width: 90px;
     display: inline-block;
+    #grid-button svg {
+      vertical-align: middle;
+      margin-bottom: 4px;
+    }
+    button{
+      height: 50px;
+      width: 50px;
+      border-radius: 50%;
+      background-color: white;
+      border: 1px solid rgb(204, 204, 204);;
+      svg{
+        color: rgb(204, 204, 204);
+      }
+    }
   }
   .TopBar.with-labels {
     padding: 1em 4em 1em;
@@ -616,6 +637,9 @@ span.label-wrp {
       width: 100%;
       height: auto;
       }
+      .result-img-default {
+        background-image: var(--search-result-image);
+      }
     a.result-img-link {
         position: relative;
         display: block;
@@ -709,6 +733,9 @@ span.label-wrp {
  .results-table .results-table-categories , .results-table .results-table-year {
   display: none;
  }
+ .parser-search  .dynamicfields {
+  display:none ;
+}
  .parser-search .TopBar.with-labels {
   padding: 0px;}
 }
@@ -748,7 +775,7 @@ span.label-wrp {
     .field-wrp-name-search {
       input {
       padding: 0px 1em;
-      border-radius: 23px 0 0 23px;
+      border-radius: 23px ;
       }
       button {
           background: transparent !important;
@@ -918,6 +945,18 @@ span.label-wrp {
   form:focus-within .field-wrp-name-search button, .field-wrp-name-search button:hover {
 
   }
+  #bodyContent #mw-content-text .parser-search .top-and-results-wrp{
+    padding-top: 20px;
+  } 
+}
+@media (max-width: 450px) {
+  #bodyContent #mw-content-text .parser-search .top-and-results-wrp{
+    padding-top: 20px;
+  } 
+  .parser-search .display-buttons{
+    width: 40%;}
+    .parser-search .topbar-filters  {
+  width: 60%;}
 }
 /* Advanced Search */
 input,input:focus {box-shadow: none;}

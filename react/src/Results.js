@@ -25,7 +25,7 @@ class Results extends Component {
       resultClass: structuredSearchProps.class || "", 
       displayTemplate: structuredSearchProps.display || "",
       useTableView: false,
-      enableDisplayToggle: Object.keys(structuredSearchProps).length > 0
+      enableDisplayToggle: Object.keys(structuredSearchProps).length > 0,
      // loading: true, 
     };
    
@@ -66,7 +66,9 @@ class Results extends Component {
     });
     EventEmitter.on('dataRecieved', data => {
       let results = data.results;
-      console.log("dataRecieved event fired", data);
+      console.log("data.continue:", data.continue);
+      console.log("results length:", Object.keys(results).length);
+      console.log("total expected:", data.searchinfo?.totalhits);
       if (!data || !data.results) {
         console.error("Error: No results received", data);
     }
@@ -77,7 +79,7 @@ class Results extends Component {
           searchReturned: true,
           searchStarted: false,
           onTop: false,
-         // loading: false, // Hide loader on error
+          loading: false, // Hide loader on error
         })
       }
       else {
@@ -98,7 +100,7 @@ class Results extends Component {
           searchReturned: true,
           searchStarted: false,
           onTop: false,
-         // loading: false, // Hide loader once results are received
+          loading: false, // Hide loader once results are received
         })
       }
 
@@ -111,13 +113,11 @@ class Results extends Component {
     });
   }
   componentDidMount() {
-    
-   
     this.retryInterval = setInterval(() => {
       this.checkStructuredSearchProps();
     }, 500);
   
-    setTimeout(() => clearInterval(this.retryInterval), 600); // Stop after 60 seconds
+    setTimeout(() => clearInterval(this.retryInterval), 2000); // Stop after 60 seconds
     window.addEventListener("scroll", this.handleScroll);
     EventEmitter.on("toggleDisplayView", (useTableView) => {
       this.setState({ useTableView });
@@ -132,8 +132,10 @@ class Results extends Component {
   }
 
   handleScroll = () => {
+    console.log("handscroll1");
+    console.log("offset:", this.state.offset, "loading:", this.state.loading);
     if (this.state.loading || !this.state.offset) return; // Prevent multiple triggers
-
+    console.log("handscroll");
     // Select the last child inside .results
     const resultsContainer = document.querySelector(".results");
     if (!resultsContainer) return;
@@ -142,6 +144,7 @@ class Results extends Component {
     const lastResult = resultItems[resultItems.length - 1]; // Get the last loaded result
 
     if (!lastResult) return;
+console.log("lastchild");
 
     if (this.isElementInViewport(lastResult)) {
         // Ensure we only trigger `next()` once per batch
@@ -161,7 +164,9 @@ isElementInViewport = (el) => {
 
 
   next = () => {
+    console.log("next");
     if (!this.state.offset) return;
+    console.log("nextresults");
     FormMain.setNext(this.state.offset);
   };
   

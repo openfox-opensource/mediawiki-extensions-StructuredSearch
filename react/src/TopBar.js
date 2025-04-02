@@ -289,7 +289,7 @@ class TopBar extends Component {
       type="button"
       id="grid-button"
       className="flex-grow"
-      style={{ marginRight: '10px' }}
+      style={{ marginRight: '5px' }}
       onClick={() => EventEmitter.emit('toggleDisplayView', false)}
     >
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -299,6 +299,7 @@ class TopBar extends Component {
     <button
       type="button"
       id="card-button"
+      style={{ marginRight: '5px' }}
       className="isDisplay flex-grow"
       onClick={() => EventEmitter.emit('toggleDisplayView', true)}
     >
