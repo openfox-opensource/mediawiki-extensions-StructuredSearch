@@ -39,6 +39,15 @@ class TopBar extends Component {
     });
   }
   componentDidMount() {
+    this.retryInterval = setInterval(() => {
+      this.checkStructuredSearchProps();
+    }, 500);
+  
+    setTimeout(() => {
+      if (this.retryInterval) {
+        clearInterval(this.retryInterval);
+      }
+    }, 4000);
     EventEmitter.on("toggleDisplayView", (useTableView) => {
       this.setState({ useTableView });
     });
@@ -73,8 +82,25 @@ class TopBar extends Component {
       });
   }
   componentWillUnmount(){
+    clearInterval(this.retryInterval);
     EventEmitter.off("toggleDisplayView");
   }
+  checkStructuredSearchProps = () => {
+    const structuredSearchProps = window.mw?.config.get("structuredSearchProps");
+  
+    if (structuredSearchProps && Object.keys(structuredSearchProps).length > 0) {
+      console.log("structuredSearchProps received in TopBar:", structuredSearchProps);
+  
+      this.setState({
+        enableDisplayToggle: Object.keys(structuredSearchProps).length > 0
+      });
+  
+      if (this.retryInterval) {
+        clearInterval(this.retryInterval);
+      }
+    }
+  };
+  
   setStickyCheck( ) {
     const observer = new IntersectionObserver((records, observer) => {
       for (const record of records) {

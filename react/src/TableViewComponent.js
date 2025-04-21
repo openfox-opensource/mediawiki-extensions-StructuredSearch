@@ -6,7 +6,7 @@ const TableViewComponent = ({ results }) => {
   const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
   const [translatedLabels, setTranslatedLabels] = useState({});
   const [structuredSearchProps, setStructuredSearchProps] = useState(window.mw?.config.get('structuredSearchProps') || {});
-  const DEFAULT_IMAGE = "/default-image.jpg";
+ // const DEFAULT_IMAGE = "/default-image.jpg";
 
   const dynamicFields = (structuredSearchProps.table || "")
     .split(',')
@@ -17,7 +17,7 @@ const TableViewComponent = ({ results }) => {
 
   // Fetch translations and structuredSearchProps
   useEffect(() => {
-    translate('structuredsearch-no-results').then(setNoResultsText);
+   // translate('structuredsearch-no-results').then(setNoResultsText);
 
     const fetchAllLabels = async () => {
       const entries = await Promise.all(
@@ -36,6 +36,7 @@ const TableViewComponent = ({ results }) => {
     const checkStructuredSearchProps = () => {
       const updatedProps = window.mw?.config.get("structuredSearchProps") || {};
       if (Object.keys(updatedProps).length > 0) {
+        console.log("structuredSearchProps received in Table:", structuredSearchProps);
         setStructuredSearchProps(updatedProps);
         clearInterval(interval);
       }
@@ -43,7 +44,7 @@ const TableViewComponent = ({ results }) => {
 
     // Periodically check for props, then clean up
     const interval = setInterval(checkStructuredSearchProps, 500);
-    const timeout = setTimeout(() => clearInterval(interval), 60000);
+    const timeout = setTimeout(() => clearInterval(interval), 20000);
 
     return () => {
       clearInterval(interval);
@@ -96,11 +97,11 @@ const TableViewComponent = ({ results }) => {
   className="border p-2 capitalize cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700"
 >
   {getLabel('title')}
-  <i className={`fal ml-1 ${sortConfig.key === 'title'
+  <i className={`ml-1 ${sortConfig.key === 'title'
     ? sortConfig.direction === 'asc'
-      ? 'fa-caret-up'
-      : 'fa-caret-down'
-    : 'fa-sort'}`} />
+      ? 'fas fa-caret-up'
+      : 'fas fa-caret-down'
+    : 'fas fa-sort'}`} />
 </th>
 
     {dynamicFields.map((field, i) => (
@@ -110,11 +111,11 @@ const TableViewComponent = ({ results }) => {
         className={`border p-2 capitalize cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700 dynamicfields sm:table-cell`}
       >
         {getLabel(field)}
-        <i className={`fal ml-1 ${sortConfig.key === field
+        <i className={`ml-1 ${sortConfig.key === field
           ? sortConfig.direction === 'asc'
-            ? 'fa-caret-up'
-            : 'fa-caret-down'
-          : 'fa-sort'}`} />
+          ? 'fas fa-caret-up'
+          : 'fas fa-caret-down'
+        : 'fas fa-sort'}`} />
       </th>
     ))}
   </tr>

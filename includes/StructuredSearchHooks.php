@@ -780,6 +780,15 @@ class Hooks {
 		if ( $thumb ) {
 			$thumbUrl = $thumb->getUrl();
 		}
+		if('cli' == php_sapi_name()){
+			print_r([
+					$wgScriptPath,
+					$wgStructuredSearchThumbSize,
+					$dimensions,
+					$file, ($thumb?get_class($thumb): 'no thumb'),($fileClass?get_class($fileClass): 'no fileClass')
+			]);
+	}
+
 		return $thumbUrl ? $thumbUrl : $file;
 	}
 	public static function testImages($pageNames){

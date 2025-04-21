@@ -13,24 +13,26 @@ const htmlToReactParser = new Parser();
   
 class Results extends Component {
   constructor() {
-    let params = queryString.parse(window.location.search);
     super();
-    const structuredSearchProps = window.mw?.config.get('structuredSearchProps') || {};
-    console.log("structuredSearchPropsRE", structuredSearchProps);
-    
-    this.state = {
-      searchStarted: params.advanced_search ? true : false,
-      searchReturned: false,
-      hasResultsSumHidden: structuredSearchProps.resultsSumMessage === "hidden" ,
-      resultClass: structuredSearchProps.class || "", 
-      displayTemplate: structuredSearchProps.display || "",
-      useTableView: false,
-      enableDisplayToggle: Object.keys(structuredSearchProps).length > 0,
-     // loading: true, 
-    };
-   
-    console.log("table",this.state.enableDisplayToggle );
-    console.log(' display', structuredSearchProps.display );
+  const params = queryString.parse(window.location.search);
+
+  this.state = {
+    searchStarted: params.advanced_search ? true : false,
+    searchReturned: false,
+    hasResultsSumHidden: false,
+    resultClass: "",
+    displayTemplate: "",
+    useTableView: false,
+    enableDisplayToggle: false,
+  };
+  }
+  componentDidMount() {
+    this.retryInterval = setInterval(() => {
+      console.log("in");
+      
+      this.checkStructuredSearchProps();
+    }, 500);
+  
     translate('structuredsearch-no-results').then(translatedStr => {
       this.noResults = translatedStr;
     });
@@ -66,9 +68,7 @@ class Results extends Component {
     });
     EventEmitter.on('dataRecieved', data => {
       let results = data.results;
-      console.log("data.continue:", data.continue);
-      console.log("results length:", Object.keys(results).length);
-      console.log("total expected:", data.searchinfo?.totalhits);
+    
       if (!data || !data.results) {
         console.error("Error: No results received", data);
     }
@@ -111,31 +111,32 @@ class Results extends Component {
         this.templates = data.templates;
       }
     });
-  }
-  componentDidMount() {
-    this.retryInterval = setInterval(() => {
-      this.checkStructuredSearchProps();
-    }, 500);
-  
-    setTimeout(() => clearInterval(this.retryInterval), 2000); // Stop after 60 seconds
+   
+    setTimeout(() => clearInterval(this.retryInterval), 2000);
     window.addEventListener("scroll", this.handleScroll);
     EventEmitter.on("toggleDisplayView", (useTableView) => {
       this.setState({ useTableView });
     });
+  
+    //  Trigger search immediately if URL has advanced_search
+    const params = queryString.parse(window.location.search);
+    if (params.advanced_search) {
+      console.log("Auto-starting search from componentDidMount");
+      EventEmitter.emit('searchStarted', { reset: true });
+      FormMain.setNext(0); // or whatever starts the first search
+    }
   }
 
   componentWillUnmount() {
   
     window.removeEventListener("scroll", this.handleScroll);
-    clearInterval(this.retryInterval);
+   clearInterval(this.retryInterval);
     EventEmitter.off("toggleDisplayView");
   }
 
   handleScroll = () => {
-    console.log("handscroll1");
-    console.log("offset:", this.state.offset, "loading:", this.state.loading);
+ 
     if (this.state.loading || !this.state.offset) return; // Prevent multiple triggers
-    console.log("handscroll");
     // Select the last child inside .results
     const resultsContainer = document.querySelector(".results");
     if (!resultsContainer) return;
@@ -144,7 +145,6 @@ class Results extends Component {
     const lastResult = resultItems[resultItems.length - 1]; // Get the last loaded result
 
     if (!lastResult) return;
-console.log("lastchild");
 
     if (this.isElementInViewport(lastResult)) {
         // Ensure we only trigger `next()` once per batch
@@ -172,23 +172,20 @@ isElementInViewport = (el) => {
   
   // Ensure `checkStructuredSearchProps` is defined as a class method
   checkStructuredSearchProps = () => {
-  //  const structuredSearchProps = window.mw?.config.get("structuredSearchProps");
+    const structuredSearchProps = window.mw?.config.get('structuredSearchProps') || {};
+  
     if (structuredSearchProps && Object.keys(structuredSearchProps).length > 0) {
-      console.log("structuredSearchProps received in App:", structuredSearchProps);
+      console.log("structuredSearchProps received in Results:", structuredSearchProps);
       this.setState({
-        structuredSearchProps
+        hasResultsSumHidden: structuredSearchProps.resultsSumMessage === "hidden",
+        resultClass: structuredSearchProps.class || "",
+        displayTemplate: structuredSearchProps.display || "",
+        enableDisplayToggle: true,
       });
       clearInterval(this.retryInterval);
     }
-    const structuredSearchProps = window.mw?.config.get('structuredSearchProps') || {};
-    console.log("structuredSearchProps fetched in componentDidMount:", structuredSearchProps);
-
-    this.setState({
-      hasResultsSumHidden: structuredSearchProps.resultsSumMessage === "hidden",
-      resultClass: structuredSearchProps.class || "",
-      displayTemplate: structuredSearchProps.display || ""
-    });
   }
+  
   resultClicked(title, event) {
     // console.log("resultClicked StructuredSearchResultclicked", title, event);
     FormMain.fireGlobalEvent({ title: title }, 'StructuredSearchResultclicked');
