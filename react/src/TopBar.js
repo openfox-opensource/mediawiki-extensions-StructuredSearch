@@ -244,12 +244,18 @@ class TopBar extends Component {
       }
     }
   
+    // New flag: if select=hidden, do not render the topbar-filters div
+    const structuredSearchProps = window.mw?.config.get('structuredSearchProps');
+    const isSelectHidden = structuredSearchProps?.select === "hidden";
+    if (isSelectHidden) {
+      return null;
+    }
+  
     return allInputs.length ? (
       <div className="topbar-filters">
         {allInputs}
       </div>
     ) : <div className="topbar-filters"></div>;
-    
   }
   
   
