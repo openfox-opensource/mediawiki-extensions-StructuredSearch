@@ -2,6 +2,8 @@
 
 namespace MediaWiki\Extension\StructuredSearch;
 
+use MediaWiki\MediaWikiServices;
+
 class Utils {
 	public static function categoryAutocomplete( $term ) {
 		$conf = \MediaWiki\MediaWikiServices::getInstance()->getMainConfig();
@@ -152,7 +154,8 @@ class Utils {
 		}
 		// run this before all hooks to let others modify predefined fields
 		Hooks::onStructuredSearchParams( $newKeyedArray );
-		\Hooks::run( 'StructuredSearchParams', [ &$newKeyedArray ] );
+		$hookContainer = MediaWikiServices::getInstance()->getHookContainer();
+		$hookContainer->run('StructuredSearchParams', [ &$newKeyedArray ] );
 		// sanity
 		foreach ( $newKeyedArray as $key => $param ) {
 			if ( !isset( $param['field'] ) || !$param['field'] ) {

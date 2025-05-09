@@ -19,6 +19,8 @@
 
 namespace MediaWiki\Extension\StructuredSearch;
 
+use MediaWiki\MediaWikiServices;
+
 class ApiSearch extends \ApiBase {
 	use \SearchApi;
 	public function __construct( $query, $moduleName ) {
@@ -112,11 +114,7 @@ class ApiSearch extends \ApiBase {
 		$api->execute();
 
 		$results = $api->getResult()->getResultData();
-		if(isset($_GET['sdasdaasddasdsaasdsda'])){
-            die("<pre>". print_r([
-                $results
-            ],1));
-        } 
+		
 		$resultsFiltered = array_filter( $results['query']['search'], function ( $key ){
 			//remove keys starting with _
 			return strpos( $key, '_' ) !== 0;
@@ -219,7 +217,8 @@ class ApiSearch extends \ApiBase {
 			return $res;
 		},$results['query']['search']);
 		$resultsData = self::getResultsAdditionalFieldsFromTitles( $titles, $results['query']['search'] );
-		\Hooks::run( 'StructuredSearchResultsView', [ &$resultsData ] );
+		$hookContainer = MediaWikiServices::getInstance()->getHookContainer();
+		$hookContainer->run( 'StructuredSearchResultsView', [ &$resultsData ] );
 		//$results['query']['searchinfo']['totalhits'] = count( $resultsData );
 		return [
 			'continue' => isset( $results['continue'] ) ? $results['continue'] : '',
@@ -319,8 +318,9 @@ class ApiSearch extends \ApiBase {
 				self::addPageImage( $resultsTitlesForCheck );
 			}
 		}
+		$hookContainer = MediaWikiServices::getInstance()->getHookContainer();
 
-		\Hooks::run( 'StructuredSearchResults', [ &$resultsTitlesForCheck ] );
+		$hookContainer->run( 'StructuredSearchResults', [ &$resultsTitlesForCheck ] );
 		return $resultsTitlesForCheck;
 	}
 	public static function addPageImage( &$resultsTitlesForCheck ) {
