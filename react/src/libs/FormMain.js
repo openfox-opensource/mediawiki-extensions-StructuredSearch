@@ -146,7 +146,7 @@ class FormMain{
 	    FormMain.fireGlobalEvent( params );
 
 	    ajaxCall.get(urlSuffix).then(data=>{
-	      console.log(data, "data");
+	      //console.log(data, "data");
 	      let eventData = data.error ? { results: {error:true}} : data.StructuredSearchSearch;
 	      eventData.reset = reset;
 	      EventEmitter.emit('dataRecieved', eventData);
