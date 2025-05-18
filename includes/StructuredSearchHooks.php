@@ -146,7 +146,7 @@ class Hooks {
 				<div class="top-and-results-wrp">
 					<div class="checking-sticky"></div>
 					<div id="top-bar" class="sticky-top"></div>
-					<div id="results"></div>
+					<div id="results" class="min-h-96"></div>
 				</div>
 			</div>
 				</div>

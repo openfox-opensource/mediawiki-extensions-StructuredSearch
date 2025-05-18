@@ -305,7 +305,7 @@ getTemplateByResult(result) {
       
     if (this.state.searchStarted) {
       if (this.state.onTop) {
-        searchTop = <div className="loading loading-top" dangerouslySetInnerHTML={{ __html: this.onSearchText }}></div>
+        searchTop = <div className="loading loading-top w-full" dangerouslySetInnerHTML={{ __html: this.onSearchText }}></div>
       }
       else {
         searchBottom = <div className="loading loading-bottom" dangerouslySetInnerHTML={{ __html: this.onSearchText }}></div>
