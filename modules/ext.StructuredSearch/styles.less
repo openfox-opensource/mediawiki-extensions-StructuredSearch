@@ -937,9 +937,6 @@ span.label-wrp {
       }
     }
   }
-  form:focus-within .field-wrp-name-search button, .field-wrp-name-search button:hover {
-
-  }
   #bodyContent #mw-content-text .parser-search .top-and-results-wrp{
     padding-top: 20px;
   } 
@@ -1011,9 +1008,8 @@ td[class*="mw-search-ns"], #mw-searchoptions h4,
     button {
     color: var(--search-trans-blue);
       &:hover {
-        color: #fff;
 	i {
-	color: var(--search-bar-bg);
+	   font-weight: bold;
 	}
       }
     }
@@ -1026,10 +1022,6 @@ td[class*="mw-search-ns"], #mw-searchoptions h4,
   transition: all ease .1s;
   position: relative;
   box-shadow: var(--search-bar-shadow) 0px 5px 9px -2px;
-  }
-  .TopBar form:focus-within .field-wrp-name-search button, .TopBar.search-suggestions-open .field-wrp-name-search button, .TopBar .field-wrp-name-search button:hover {
-      background: var(--search-button);
-      border-color: var(--search-button);
   }
   span.label-wrp, .TopBar > header > button {
     color:  var(--search-button);
