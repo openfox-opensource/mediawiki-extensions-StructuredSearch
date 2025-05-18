@@ -11,7 +11,7 @@ import Autocomplete from 'react-autocomplete';
 //import Moment from 'moment';
 import ReactTooltip from 'react-tooltip'
 import {format, parse} from 'date-fns'
-import "react-datepicker/dist/react-datepicker.css";
+//import "react-datepicker/dist/react-datepicker.css";
 const baseDateFormat = 'dd/MM/yyyy';
 //Moment.locale('he-IL');
 
