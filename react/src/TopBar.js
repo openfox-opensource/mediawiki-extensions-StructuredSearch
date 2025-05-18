@@ -244,12 +244,18 @@ class TopBar extends Component {
       }
     }
   
+    // New flag: if select=hidden, do not render the topbar-filters div
+    const structuredSearchProps = window.mw?.config.get('structuredSearchProps');
+    const isSelectHidden = structuredSearchProps?.select === "hidden";
+    if (isSelectHidden) {
+      return null;
+    }
+  
     return allInputs.length ? (
       <div className="topbar-filters">
         {allInputs}
       </div>
     ) : <div className="topbar-filters"></div>;
-    
   }
   
   
@@ -310,12 +316,11 @@ class TopBar extends Component {
           <button type="button" onClick={this.clearClicked.bind( this )}  dangerouslySetInnerHTML={{__html:this.state['structuredsearch-clear']}} ></button>
         )}
         {this.state.enableDisplayToggle && (
-  <div className="display-buttons" style={{ marginTop: '10px', display: 'inline-block' }}>
+  <div className="display-buttons inline-flex flex-row-reverse gap-2">
     <button
       type="button"
       id="grid-button"
-      className="flex-grow"
-      style={{ marginRight: '5px' }}
+      className="flex align-items-center justify-center"
       onClick={() => EventEmitter.emit('toggleDisplayView', false)}
     >
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -325,8 +330,7 @@ class TopBar extends Component {
     <button
       type="button"
       id="card-button"
-      style={{ marginRight: '5px' }}
-      className="isDisplay flex-grow"
+      className="isDisplay flex align-items-center justify-center"
       onClick={() => EventEmitter.emit('toggleDisplayView', true)}
     >
         <svg width="17" height="16" viewBox="0 0 17 16" fill="none" xmlns="http://www.w3.org/2000/svg">
