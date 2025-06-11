@@ -496,9 +496,13 @@ class Hooks {
 			return !in_array( $category['page_id'], $hiddenCategories );
 		} );
 		//return array of cat_id:cat_title
-		return array_map( function( $category ){
+		$catsAsStrings = array_map( function( $category ){
 			return $category['cat_id'] . ':' . $category['title'];
 		}, $visibleCategories );
+		if(count( $catsAsStrings )){
+			$catsAsStrings = array_values( array_unique( $catsAsStrings ) );
+		}
+		return $catsAsStrings;
 	}
 	public static function addPageImageInSearch( $page,&$fields ) {
 		if ( class_exists( 'PageImages' ) || class_exists( 'PageImages\PageImages' ) ) {
