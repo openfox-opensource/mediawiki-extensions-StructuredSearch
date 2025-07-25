@@ -337,10 +337,11 @@ class ApiSearch extends \ApiBase {
 			]
 		);
 		$allImages = [];
-		while ( $row = $res->fetchObject( ) ) {
-
-			$resultsTitlesForCheck[$row->concatKey]['page_image_ext_source'] = $resultsTitlesForCheck[$row->concatKey]['page_image_ext']; 
-			$resultsTitlesForCheck[$row->concatKey]['page_image_ext'] = Hooks::fixImageToThumbs( 'file:' . $row->il_to );
+		while ( $row = $res->fetchObject( ) ) {	
+			if(isset( $resultsTitlesForCheck[$row->concatKey]['page_image_ext'] )){
+				$resultsTitlesForCheck[$row->concatKey]['page_image_ext_source'] = $resultsTitlesForCheck[$row->concatKey]['page_image_ext']; 
+				$resultsTitlesForCheck[$row->concatKey]['page_image_ext'] = Hooks::fixImageToThumbs( 'file:' . $row->il_to );
+			}
 		}
 	}
 	
