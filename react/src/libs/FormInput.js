@@ -7,9 +7,9 @@ import fieldsDetector from './fieldsDetector'
 import EventEmitter from './EventEmitter'
 import Select from 'react-select';
 import DatePicker from 'react-datepicker';
-import Autocomplete from 'react-autocomplete';
+// Removed react-autocomplete import - using react-select instead
 //import Moment from 'moment';
-import ReactTooltip from 'react-tooltip'
+import { Tooltip } from 'react-tooltip'
 import {format, parse} from 'date-fns'
 //import "react-datepicker/dist/react-datepicker.css";
 const baseDateFormat = 'dd/MM/yyyy';
@@ -171,38 +171,7 @@ class FormInput extends Component {
 		options = options.filter( item => !alreadyChosenOptions.includes( item.value ));
 		return options;
 	}
-	autocompleteChanged(  event , typed){
-		this.setState({
-			typed:typed
-		});
-		if(this.state.options.length){
-			let filteredOptions = this.state.options.filter( item => !typed || item.label.indexOf(typed) > -1);
-			this.setState({
-				filteredOptions : this.filterAlreadyChosenOptions( filteredOptions )
-			});
-		}
-		else if( this.isSearchAutocomplete() ){
-			this.searchAutocomplete(typed);
-		}
-		else{
-			ajaxCall.get(`action=structuredsearchautocomplete&field=${this.state.inputData.field}&search=${typed}`).then(data => {
-				if(data.values){
-					let valuesAsArray = [],
-						vals = data.values;
-					for(let valKey of Object.keys(vals) ){
-						valuesAsArray.push({
-							label:vals[valKey],
-							value:valKey
-						});
-					}
-					this.setState({
-						filteredOptions : this.filterAlreadyChosenOptions( valuesAsArray )
-					});
-				}
-			});
-		}
-
-	}
+	// Old autocompleteChanged method removed - replaced with new implementation below
 	searchAutocomplete( typed ){
 		let values = FormMain.getAllValuesProcessed(),
 			namespaces = values['namespace'];
@@ -258,6 +227,7 @@ class FormInput extends Component {
 		}
 		else{
 			FormMain.addValue( fieldName, autocompleteItem );
+			console.log("FormMain.addValue",fieldName,  autocompleteItem);
 			this.setState({
 				typed:''
 			});
@@ -389,9 +359,9 @@ class FormInput extends Component {
 		return <div className={wrpClass}>
 					<div className="main-checkbox-area">{checkboxesMain}</div>
 					{moreButton}
-					<ReactTooltip id='global' aria-haspopup='true' role='example'>
+					<Tooltip id='global' aria-haspopup='true' role='example'>
 						 {this.state['structuredsearch-show-more']}
-					</ReactTooltip>
+					</Tooltip>
 					<div className="advanced">{checkboxesAdvanced}</div>
 				</div>;
 	}
@@ -533,30 +503,62 @@ class FormInput extends Component {
 	autocompleteBuild (inputData){
 			let submitButton = this.isSearchAutocomplete() ? <button type='button' onClick={this.submitClicked.bind(this)} dangerouslySetInnerHTML={{__html:this.state['structuredsearch-search-label']}}></button> : '',///
 				placeholder = this.getPlaceholder( inputData );
-			return   <div className="autocomplete-wrp"><Autocomplete
-						  aria-label={placeholder||inputData.field}
-						  getItemValue={(item) => item.label}
-						  menuStyle={ {position:'absolute',top:'45px',right:0,left:'auto',zIndex:5,'background': '#FFF'}}
-						  items={this.state.filteredOptions}
-						  renderItem={ this.autocompleteRender.bind(this) }
-						  value={this.state.typed}
-						  autoHighlight={false}
-						  inputProps={ {placeholder:placeholder,type:'search', onKeyDown : this.autocompleteInputKeyDown.bind(this)}}
-						  onMenuVisibilityChange={ this.onAutocompleteMenuVisibilityChange.bind(this)}
-						  onChange={ this.autocompleteChanged.bind(this)}
-						  onSelect={this.autocompleteSelected.bind(this, inputData.field)}
-						/>
-					{submitButton}
-					</div>;
-					///
+			
+			// Convert filteredOptions to react-select format
+			const selectOptions = this.state.filteredOptions.map(item => ({
+				value: item.value || item.label,
+				label: item.label,
+				ns: item.ns,
+				href: item.href
+			}));
+			
+			// Find current value for react-select
+			let currentValue = this.state.typed ? selectOptions.find(option => option.label === this.state.typed) : null;
+			console.log("currentValue",currentValue, this.state.typed);
+			return   <div className="autocomplete-wrp">
+				<Select
+					aria-label={placeholder||inputData.field}
+					className="autocomplete-select"
+					classNamePrefix="autocomplete"
+					options={selectOptions}
+					value={currentValue}
+					inputValue={this.state.typed}
+					onChange={(selectedOption) => this.autocompleteSelected(inputData.field, selectedOption?.label, selectedOption)}
+					onInputChange={(inputValue) => this.autocompleteChanged(inputValue)}
+					onMenuOpen={() => this.onAutocompleteMenuVisibilityChange(true)}
+					onMenuClose={() => this.onAutocompleteMenuVisibilityChange(false)}
+					placeholder={placeholder}
+					isSearchable={true}
+					isClearable={true}
+					noOptionsMessage={() => "No options found"}
+					menuIsOpen={this.state.filteredOptions.length > 0}
+					styles={{
+						menu: (provided) => ({
+							...provided,
+							position: 'absolute',
+							top: '45px',
+							right: 0,
+							left: 'auto',
+							zIndex: 5,
+							background: '#FFF'
+						})
+					}}
+				/>
+				{submitButton}
+			</div>;
 	}
-	autocompleteRender (item, isHighlighted){
-
-		///let nsWrapper = this.isSearchAutocomplete() && item.ns ? <span className="ns-wrapper">{item.ns}</span> : '',*/
-		let	innerHtml = item.label;//this.isSearchAutocomplete() ? <a href={item.href}>{nsWrapper}<span className="label-wrapper">{item.label}</span></a> : item.label;
-		return <div className={ 'autocomplete-item ' + (isHighlighted ? 'highlighted' : 'regular') } key={item.label}>
-				     {innerHtml}
-				</div>;
+	autocompleteChanged(inputValue) {
+		console.error("autocompleteChanged",inputValue);
+		// Update the typed state and trigger search
+		if(inputValue || this.state.typed.length < 2){
+			this.setState({ typed: inputValue });
+		}
+		
+		if (inputValue && inputValue.length > 2) {
+			this.searchAutocomplete(inputValue);
+		} else {
+			this.setState({ filteredOptions: [] });
+		}
 	}
 	getLabel (inputData){
 		return inputData.label ? <label htmlFor={inputData.field} dangerouslySetInnerHTML={{__html: inputData.label }} ></label> : '';
