@@ -577,6 +577,9 @@ class Hooks {
 					$pageContent = $revision->getContent( SlotRecord::MAIN )->getText();
 					$fileContent = "";
 					try {
+						$revision = $imagePage->getPage()->getRevisionRecord();
+						$pageContent = $revision->getContent( SlotRecord::MAIN )->getText();
+						$fileContent = "";
 						$file = $imagePage->getFile();
 						$mimeType = $file->getMimeType();
 						if( $mimeType ){
