@@ -268,16 +268,16 @@ getTemplateByResult(result) {
     console.log(result);
 
     //if (window.mw && window.mw.config.get('structuredSearchProps')) {
-    if (!template) {
-        console.error("No template found for result:", result);
-        return null; // Skip rendering if no template is found
-    }
+      if (!template) {
+          console.error("No template found for result:", result);
+          return null; // Skip rendering if no template is found
+      }
 
-    let renderedHtml = Mustache.render(template, result);
+      let renderedHtml = Mustache.render(template, result);
 
-    let reactElement = htmlToReactParser.parse(renderedHtml);;
-    console.log("reactElement", reactElement);
-    return reactElement;
+      let reactElement = htmlToReactParser.parse(renderedHtml);;
+      console.log("reactElement", reactElement);
+      return reactElement;
     //}
     //return <ReactMustache template={template} data={result} onClick={this.resultClicked.bind(result.full_title, this)} />;
 }

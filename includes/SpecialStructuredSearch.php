@@ -68,12 +68,12 @@ class SpecialStructuredSearch extends \SpecialPage {
 		$html = file_get_contents( __DIR__ . '/../templates/search-page.html' );
 		$loader = $this->getConfig()->get( 'StructuredSearchInitialAppHtml' );
 		$html = preg_replace( "/LOADER/", $loader, $html );
-		if(isset($_GET['dsfdsfdfsdf'])){
+		/*if(isset($_GET['dsfdsfdfsdf'])){
 			die(print_r([
 				$loader,
 				$html,
 			]));
-		}
+		}*/
 		$out->addHTML( $html  . $scripts );
 	}
 	public static function addSearchParams( $out ) {
