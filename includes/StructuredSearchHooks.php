@@ -532,6 +532,18 @@ class Hooks {
 				//echo $title->getText() . __LINE__.  "  _________  $image --------\n";
 				break;
 			}
+			//for some reason, il_to can have more than one value, separate by comma, but comma also could be part of the image name,
+			//so we should split by comma and check if each part is a valid image name
+			if( $image ){
+				$images = explode( ',', $image );
+				foreach( $images as $image ){
+					$checkImage = \Title::newFromText( $image, NS_FILE );
+					if( $checkImage->exists() ){
+						$image = $checkImage->getDBkey();
+						break;
+					}
+				}
+			}
 			if( !$image && class_exists( 'PageImages\PageImages' ) ){
 				$dbr = wfGetDB( DB_REPLICA );
 				$image = $dbr->selectField( 'page_props',
@@ -786,7 +798,10 @@ class Hooks {
 				$file = 'file:' . $file;
 			}
 		}
-		
+		//if $file is url, return it
+		if(filter_var($file, FILTER_VALIDATE_URL)){
+			return $file;
+		}
 		$conf = MediaWikiServices::getInstance()->getMainConfig();
 		$wgScriptPath = $conf->get( 'ScriptPath' );
 		$wgStructuredSearchThumbSize = $conf->get( 'StructuredSearchThumbSize' );
