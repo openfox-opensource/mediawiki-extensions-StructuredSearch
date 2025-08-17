@@ -220,9 +220,10 @@ class TopBar extends Component {
         const fieldName = inputData.field;
   
         // Skip 'category' field entirely
-        if (fieldName === 'category' || fieldName === 'in_kit') continue;
+        if (fieldName === 'category' || fieldName === 'in_kit' || fieldName === 'search') continue;
   
-        if (!['topbar', 'hide'].includes(inputData.widget.position)) {
+        if (!['sidebar', 'hide',''].includes(inputData.widget.position)) {
+          console.log("inputData included in topbar",inputData.widget.position, inputData);
           let inputCopy = { ...inputData };
   
           // Change checkboxes to dropdowns
@@ -272,6 +273,7 @@ class TopBar extends Component {
   
     let allInputs = [],
         //labelsKeyed = [],
+        allInputsRaw = [],
         labels = [],
         toggleSidebar = <button type="button" className="hide-on-desktop" onClick={this.toggleSidebar.bind(this)}>{this.state['structuredsearch-toggle-sidebar']}<i className={'fas fa-chevron-' + this.state.chevronDir}></i></button>;
     if('undefined' !== typeof this.state.inputs){
@@ -280,10 +282,12 @@ class TopBar extends Component {
       //for(let inputDataKey of Object.keys(this.state.inputs)){
         //console.log(this.state.inputs[inputDataKey],inputDataKey,'this.state.inputs[inputDataKey],inputDataKey');
         if('topbar' === inputData.widget.position){
+          allInputsRaw.push(inputData )
           allInputs.push( <FormInput key={inputData.field} inputData={inputData} /> )
         }
       }
     }
+    console.log("allInputsRaw", allInputsRaw);
     if(this.state.labels){
 
       for(let labelKey of Object.keys(this.state.labels)){
