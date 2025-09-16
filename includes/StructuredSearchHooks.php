@@ -510,7 +510,7 @@ class Hooks {
 		}
 		return $catsAsStrings;
 	}
-	public static function addPageImageInSearch( $page,&$fields ) {
+	public static function addPageImageInSearch( $page ) {
 		if ( class_exists( 'PageImages' ) || class_exists( 'PageImages\PageImages' ) ) {
 		
 			$title = $page->getTitle();
@@ -559,9 +559,10 @@ class Hooks {
 				//echo $title->getText() .   __LINE__.  "  _________  $image --------\n";
 			}
 			$imageAsUrl = $image ? self::fixImageToThumbs( $image ): null;
-			if( $image && (!$imageAsUrl || $imageAsUrl == $image)){
-				$imageAsUrl = self::fixImageToThumbs( 'file:' . $image );
-			}
+			//$imageAsUrlIsUrl = filter_var($imageAsUrl, FILTER_VALIDATE_URL);
+			// if( $image && !$imageAsUrlIsUrl && (!$imageAsUrl || $imageAsUrl == $image)){
+			// 	$imageAsUrl = self::fixImageToThumbs( 'file:' . $image );
+			// }
 			//echo $title->getText() .   __LINE__.  "  _________  $imageAsUrl --------\n";
 			return $imageAsUrl ? $imageAsUrl : null;
 		}
@@ -798,8 +799,11 @@ class Hooks {
 				$file = 'file:' . $file;
 			}
 		}
+		if(is_array($file) ){
+			$file = $file[0];
+		}
 		//if $file is url, return it
-		if(filter_var($file, FILTER_VALIDATE_URL)){
+		if(strpos($file, 'http') === 0){
 			return $file;
 		}
 		$conf = MediaWikiServices::getInstance()->getMainConfig();
@@ -811,9 +815,7 @@ class Hooks {
 				
 		// 	]);
 		// }
-		if(is_array($file) ){
-			$file = $file[0];
-		}
+		
 		$fileClass = MediaWikiServices::getInstance()->getRepoGroup()->findFile( \Title::newFromText( $file ) );
 		$thumb = $fileClass ? $fileClass->transform( [ 'width' => $dimensions[0], 'height' => $dimensions[1] ] ) : null;
 		$thumbUrl = null;

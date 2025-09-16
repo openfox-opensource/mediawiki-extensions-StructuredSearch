@@ -83,7 +83,7 @@ background: var(--search-bar-bg);}
     transform: rotate(360deg);
   }
 }
-[type="number"]{
+.all-app-wrp  [type="number"]{
   min-width: 60px;
 }
 /* Add shimmering effect for results div */
