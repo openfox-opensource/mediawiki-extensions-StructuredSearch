@@ -422,7 +422,7 @@ class Hooks {
 		SearchEngine $searchEngine
 	) {
 		$conf = MediaWikiServices::getInstance()->getMainConfig();
-
+		//global $myheritageIsDev, $wgArticlePath;
 		$params = Utils::getSearchParams();
 		$vals = ApiSearch::getResultsAdditionalFieldsFromTitles( [ $page->getTitle()->getPrefixedText() ], [ [] ] );
 		$vals = array_pop( $vals );
@@ -444,6 +444,7 @@ class Hooks {
 		$fields['title_key'] = ($namespaceId ? $namespaceId : '0' ) . ':' . $fields['title_dash'];
 		$fields['page_image_ext'] = self::addPageImageInSearch( $page,$fields );
 		$fields['visible_categories'] = self::getVisibleCategories( $page );
+		//print_r( [$myheritageIsDev, $wgArticlePath,$fields['page_link']] );
 		//wfDebugLog( 'mh-log', print_r(array_keys($fields),1). " ====>>>>>======" . $fields['display_title'] . " ==========");
 		
 		
@@ -773,6 +774,7 @@ class Hooks {
 	}
 
 	public static function fixImageToThumbs( $file ) {
+		
 		$conf = MediaWikiServices::getInstance()->getMainConfig();
 		$wgScriptPath = $conf->get( 'ScriptPath' );
 		$wgStructuredSearchThumbSize = $conf->get( 'StructuredSearchThumbSize' );
@@ -785,6 +787,13 @@ class Hooks {
 		// 		$file,
 		// 	]);
 		// }
+		if(!is_string($file) && "cli" == php_sapi_name()){
+			print_r([
+				"file is not string",
+				gettype($file),
+				
+			]);
+		}
 		$fileClass = MediaWikiServices::getInstance()->getRepoGroup()->findFile( \Title::newFromText( $file ) );
 		$thumb = $fileClass ? $fileClass->transform( [ 'width' => $dimensions[0], 'height' => $dimensions[1] ] ) : null;
 		$thumbUrl = null;
