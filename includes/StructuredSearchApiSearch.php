@@ -414,6 +414,7 @@ class ApiSearch extends \ApiBase {
 			"_pageNamespace",
 		];
 		while ( $row = $res->fetchObject( ) ) {
+			try {
 			$dbrCargo = \CargoUtils::getDB();
 			$res2 = $dbrCargo->query( "DESCRIBE " . $dbrCargo->tablePrefix() . $row->main_table );
 			$r = [];
@@ -423,6 +424,9 @@ class ApiSearch extends \ApiBase {
 				}
 			}
 			$tables[$row->main_table] = $r;
+			} catch (\Throwable $th) {
+				//throw $th;
+			}
 		}
 
 		return $tables;

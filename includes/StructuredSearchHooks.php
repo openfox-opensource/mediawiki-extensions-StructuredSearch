@@ -375,6 +375,8 @@ class Hooks {
 			/**
 			 * @var \CirrusSearch $engine
 			 */
+			//if cli
+			
 			$conf = MediaWikiServices::getInstance()->getMainConfig();
 			$params = Utils::getSearchParams();
 			$builder = new CirrusSearchIndexFieldFactory( $engine->getConfig() );
@@ -401,7 +403,7 @@ class Hooks {
 				//echo $fieldKey . "\n";
 				$fields[$fieldKey] = $builder->newKeywordField( $fieldKey );
 			}
-
+			
 		}
 	}
 
@@ -423,8 +425,11 @@ class Hooks {
 	) {
 		$conf = MediaWikiServices::getInstance()->getMainConfig();
 		//global $myheritageIsDev, $wgArticlePath;
+		
 		$params = Utils::getSearchParams();
+		
 		$vals = ApiSearch::getResultsAdditionalFieldsFromTitles( [ $page->getTitle()->getPrefixedText() ], [ [] ] );
+		
 		$vals = array_pop( $vals );
 		foreach ( $params as $param ) {
 			if ( Utils::isCargoField( $param['field'] ) ) {
@@ -434,6 +439,7 @@ class Hooks {
 			}
 		}
 		$titleClass = $page->getTitle();
+		
 		$namespaceId = $titleClass->getNamespace();
 		$fields['full_title'] = $titleClass->getFullText();
 		$fields['short_title'] = $titleClass->getText();
@@ -445,6 +451,7 @@ class Hooks {
 		$fields['page_image_ext'] = self::addPageImageInSearch( $page,$fields );
 		$fields['visible_categories'] = self::getVisibleCategories( $page );
 		//print_r( [$myheritageIsDev, $wgArticlePath,$fields['page_link']] );
+		
 		//wfDebugLog( 'mh-log', print_r(array_keys($fields),1). " ====>>>>>======" . $fields['display_title'] . " ==========");
 		
 		
@@ -505,7 +512,7 @@ class Hooks {
 		}
 		return $catsAsStrings;
 	}
-	public static function addPageImageInSearch( $page,&$fields ) {
+	public static function addPageImageInSearch( $page ) {
 		if ( class_exists( 'PageImages' ) || class_exists( 'PageImages\PageImages' ) ) {
 		
 			$title = $page->getTitle();
@@ -527,6 +534,18 @@ class Hooks {
 				//echo $title->getText() . __LINE__.  "  _________  $image --------\n";
 				break;
 			}
+			//for some reason, il_to can have more than one value, separate by comma, but comma also could be part of the image name,
+			//so we should split by comma and check if each part is a valid image name
+			if( $image ){
+				$images = explode( ',', $image );
+				foreach( $images as $image ){
+					$checkImage = \Title::newFromText( $image, NS_FILE );
+					if( $checkImage->exists() ){
+						$image = $checkImage->getDBkey();
+						break;
+					}
+				}
+			}
 			if( !$image && class_exists( 'PageImages\PageImages' ) ){
 				$dbr = wfGetDB( DB_REPLICA );
 				$image = $dbr->selectField( 'page_props',
@@ -542,9 +561,10 @@ class Hooks {
 				//echo $title->getText() .   __LINE__.  "  _________  $image --------\n";
 			}
 			$imageAsUrl = $image ? self::fixImageToThumbs( $image ): null;
-			if( $image && (!$imageAsUrl || $imageAsUrl == $image)){
-				$imageAsUrl = self::fixImageToThumbs( 'file:' . $image );
-			}
+			//$imageAsUrlIsUrl = filter_var($imageAsUrl, FILTER_VALIDATE_URL);
+			// if( $image && !$imageAsUrlIsUrl && (!$imageAsUrl || $imageAsUrl == $image)){
+			// 	$imageAsUrl = self::fixImageToThumbs( 'file:' . $image );
+			// }
 			//echo $title->getText() .   __LINE__.  "  _________  $imageAsUrl --------\n";
 			return $imageAsUrl ? $imageAsUrl : null;
 		}
@@ -775,16 +795,27 @@ class Hooks {
 
 	public static function fixImageToThumbs( $file ) {
 		
+		//sanity - if no "file:" prefix, add it
+		if( is_string($file) ){
+			$titleToCheck = \Title::newFromText( $file );
+			if(!$titleToCheck || $titleToCheck->getNamespace() != NS_FILE){
+				$file = 'file:' . $file;
+			}
+		}
+		if(is_array($file) ){
+			$file = $file[0];
+		}
+		//if $file is url, return it
+		if(strpos($file, 'http') === 0){
+			return $file;
+		}
 		$conf = MediaWikiServices::getInstance()->getMainConfig();
 		$wgScriptPath = $conf->get( 'ScriptPath' );
 		$wgStructuredSearchThumbSize = $conf->get( 'StructuredSearchThumbSize' );
 		$dimensions = explode( 'X', $wgStructuredSearchThumbSize );
 		// if('cli' == php_sapi_name()){
 		// 	print_r([
-		// 		$wgScriptPath,
-		// 		$wgStructuredSearchThumbSize,
-		// 		$dimensions,
-		// 		$file,
+				
 		// 	]);
 		// }
 		if(!is_string($file) && "cli" == php_sapi_name()){
@@ -794,20 +825,28 @@ class Hooks {
 				
 			]);
 		}
+		
 		$fileClass = MediaWikiServices::getInstance()->getRepoGroup()->findFile( \Title::newFromText( $file ) );
 		$thumb = $fileClass ? $fileClass->transform( [ 'width' => $dimensions[0], 'height' => $dimensions[1] ] ) : null;
 		$thumbUrl = null;
 		if ( $thumb ) {
 			$thumbUrl = $thumb->getUrl();
 		}
-	// 	if('cli' == php_sapi_name()){
-	// 		print_r([
-	// 				$wgScriptPath,
-	// 				$wgStructuredSearchThumbSize,
-	// 				$dimensions,
-	// 				$file, ($thumb?get_class($thumb): 'no thumb'),($fileClass?get_class($fileClass): 'no fileClass')
-	// 		]);
-	// }
+		if('cli' == php_sapi_name() && !$thumbUrl){
+			$exception = new \Exception();
+			$trace = $exception->getTraceAsString();
+			print_r([
+					$wgScriptPath,
+					$file,
+					$thumbUrl,
+					$wgStructuredSearchThumbSize,
+					$dimensions,
+					$file, 
+					($thumb?get_class($thumb): 'no thumb'),
+					($fileClass?get_class($fileClass): 'no fileClass'),
+					$trace
+			]);
+	}
 
 		return $thumbUrl ? $thumbUrl : $file;
 	}

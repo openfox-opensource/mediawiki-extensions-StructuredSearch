@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import queryString from 'query-string';
 import EventEmitter from './libs/EventEmitter';
 import translate from './libs/translations';
-import ReactMustache from 'react-mustache'
 import settingsGetter from './libs/settingsGetter';
 import FormMain from './libs/FormMain';
 import Mustache from 'mustache';
@@ -268,7 +267,7 @@ getTemplateByResult(result) {
     this.linkToTheSearchTerms(result);
     console.log(result);
 
-    if (window.mw && window.mw.config.get('structuredSearchProps')) {
+    //if (window.mw && window.mw.config.get('structuredSearchProps')) {
       if (!template) {
           console.error("No template found for result:", result);
           return null; // Skip rendering if no template is found
@@ -279,8 +278,8 @@ getTemplateByResult(result) {
       let reactElement = htmlToReactParser.parse(renderedHtml);;
       console.log("reactElement", reactElement);
       return reactElement;
-    }
-    return <ReactMustache template={template} data={result} onClick={this.resultClicked.bind(result.full_title, this)} />;
+    //}
+    //return <ReactMustache template={template} data={result} onClick={this.resultClicked.bind(result.full_title, this)} />;
 }
 
 

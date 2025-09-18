@@ -91,55 +91,8 @@ class App extends Component {
       const structuredSearchProps = window.mw.config.get("structuredSearchProps");
       console.log("structuredSearchPropsApp:", structuredSearchProps);
 
-      // Helper function to apply filters
-      const applyFilter = (fieldName, filterValue) => {
-        const value = { value: filterValue, label: filterValue };
-        if (FormMain && typeof FormMain.addValue === "function") {
-          console.log(`Applying filter - Field: ${fieldName}, Value:`, value);
-          FormMain.addValue(fieldName, value);
-        } else {
-          console.warn(`FormMain or FormMain.addValue is not defined for field: ${fieldName}`);
-        }
-      };
-      if (structuredSearchProps.namespaces) {
-        console.log("namespaces filter found:", structuredSearchProps.namespaces);
-        applyFilter("namespaces", structuredSearchProps.namespaces);
-      }
-      // Apply category filter
-    
-      if (structuredSearchProps.category) {
-        console.log("Category filter found:", structuredSearchProps.category);
-        applyFilter("category", structuredSearchProps.category);
-      }
-      // Apply pageType filter
-      if (structuredSearchProps.pageType) {
-        console.log("Page type filter found:", structuredSearchProps.pageType);
-        applyFilter("in_kit", structuredSearchProps.pageType);
-      }
-    
-    
-      if (structuredSearchProps.title) {
-        console.log("title found:", structuredSearchProps.title);
-        const titleElement = document.getElementById("parser-search-title");
-        if (titleElement) {
-          titleElement.textContent = structuredSearchProps.title;
-        }
-      }
-     // Apply limit
-      if (structuredSearchProps.limit) {
-        let limit = structuredSearchProps.limit;
-        console.log("Setting limit:", limit);}
-
-      //   if (typeof limit === "string") {
-      //     limit = parseInt(limit, 10); // Ensure limit is a number
-      //   }
-
-      //   if (FormMain && typeof FormMain.addValue === "function") {
-      //     FormMain.addValue("limit", limit);
-      //   } else {
-      //     console.warn(" FormMain or FormMain.addValue is not defined to set the limit.");
-      //   }
-      // }
+      // Apply all structured search properties
+      this.applyStructuredSearchProps(structuredSearchProps);
     } else {
       console.warn("No structuredSearchProps found in mw.config.");
     }
@@ -186,60 +139,70 @@ class App extends Component {
         structuredSearchProps
       });
 
-      // Helper function to apply filters
-      const applyFilter = (fieldName, filterValue) => {
-        const value = { value: filterValue, label: filterValue };
-        if (FormMain && typeof FormMain.addValue === "function") {
-          console.log(`Applying filter - Field: ${fieldName}, Value:`, value);
-          FormMain.addValue(fieldName, value);
-        } else {
-          console.warn(`FormMain or FormMain.addValue is not defined for field: ${fieldName}`);
-        }
-      };
-      if (structuredSearchProps.namespaces) {
-        console.log("namespaces filter found:", structuredSearchProps.namespaces);
-        applyFilter("namespaces", structuredSearchProps.namespaces);
-      }
-      // Apply category filter
-    
-      if (structuredSearchProps.category) {
-        console.log("Category filter found:", structuredSearchProps.category);
-        applyFilter("category", structuredSearchProps.category);
-      }
-      // Apply pageType filter
-      if (structuredSearchProps.pageType) {
-        console.log("Page type filter found:", structuredSearchProps.pageType);
-        applyFilter("in_kit", structuredSearchProps.pageType);
-      }
-    
-    
-      if (structuredSearchProps.title) {
-        console.log("title found:", structuredSearchProps.title);
-        const titleElement = document.getElementById("parser-search-title");
-        if (titleElement) {
-          titleElement.textContent = structuredSearchProps.title;
-        }
-      }
-     // Apply limit
-      if (structuredSearchProps.limit) {
-        let limit = structuredSearchProps.limit;
-        console.log("Setting limit:", limit);}
-
-      //   if (typeof limit === "string") {
-      //     limit = parseInt(limit, 10); // Ensure limit is a number
-      //   }
-
-      //   if (FormMain && typeof FormMain.addValue === "function") {
-      //     FormMain.addValue("limit", limit);
-      //   } else {
-      //     console.warn(" FormMain or FormMain.addValue is not defined to set the limit.");
-      //   }
-      // }
+      // Apply all structured search properties
+      this.applyStructuredSearchProps(structuredSearchProps);
     } else {
       console.warn("No structuredSearchProps found in mw.config.");
     }
     if (this.retryInterval) {
       clearInterval(this.retryInterval);
+    }
+  }
+
+  // Consolidated method to apply structured search properties
+  applyStructuredSearchProps = (structuredSearchProps) => {
+    // Helper function to apply filters
+    const applyFilter = (fieldName, filterValue) => {
+      const value = { value: filterValue, label: filterValue };
+      if (FormMain && typeof FormMain.addValue === "function") {
+        console.log(`Applying filter - Field: ${fieldName}, Value:`, value);
+        FormMain.addValue(fieldName, value);
+      } else {
+        console.warn(`FormMain or FormMain.addValue is not defined for field: ${fieldName}`);
+      }
+    };
+
+    // Apply namespaces filter
+    if (structuredSearchProps.namespaces) {
+      console.log("namespaces filter found:", structuredSearchProps.namespaces);
+      applyFilter("namespaces", structuredSearchProps.namespaces);
+    }
+
+    // Apply category filter
+    if (structuredSearchProps.category) {
+      console.log("Category filter found:", structuredSearchProps.category);
+      applyFilter("category", structuredSearchProps.category);
+    }
+
+    // Apply pageType filter
+    if (structuredSearchProps.pageType) {
+      console.log("Page type filter found:", structuredSearchProps.pageType);
+      applyFilter("in_kit", structuredSearchProps.pageType);
+    }
+
+    // Apply title
+    if (structuredSearchProps.title) {
+      console.log("title found:", structuredSearchProps.title);
+      const titleElement = document.getElementById("parser-search-title");
+      if (titleElement) {
+        titleElement.textContent = structuredSearchProps.title;
+      }
+    }
+
+    // Apply limit
+    if (structuredSearchProps.limit) {
+      let limit = structuredSearchProps.limit;
+      console.log("Setting limit:", limit);
+      
+      if (typeof limit === "string") {
+        limit = parseInt(limit, 10); // Ensure limit is a number
+      }
+
+      if (FormMain && typeof FormMain.addValue === "function") {
+        FormMain.addValue("limit", limit);
+      } else {
+        console.warn("FormMain or FormMain.addValue is not defined to set the limit.");
+      }
     }
   }
 

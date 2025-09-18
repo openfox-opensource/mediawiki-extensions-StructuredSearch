@@ -73,7 +73,7 @@ const TableViewComponent = ({ results }) => {
 
     let aVal = a[sortConfig.key] ?? '';
     let bVal = b[sortConfig.key] ?? '';
-
+    console.log('sortConfig.key', sortConfig.key, aVal, bVal);
     if (sortConfig.key === 'date' && a.timestamp && b.timestamp) {
       aVal = new Date(a.timestamp);
       bVal = new Date(b.timestamp);
@@ -93,7 +93,7 @@ const TableViewComponent = ({ results }) => {
   <tr>
     <th className="border p-2"></th> {/* Image */}
     <th
-  onClick={() => handleSort('title')}
+  onClick={() => handleSort('short_title')}
   className="border p-2 capitalize cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700"
 >
   {getLabel('title')}
