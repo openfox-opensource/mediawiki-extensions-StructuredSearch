@@ -265,7 +265,6 @@ class TopBar extends Component {
     const structuredSearchProps = window.mw?.config.get('structuredSearchProps');
     const isInputHidden = structuredSearchProps?.input === "hidden";
     const isFilterHidden = structuredSearchProps?.filter === "hidden";
-    console.log("isFilterHidden", isFilterHidden);
     const isLabelsHidden = structuredSearchProps?.labels === "hidden";
     // If input=hidden, do not render the TopBar at all
     if (isInputHidden) {
