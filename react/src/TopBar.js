@@ -144,7 +144,7 @@ class TopBar extends Component {
         if( alreadyIncluded.includes(fieldKey)){
           continue;
         }
-        if(allData[fieldKey] && utils.safeGet(this, 'state.inputs') && !this.state.inputs[fieldKey].withoutLabels ){
+        if(allData[fieldKey] && utils.safeGet(this, 'state.inputs') && !this.state.inputs[fieldKey]?.withoutLabels ){
           //console.log(allData[fieldKey],"allData[fieldKey]");
           newLabels[fieldKey] = [];
           //console.log(allData[fieldKey],"allData[fieldKey]");
@@ -265,6 +265,7 @@ class TopBar extends Component {
     const structuredSearchProps = window.mw?.config.get('structuredSearchProps');
     const isInputHidden = structuredSearchProps?.input === "hidden";
     const isFilterHidden = structuredSearchProps?.filter === "hidden";
+    console.log("isFilterHidden", isFilterHidden);
     const isLabelsHidden = structuredSearchProps?.labels === "hidden";
     // If input=hidden, do not render the TopBar at all
     if (isInputHidden) {
