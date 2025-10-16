@@ -271,7 +271,7 @@
     border-width: 2px;
     border-color: var(--search-light-border);
     border-radius: 23px;
-    &:hover {
+    &:hover, &:focus {
       box-shadow: 0 1px 6px 0 var(--search-input-shadow);
     }
   }
@@ -1033,4 +1033,8 @@ td[class*="mw-search-ns"], #mw-searchoptions h4,
   .label-remove {
     color: var( --search-button);
   }
+}
+.field-wrp-type-autocomplete input:focus {
+  outline: none;
+  box-shadow: none;
 }
