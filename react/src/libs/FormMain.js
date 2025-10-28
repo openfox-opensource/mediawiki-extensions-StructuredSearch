@@ -223,7 +223,7 @@ class FormMain{
 		if(fieldsDetector.isMultiple(paramsSettings[fieldName]) ){
 			if(options){
 				for(let option of options){
-					if(option.value === val){
+					if(String(option.value) === String(val)){
 						foundOption = option;
 						break;
 					}
