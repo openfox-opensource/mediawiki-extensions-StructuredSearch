@@ -541,7 +541,14 @@ class FormInput extends Component {
 							left: 'auto',
 							zIndex: 5,
 							background: '#FFF'
-						})
+						}),
+						option: (provided, state) => ({
+							...provided,
+							backgroundColor: state.isFocused
+							  ? "#deebff"          
+							  : "transparent",     
+							color: "inherit",
+						  }),
 					}}
 				/>
 				{submitButton}
