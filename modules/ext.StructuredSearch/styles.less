@@ -293,6 +293,23 @@
     transition: all ease .2s;
   }
 }
+.topbar-other-fields {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.5em;
+  margin-top: 0.5em;
+  width: 100%;
+  .form-input {
+    max-width: 200px;
+    flex: 0 0 auto;
+    .field-wrp {
+      max-width: 200px;
+      > div {
+        max-width: 200px;
+      }
+    }
+  }
+}
 
 .regular {
     background: #fff;

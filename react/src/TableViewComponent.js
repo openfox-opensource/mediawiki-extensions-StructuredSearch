@@ -8,10 +8,18 @@ const TableViewComponent = ({ results }) => {
   const [structuredSearchProps, setStructuredSearchProps] = useState(window.mw?.config.get('structuredSearchProps') || {});
  // const DEFAULT_IMAGE = "/default-image.jpg";
 
-  const dynamicFields = (structuredSearchProps.table || "")
+  // Get dynamic fields from both 'table' parameter and 'dynamic-fields' property
+  const tableFields = (structuredSearchProps.table || "")
     .split(',')
     .map(f => f.trim())
     .filter(Boolean);
+  
+  // Get dynamic fields from page properties (parser function parameters)
+  const dynamicFieldsFromProps = structuredSearchProps['dynamic-fields'] || {};
+  const dynamicFieldNames = Object.keys(dynamicFieldsFromProps);
+  
+  // Combine both sources of dynamic fields
+  const dynamicFields = [...new Set([...tableFields, ...dynamicFieldNames])];
 
   const allFields = ['title', ...dynamicFields];
 
@@ -53,7 +61,17 @@ const TableViewComponent = ({ results }) => {
   }, []);
 
   const getLabel = (field) => {
-    return translatedLabels[field] || field.charAt(0).toUpperCase() + field.slice(1);
+    // First check if field has a label in structuredSearchProps dynamic-fields
+    const dynamicFieldsFromProps = structuredSearchProps['dynamic-fields'] || {};
+    if (dynamicFieldsFromProps[field] && dynamicFieldsFromProps[field].label) {
+      return dynamicFieldsFromProps[field].label;
+    }
+    // Then try translation
+    if (translatedLabels[field]) {
+      return translatedLabels[field];
+    }
+    // Fallback to capitalized field name
+    return field.charAt(0).toUpperCase() + field.slice(1);
   };
 
   const handleSort = (key) => {

@@ -78,6 +78,32 @@ class SpecialStructuredSearch extends \SpecialPage {
 	}
 	public static function addSearchParams( $out ) {
 		$searchParams = Utils::getSearchParamsFiltered();
+		
+		// Update position to 'topbar' for dynamic fields from parser function
+		// The fields already exist in StructuredSearchParams, we just need to change their position
+		$title = $out->getTitle();
+		if ( $title && !$title->isSpecialPage() && !$title->isExternal() ) {
+			$user = $out->getUser();
+			$structuredSearchProps = \MediaWiki\Extension\StructuredSearch\Hooks::getStructuredSearchProps( $title, $user );
+			if ( !empty( $structuredSearchProps['dynamic-fields'] ) && is_array( $structuredSearchProps['dynamic-fields'] ) ) {
+				foreach ( $structuredSearchProps['dynamic-fields'] as $fieldName => $fieldData ) {
+					// Only update if field exists in StructuredSearchParams
+					if ( isset( $searchParams[$fieldName] ) ) {
+						// Simply update the position to topbar - field already exists with all its config
+						if ( !isset( $searchParams[$fieldName]['widget'] ) ) {
+							$searchParams[$fieldName]['widget'] = [];
+						}
+						$searchParams[$fieldName]['widget']['position'] = 'topbar';
+						
+						// If fieldData has options (from parser function values), update them
+						if ( is_array( $fieldData ) && isset( $fieldData['widget'] ) && isset( $fieldData['widget']['options'] ) ) {
+							$searchParams[$fieldName]['widget']['options'] = $fieldData['widget']['options'];
+						}
+					}
+				}
+			}
+		}
+		
 		$out->addJsConfigVars( 'structuredSearchSettings', [
 			'params'=> $searchParams,
 			'binds'=> Utils::getSearchBinds( $searchParams ),

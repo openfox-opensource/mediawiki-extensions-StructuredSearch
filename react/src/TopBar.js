@@ -38,6 +38,7 @@ class TopBar extends Component {
       });
     });
   }
+  
   componentDidMount() {
     this.retryInterval = setInterval(() => {
       this.checkStructuredSearchProps();
@@ -51,6 +52,7 @@ class TopBar extends Component {
     EventEmitter.on("toggleDisplayView", (useTableView) => {
       this.setState({ useTableView });
     });
+    
     for(let key of [
       'structuredsearch-clear',
       'structuredsearch-toggle-sidebar'
@@ -65,10 +67,28 @@ class TopBar extends Component {
 
       settingsGetter.get().then(data => {
         if( data ){
+          console.log('[TopBar] Received data from settingsGetter:', data);
+          console.log('[TopBar] Params keys:', Object.keys(data.params || {}));
+          
+          // Debug: Check for topbar fields
+          const topbarFields = Object.keys(data.params || {}).filter(key => 
+            data.params[key]?.widget?.position === 'topbar'
+          );
+          console.log('[TopBar] Fields with position=topbar:', topbarFields);
+          topbarFields.forEach(key => {
+            console.log(`[TopBar] Topbar field "${key}":`, data.params[key]);
+          });
+          
+          // Debug: Check structuredSearchProps
+          const structuredSearchProps = window.mw?.config.get('structuredSearchProps') || {};
+          console.log('[TopBar] structuredSearchProps:', structuredSearchProps);
+          console.log('[TopBar] dynamic-fields:', structuredSearchProps['dynamic-fields']);
+          
           this.setState({
             inputs: data.params,
             labels : []
           });
+          console.log('[TopBar] State inputs after setState:', this.state.inputs);
           this.refreshAllInputsByData( FormMain.getAllValuesRaw() );
         }
        }
@@ -222,10 +242,12 @@ class TopBar extends Component {
         // Skip 'category' field entirely
         if (fieldName === 'category' || fieldName === 'in_kit' || fieldName === 'search') continue;
   
-        if (!['sidebar', 'hide',''].includes(inputData.widget.position)) {
-          console.log("inputData included in topbar",inputData.widget.position, inputData);
+        // Exclude 'topbar' position - those are rendered inside the form
+        // Only include fields that are NOT in sidebar, hide, empty, or topbar
+        if (!['sidebar', 'hide', '', 'topbar'].includes(inputData.widget.position)) {
+          console.log("inputData included in renderSimpleFilters",inputData.widget.position, inputData);
           let inputCopy = { ...inputData };
-  
+
           // Change checkboxes to dropdowns
           if (inputCopy.widget.type === 'checkboxes') {
             inputCopy = {
@@ -237,7 +259,7 @@ class TopBar extends Component {
               }
             };
           }
-  
+
           allInputs.push(
             <FormInput key={inputCopy.field} inputData={inputCopy} />
           );
@@ -271,23 +293,38 @@ class TopBar extends Component {
       return null; // Prevents rendering
     }
   
-    let allInputs = [],
+    let searchInput = null,
+        otherTopbarInputs = [],
         //labelsKeyed = [],
         allInputsRaw = [],
         labels = [],
         toggleSidebar = <button type="button" className="hide-on-desktop" onClick={this.toggleSidebar.bind(this)}>{this.state['structuredsearch-toggle-sidebar']}<i className={'fas fa-chevron-' + this.state.chevronDir}></i></button>;
     if('undefined' !== typeof this.state.inputs){
       let inputsSorted = Object.values(this.state.inputs).sort(utils.sortByWeight);
+      console.log('[TopBar render] Total inputs:', inputsSorted.length);
+      console.log('[TopBar render] All input positions:', 
+        inputsSorted.map(i => ({ field: i.field, position: i.widget?.position }))
+      );
+      
       for(let inputData of inputsSorted){
       //for(let inputDataKey of Object.keys(this.state.inputs)){
         //console.log(this.state.inputs[inputDataKey],inputDataKey,'this.state.inputs[inputDataKey],inputDataKey');
         if('topbar' === inputData.widget.position){
-          allInputsRaw.push(inputData )
-          allInputs.push( <FormInput key={inputData.field} inputData={inputData} /> )
+          console.log('[TopBar render] Adding topbar field:', inputData.field, inputData);
+          allInputsRaw.push(inputData);
+          
+          // Separate search field from other topbar fields
+          if (inputData.field === 'search') {
+            searchInput = <FormInput key={inputData.field} inputData={inputData} />;
+          } else {
+            otherTopbarInputs.push( <FormInput key={inputData.field} inputData={inputData} /> );
+          }
         }
       }
     }
-    console.log("allInputsRaw", allInputsRaw);
+    console.log("[TopBar render] allInputsRaw", allInputsRaw);
+    console.log("[TopBar render] searchInput:", searchInput);
+    console.log("[TopBar render] otherTopbarInputs count:", otherTopbarInputs.length);
     if(this.state.labels){
 
       for(let labelKey of Object.keys(this.state.labels)){
@@ -308,11 +345,18 @@ class TopBar extends Component {
     if(this.state.searchSuggestionsOpen && this.state.searchSuggestionsNotEmpty){
       appendedClass += ' search-suggestions-open';
     }
-    return allInputs.length ? 
+    const hasTopbarInputs = searchInput || otherTopbarInputs.length > 0;
+    return hasTopbarInputs ? 
       <div className={'TopBar sticky-top' + appendedClass}>
         <header className="App-header">
           <form onSubmit={this.submitClicked.bind(this)}>
-            {allInputs}{toggleSidebar}
+            {searchInput}
+            {otherTopbarInputs.length > 0 && (
+              <div className="topbar-other-fields">
+                {otherTopbarInputs}
+              </div>
+            )}
+            {toggleSidebar}
             {!isLabelsHidden && ( <div className={'lables-wrp'}>{labels}</div>  )}
           </form>
          {isFilterHidden && this.renderSimpleFilters()} 

@@ -54,6 +54,20 @@ class settingsGetter{
 			settingsGetter.onCall = true;
 			ajaxCall.get('action=structuredsearchparams').then(data => {
 				settingsGetter.onCall = false;
+				console.log('[settingsGetter] API response data:', data);
+				if (data && data.params) {
+					console.log('[settingsGetter] Params keys:', Object.keys(data.params));
+					console.log('[settingsGetter] Params with topbar position:', 
+						Object.keys(data.params).filter(key => 
+							data.params[key]?.widget?.position === 'topbar'
+						)
+					);
+					Object.keys(data.params).forEach(key => {
+						if (data.params[key]?.widget?.position === 'topbar') {
+							console.log(`[settingsGetter] Topbar field "${key}":`, data.params[key]);
+						}
+					});
+				}
 				resolve( data ? data : null );
 			});
 

@@ -160,6 +160,12 @@
 				"ext.StructuredSearch/styles.less"
 			]
 		},
+		"ext.StructuredSearch.parser-styles": {
+			"styles": [
+				"ext.StructuredSearch/variables.less",
+				"ext.StructuredSearch/parser-styles.less"
+			]
+		},
 		
 		"ext.StructuredSearch": {
 			"messages" : [

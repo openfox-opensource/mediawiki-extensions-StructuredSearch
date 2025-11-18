@@ -106,6 +106,13 @@ class App extends Component {
     settingsGetter.get().then(data => {
       //console.log(data.templates, data,"data.templates, data");
       if( data ){
+        // PHP side should have already handled dynamic fields merging
+        // Just log for debugging
+        const structuredSearchProps = window.mw?.config.get('structuredSearchProps') || {};
+        console.log('[App] structuredSearchProps:', structuredSearchProps);
+        console.log('[App] dynamic-fields:', structuredSearchProps['dynamic-fields']);
+        console.log('[App] data.params keys:', Object.keys(data.params || {}));
+        
         FormMain.setBinds( data.binds );
         FormMain.setInputsParams( data.params );
         

@@ -34,94 +34,69 @@ class Hooks {
 		
 		$pageProps = [];
 		$pageProps['structured-search-limit'] = 100;
+		$dynamicFields = [];
+		// Known parameter keys that are not dynamic fields
+		$knownKeys = [
+			'filter', 'input', 'resultsSumMessage', 'labels', 'class', 
+			'placeholder', 'title', 'page-filter', 'category-filter', 
+			'category', 'pageType', 'namespaces', 'limit', 'display', 'table'
+		];
+		
 		// Parse parameters
 		if ( !empty( $params ) ) {
-			
+			$params = array_map( function( $param ){
+				$splitted = explode( '=', $param );
+				return [
+					'key' => $splitted[0],
+					'value' => isset( $splitted[1] ) ? $splitted[1] : '',
+				];
+			}, $params );
 			foreach ( $params as $param ) {
-				$param = trim( $param );
-	
-				// Handle inline CSS dynamically
-				if ( str_starts_with( $param, 'filter=' ) ) {
-					$value = substr( $param, strlen( 'filter=' ) );
-					if ( $value === 'hidden' ) {
-						
-						$pageProps['structured-search-filter'] = htmlspecialchars( $value );
+				if ( in_array( $param['key'], $knownKeys ) ) {
+					switch( $param['key'] ){
+						case 'filter':
+						case 'input':
+						case 'resultsSumMessage':
+						case 'labels':
+						case 'class':
+						case 'placeholder':
+						case 'title':
+						case 'page-filter':
+						case 'category-filter':
+						case 'category':
+						case 'pageType':
+						case 'namespaces':
+						case 'limit':
+						case 'display':
+						case 'table':
+							$pageProps['structured-search-' . $param['key']] = htmlspecialchars( $param['value'] );
+							break;
 					}
-				} elseif ( str_starts_with( $param, 'input=' ) ) {
-					$value = substr( $param, strlen( 'input=' ) );
-					if ( $value === 'hidden' ) {
-						$pageProps['structured-search-input'] = htmlspecialchars( $value );
-					}
-				} elseif ( str_starts_with( $param, 'resultsSumMessage=' ) ) {
-						$value = substr( $param, strlen( 'resultsSumMessage=' ) );
-						if ( $value === 'hidden' ) {
-							$pageProps['structured-search-resultsSumMessage'] = htmlspecialchars( $value );
-						}
-					} elseif ( str_starts_with( $param, 'labels=' ) ) {
-						$value = substr( $param, strlen( 'labels=' ) );
-						if ( $value === 'hidden' ) {
-							$pageProps['structured-search-labels'] = htmlspecialchars( $value );
-						}
-						
-				}  elseif ( str_starts_with( $param, 'class=' ) ) {
-					$value = substr( $param, strlen( 'class=' ) );
-					$pageProps['structured-search-class'] = htmlspecialchars( $value );
-						
-				}
-				elseif ( str_starts_with( $param, 'placeholder=' ) ) {
-					$value = substr( $param, strlen( 'placeholder=' ) );
-					$pageProps['structured-search-placeholder'] = htmlspecialchars( $value );
-						
-				}
-				elseif ( str_starts_with( $param, 'title=' ) ) {
-					$value = substr( $param, strlen( 'title=' ) );
-					$pageProps['structured-search-title'] = htmlspecialchars( $value );
-						
-				}
-				elseif ( str_starts_with( $param, 'page-filter=' ) ) {
-					$value = substr( $param, strlen( 'page-filter=' ) );
-					if ( $value === 'hidden' ) {
-						$pageProps['structured-search-page-filter'] = htmlspecialchars( $value );
-					}
-				} elseif ( str_starts_with( $param, 'category-filter=' ) ) {
-					$value = substr( $param, strlen( 'category-filter=' ) );
-					if ( $value === 'hidden' ) {
-						$pageProps['structured-search-category-filter'] = htmlspecialchars( $value );
-					}
-				}
-	
-				elseif ( str_starts_with( $param, 'category=' ) ) {
-					$value = substr( $param, strlen( 'category=' ) );
-					$pageProps['structured-search-category'] = htmlspecialchars( $value );
-				} elseif ( str_starts_with( $param, 'pageType=' ) ) {
-					$value = substr( $param, strlen( 'pageType=' ) );
-					$pageProps['structured-search-pageType'] = htmlspecialchars( $value );
-				}
-				elseif ( str_starts_with( $param, 'namespaces=' ) ) {
-					$value = substr( $param, strlen( 'namespaces=' ) );
-					$pageProps['structured-search-namespaces'] = (int) $value;;
-				}
-				elseif ( str_starts_with( $param, 'limit=' ) ) {
-					$value = substr( $param, strlen( 'limit=' ) );
-					if ( is_numeric( $value ) ) {
-						$pageProps['structured-search-limit'] = (int) $value; // Ensure it's a valid integer
+				} else {
+					// This is a potential dynamic field parameter
+					// Store it - filtering against StructuredSearchParams will happen later
+					// in addDynamicFieldsToParams() when params are actually needed
+					if ( empty( $param['value'] ) ) {
+						$dynamicFields[$param['key']] = [];
 					} else {
-						wfDebugLog('StructuredSearch', "Invalid limit value: $value");
+						// Parse comma-separated values
+						$values = array_map( 'trim', explode( ',', $param['value'] ) );
+						$values = array_filter( $values ); // Remove empty values
+						if ( !empty( $values ) ) {
+							$dynamicFields[$param['key']] = $values;
+						} else {
+							// Empty after filtering, store as empty array
+							$dynamicFields[$param['key']] = [];
+						}
 					}
 				}
-				
-					elseif ( str_starts_with( $param, 'display=' ) ) {
-						$value = substr( $param, strlen( 'display=' ) );
-						$pageProps['structured-search-display'] = htmlspecialchars( $value );
-					}
-					elseif ( str_starts_with( $param, 'table=' ) ) {
-						$value = substr( $param, strlen( 'table=' ) );
-						$pageProps['structured-search-table'] = htmlspecialchars( $value );
-					}
-					
-			}
+			}		
 		}
-	
+		
+		// Store dynamic fields as JSON in page properties
+		if ( !empty( $dynamicFields ) ) {
+			$pageProps['structured-search-dynamic-fields'] = json_encode( $dynamicFields );
+		}
 		// Save the props in the parser output
 		$parserOutput = $parser->getOutput();
 	
@@ -190,7 +165,16 @@ class Hooks {
 		if($structuredSearchProps && count($structuredSearchProps)){
 			$newPropsArray = [];
 			foreach($structuredSearchProps as $key => $value){
-				$newPropsArray[substr($key, strlen('structured-search-'))] = $value;
+				$newKey = substr($key, strlen('structured-search-'));
+				// Decode dynamic fields JSON
+				if ( $newKey === 'dynamic-fields' ) {
+					$decoded = json_decode( $value, true );
+					if ( $decoded ) {
+						$newPropsArray[$newKey] = $decoded;
+					}
+				} else {
+					$newPropsArray[$newKey] = $value;
+				}
 			}
 			$structuredSearchProps = $newPropsArray;
 		}
@@ -235,11 +219,26 @@ class Hooks {
 		$props = self::getStructuredSearchProps( $title, $out->getUser() );
 		
 		if ( !empty( $props ) ) {
+			if(isset($props['dynamic-fields'])){
+				$predefinedParams = Utils::getSearchParams();
+				foreach($props['dynamic-fields'] as $key => &$value){
+					if( isset( $predefinedParams[$key] ) ){
+						$values = $value ?? [];
+						$value = $predefinedParams[$key];
+						//widget is always not in sidebar, as there is no space for it
+						$value['widget']['position'] = 'topbar';
+						if(!empty( $values )){
+							$value['widget']['options'] = $values;
+						}
+					}
+				}
+			}
+			
 			
 			// Pass the properties to JavaScript
 			$out->addJsConfigVars( 'structuredSearchProps', $props );
 			SpecialStructuredSearch::addSearchParams( $out );
-			$out->addModuleStyles( [ 'ext.StructuredSearch.styles' ] );
+			$out->addModuleStyles( [ 'ext.StructuredSearch.styles', 'ext.StructuredSearch.parser-styles' ] );
 		} else {
 			wfDebugLog( 'StructuredSearch', 'No structuredSearchProps found for this page.' );
 		}
@@ -698,6 +697,99 @@ class Hooks {
 				default:
 					break;
 			}
+		}
+		
+		// Add dynamic fields from page properties
+		// Pass $params to get allowed field names (fields already in StructuredSearchParams)
+		self::addDynamicFieldsToParams( $params );
+	}
+	
+	/**
+	 * Add dynamic fields from page properties to search params
+	 * 
+	 * @param array &$params Search parameters array (by reference)
+	 *   This array already contains all fields from StructuredSearchParams config
+	 */
+	public static function addDynamicFieldsToParams( &$params ) {
+		try {
+			// Get the current request context to access the title
+			$context = \RequestContext::getMain();
+			$title = $context->getTitle();
+			
+			// If no title available (e.g., API call without page context), skip
+			if ( !$title || $title->isSpecialPage() || $title->isExternal() ) {
+				return;
+			}
+			
+			$user = $context->getUser();
+			$structuredSearchProps = self::getStructuredSearchProps( $title, $user );
+			
+			if ( !empty( $structuredSearchProps['dynamic-fields'] ) && is_array( $structuredSearchProps['dynamic-fields'] ) ) {
+				// Get allowed field names from StructuredSearchParams config
+				// Extract field names from config to filter dynamic fields (avoid recursion)
+				$conf = MediaWikiServices::getInstance()->getMainConfig();
+				$configParams = $conf->get( 'StructuredSearchParams' );
+				$allowedFieldNames = [];
+				foreach ( $configParams as $configParam ) {
+					if ( isset( $configParam['field'] ) && $configParam['field'] ) {
+						$allowedFieldNames[] = $configParam['field'];
+					}
+				}
+				
+				foreach ( $structuredSearchProps['dynamic-fields'] as $fieldName => $fieldValues ) {
+					// Only process fields that exist in StructuredSearchParams config
+					if ( !in_array( $fieldName, $allowedFieldNames ) ) {
+						wfDebugLog( 'StructuredSearch', "Skipping dynamic field '$fieldName' - not in StructuredSearchParams" );
+						continue;
+					}
+					
+					// Get existing field config from $params (already processed by hooks)
+					// If field doesn't exist in $params yet, it might be added by other hooks, so skip for now
+					if ( !isset( $params[$fieldName] ) ) {
+						wfDebugLog( 'StructuredSearch', "Skipping dynamic field '$fieldName' - not yet in params array" );
+						continue;
+					}
+					
+					$existingFieldConfig = $params[$fieldName];
+					
+					// If no values specified and it's a Cargo field, get default values from Cargo
+					if ( empty( $fieldValues ) && Utils::isCargoField( $fieldName ) ) {
+						$cargoValues = Utils::cargoAllRows( $fieldName );
+						$fieldValues = array_values( $cargoValues );
+					}
+					
+					// Skip if still no values
+					if ( empty( $fieldValues ) ) {
+						wfDebugLog( 'StructuredSearch', "Skipping dynamic field '$fieldName' - no values available" );
+						continue;
+					}
+					
+					// Convert values to options format
+					$options = [];
+					foreach ( $fieldValues as $value ) {
+						$options[] = [
+							'value' => $value,
+							'label' => $value,
+						];
+					}
+					
+					// Merge dynamic options into existing widget config
+					// Preserve existing widget settings but override/add options
+					$widgetConfig = $existingFieldConfig['widget'] ?? [];
+					$widgetConfig['options'] = $options;
+					
+					// Update the field in params with the dynamic options
+					$params[$fieldName]['widget'] = $widgetConfig;
+					
+					wfDebugLog( 'StructuredSearch', "Added dynamic options for field '$fieldName': " . count( $options ) . " options" );
+				}
+			} else {
+				wfDebugLog( 'StructuredSearch', 'No dynamic-fields found in structuredSearchProps' );
+			}
+		} catch ( \Exception $e ) {
+			// If we can't get the title or props, just skip adding dynamic fields
+			// They may be added by React app from structuredSearchProps if needed
+			wfDebugLog( 'StructuredSearch', 'Could not add dynamic fields to params: ' . $e->getMessage() );
 		}
 	}
 	public static function addOptionsToCargoTable( &$params ) {

@@ -1,0 +1,53 @@
+// Parser function page specific styles
+.parser-search {
+  // Make topbar other fields (dynamic fields) match the width of search input's autocomplete-wrp
+  .TopBar header form {
+    // Use CSS Grid to ensure both search input and topbar-other-fields share the same column width
+    // This way, if autocomplete-wrp has a max-width, both will be constrained the same way
+    display: grid;
+    grid-template-columns: minmax(0, 1fr); // Single column that respects max-width constraints
+    gap: 0.5em;
+    
+    // The search input container - it will determine the width constraint
+    .form-input.form-input-wrp-search {
+      grid-column: 1;
+      width: 100%;
+      min-width: 0; // Allow shrinking below content size
+      // The autocomplete-wrp inside will have its max-width applied
+      .autocomplete-wrp {
+        width: 100%;
+        max-width: 100%; // Respect any max-width set elsewhere
+      }
+    }
+    
+    // Make topbar-other-fields match the exact same width as the search input container
+    // Since both are in the same grid column, they'll have the same width
+    .topbar-other-fields {
+      grid-column: 1;
+      width: 100%;
+      min-width: 0; // Allow shrinking below content size
+      max-width: 100%; // Match the same constraint as search input
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5em;
+      box-sizing: border-box;
+      
+      .form-input {
+        flex: 0 0 auto;
+        // Each field is 1/3 of the container width (which matches search input)
+        width: calc(33.333% - 0.5em);
+        max-width: calc(33.333% - 0.5em);
+        box-sizing: border-box;
+        .field-wrp {
+          width: 100%;
+          max-width: 100%;
+          > div {
+            width: 100%;
+            max-width: 100%;
+          }
+        }
+      }
+    }
+  }
+}
+
