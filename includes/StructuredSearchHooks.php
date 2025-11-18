@@ -7,6 +7,7 @@ use CirrusSearch\Search\CirrusSearchIndexFieldFactory;
 use CirrusSearch\SearchConfig;
 #add SlotRecord
 use MediaWiki\Revision\SlotRecord;
+use MediaWiki\Html\Html;
 use SearchEngine;
 use ParserOutput;
 use WikiPage;
@@ -21,6 +22,8 @@ class Hooks {
     public static function onParserFirstCallInit( \Parser $parser ) {
         // Register thestructuresearch parser function
         $parser->setFunctionHook( 'structuresearch', [ self::class, 'renderstructureSearch' ] );
+        // Register the list-structuredsearch-params parser function
+        $parser->setFunctionHook( 'list-structuredsearch-params', [ self::class, 'renderListStructuredSearchParams' ] );
     }
 
     /**
@@ -132,6 +135,44 @@ class Hooks {
 			'isHTML' => true
 		];
 	}
+
+	/**
+	 * Parser function for {{#list-structuredsearch-params:}}
+	 * Lists all StructuredSearchParams in HTML format
+	 *
+	 * @param Parser $parser
+	 * @return array
+	 */
+	public static function renderListStructuredSearchParams( \Parser $parser ) {
+		$searchParams = Utils::getSearchParamsFiltered();
+		$htmlRows = [];
+		
+		foreach ( $searchParams as $key => $param ) {
+			$field = isset( $param['field'] ) ? $param['field'] : $key;
+			$label = isset( $param['label'] ) ? $param['label'] : $field;
+			// Use Html::element to properly escape content
+			$htmlRows[] = Html::rawElement( 'tr', [],
+				Html::element( 'td', [], $label ) .
+				Html::element( 'td', [], $field )
+			);
+		}
+		
+		$htmlContent = Html::rawElement( 'table', [ 'class' => 'wikitable' ],
+			Html::rawElement( 'thead', [],
+				Html::rawElement( 'tr', [],
+					Html::element( 'th', [], 'Name' ) .
+					Html::element( 'th', [], 'Key' )
+				)
+			) .
+			Html::rawElement( 'tbody', [], implode( '', $htmlRows ) )
+		);
+		
+		return [
+			$htmlContent,
+			'isHTML' => true
+		];
+	}
+
 	public static function getStructuredSearchProps( $title, $user){
 		if(!$title || $title->isSpecialPage() || $title->isExternal()){
 			return;
@@ -698,10 +739,6 @@ class Hooks {
 					break;
 			}
 		}
-		
-		// Add dynamic fields from page properties
-		// Pass $params to get allowed field names (fields already in StructuredSearchParams)
-		self::addDynamicFieldsToParams( $params );
 	}
 	
 	/**

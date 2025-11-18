@@ -8,7 +8,8 @@ $magicWords = [];
 
 /** English (English) */
 $magicWords['en'] = [
-	'structuresearch' => [ 0, 'structuresearch' ]
+	'structuresearch' => [ 0, 'structuresearch' ],
+	'list-structuredsearch-params' => [ 0, 'list-structuredsearch-params' ]
 ];
 // $magicWords = [];
 
