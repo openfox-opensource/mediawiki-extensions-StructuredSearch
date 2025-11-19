@@ -145,22 +145,43 @@ class Hooks {
 	public static function renderListStructuredSearchParams( \Parser $parser ) {
 		$searchParams = Utils::getSearchParamsFiltered();
 		$htmlRows = [];
+		$searchParams = array_map(function( $param ){
+			$label = isset( $param['label'] ) && !empty( $param['label'] ) ? $param['label'] : null;
+			if( !$label && isset( $param['widget']['label'] ) && !empty( $param['widget']['label'] ) ){
+				$label = $param['widget']['label'];
+			}
+			if( !$label ){
+				$labelExists = false;
+				$label = $param['field'];
+			}
+			else{
+				$labelExists = true;
+			}
+			return [
+				'labelExists' => $labelExists,
+				'field' => $param['field'],
+				'label' => $label,
+			];
+		}, $searchParams);
+
+		//sort by labelExists - true first
+		usort($searchParams, function( $a, $b ){
+			return $a['labelExists'] ? -1 : 1;
+		});
+		//die(print_r($searchParams));
 		
-		foreach ( $searchParams as $key => $param ) {
-			$field = isset( $param['field'] ) ? $param['field'] : $key;
-			$label = isset( $param['label'] ) ? $param['label'] : $field;
-			// Use Html::element to properly escape content
+		foreach($searchParams as $param){
 			$htmlRows[] = Html::rawElement( 'tr', [],
-				Html::element( 'td', [], $label ) .
-				Html::element( 'td', [], $field )
+				Html::element( 'td', [], $param['label'] ) .
+				Html::element( 'td', [], $param['field'] )
 			);
 		}
 		
 		$htmlContent = Html::rawElement( 'table', [ 'class' => 'wikitable' ],
 			Html::rawElement( 'thead', [],
 				Html::rawElement( 'tr', [],
-					Html::element( 'th', [], 'Name' ) .
-					Html::element( 'th', [], 'Key' )
+					Html::element( 'th', [], 'Readable name' ) .
+					Html::element( 'th', [], 'Field name' )
 				)
 			) .
 			Html::rawElement( 'tbody', [], implode( '', $htmlRows ) )
