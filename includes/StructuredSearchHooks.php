@@ -78,7 +78,6 @@ class Hooks {
 				} else {
 					// This is a potential dynamic field parameter
 					// Store it - filtering against StructuredSearchParams will happen later
-					// in addDynamicFieldsToParams() when params are actually needed
 					if ( empty( $param['value'] ) ) {
 						$dynamicFields[$param['key']] = [];
 					} else {
@@ -741,94 +740,6 @@ class Hooks {
 		}
 	}
 	
-	/**
-	 * Add dynamic fields from page properties to search params
-	 * 
-	 * @param array &$params Search parameters array (by reference)
-	 *   This array already contains all fields from StructuredSearchParams config
-	 */
-	public static function addDynamicFieldsToParams( &$params ) {
-		try {
-			// Get the current request context to access the title
-			$context = \RequestContext::getMain();
-			$title = $context->getTitle();
-			
-			// If no title available (e.g., API call without page context), skip
-			if ( !$title || $title->isSpecialPage() || $title->isExternal() ) {
-				return;
-			}
-			
-			$user = $context->getUser();
-			$structuredSearchProps = self::getStructuredSearchProps( $title, $user );
-			
-			if ( !empty( $structuredSearchProps['dynamic-fields'] ) && is_array( $structuredSearchProps['dynamic-fields'] ) ) {
-				// Get allowed field names from StructuredSearchParams config
-				// Extract field names from config to filter dynamic fields (avoid recursion)
-				$conf = MediaWikiServices::getInstance()->getMainConfig();
-				$configParams = $conf->get( 'StructuredSearchParams' );
-				$allowedFieldNames = [];
-				foreach ( $configParams as $configParam ) {
-					if ( isset( $configParam['field'] ) && $configParam['field'] ) {
-						$allowedFieldNames[] = $configParam['field'];
-					}
-				}
-				
-				foreach ( $structuredSearchProps['dynamic-fields'] as $fieldName => $fieldValues ) {
-					// Only process fields that exist in StructuredSearchParams config
-					if ( !in_array( $fieldName, $allowedFieldNames ) ) {
-						wfDebugLog( 'StructuredSearch', "Skipping dynamic field '$fieldName' - not in StructuredSearchParams" );
-						continue;
-					}
-					
-					// Get existing field config from $params (already processed by hooks)
-					// If field doesn't exist in $params yet, it might be added by other hooks, so skip for now
-					if ( !isset( $params[$fieldName] ) ) {
-						wfDebugLog( 'StructuredSearch', "Skipping dynamic field '$fieldName' - not yet in params array" );
-						continue;
-					}
-					
-					$existingFieldConfig = $params[$fieldName];
-					
-					// If no values specified and it's a Cargo field, get default values from Cargo
-					if ( empty( $fieldValues ) && Utils::isCargoField( $fieldName ) ) {
-						$cargoValues = Utils::cargoAllRows( $fieldName );
-						$fieldValues = array_values( $cargoValues );
-					}
-					
-					// Skip if still no values
-					if ( empty( $fieldValues ) ) {
-						wfDebugLog( 'StructuredSearch', "Skipping dynamic field '$fieldName' - no values available" );
-						continue;
-					}
-					
-					// Convert values to options format
-					$options = [];
-					foreach ( $fieldValues as $value ) {
-						$options[] = [
-							'value' => $value,
-							'label' => $value,
-						];
-					}
-					
-					// Merge dynamic options into existing widget config
-					// Preserve existing widget settings but override/add options
-					$widgetConfig = $existingFieldConfig['widget'] ?? [];
-					$widgetConfig['options'] = $options;
-					
-					// Update the field in params with the dynamic options
-					$params[$fieldName]['widget'] = $widgetConfig;
-					
-					wfDebugLog( 'StructuredSearch', "Added dynamic options for field '$fieldName': " . count( $options ) . " options" );
-				}
-			} else {
-				wfDebugLog( 'StructuredSearch', 'No dynamic-fields found in structuredSearchProps' );
-			}
-		} catch ( \Exception $e ) {
-			// If we can't get the title or props, just skip adding dynamic fields
-			// They may be added by React app from structuredSearchProps if needed
-			wfDebugLog( 'StructuredSearch', 'Could not add dynamic fields to params: ' . $e->getMessage() );
-		}
-	}
 	public static function addOptionsToCargoTable( &$params ) {
 		foreach ( $params as $key => &$param ) {
 			if ( isset( $param['widget']['type'] ) && in_array( $param['widget']['type'], [ 'checkboxes','radios','select' ] ) && !isset( $param['widget']['options'] ) && Utils::isCargoField( $param['field'] ) ) {
