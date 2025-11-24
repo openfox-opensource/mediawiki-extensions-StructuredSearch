@@ -69,7 +69,6 @@ class App extends Component {
       
   } 
   show(){
-    console.log("show");
       this.setState({hide:false});
       document.body.classList.remove('sidebar-hidden')
       document.body.classList.add('sidebar-visible');
@@ -89,12 +88,8 @@ class App extends Component {
 
     if (window.mw && window.mw.config.get("structuredSearchProps")) {
       const structuredSearchProps = window.mw.config.get("structuredSearchProps");
-      console.log("structuredSearchPropsApp:", structuredSearchProps);
-
       // Apply all structured search properties
       this.applyStructuredSearchProps(structuredSearchProps);
-    } else {
-      console.warn("No structuredSearchProps found in mw.config.");
     }
     this.hide();
     EventEmitter.on("FormDataChanged", allData => {
@@ -103,25 +98,23 @@ class App extends Component {
         this.forceUpdate();
       }
     });
-    settingsGetter.get().then(data => {
-      //console.log(data.templates, data,"data.templates, data");
-      if( data ){
-        // PHP side should have already handled dynamic fields merging
-        // Just log for debugging
-        const structuredSearchProps = window.mw?.config.get('structuredSearchProps') || {};
-        console.log('[App] structuredSearchProps:', structuredSearchProps);
-        console.log('[App] dynamic-fields:', structuredSearchProps['dynamic-fields']);
-        console.log('[App] data.params keys:', Object.keys(data.params || {}));
-        
-        FormMain.setBinds( data.binds );
-        FormMain.setInputsParams( data.params );
+      settingsGetter.get().then(data => {
+        if( data ){
+          const structuredSearchProps = window.mw?.config.get('structuredSearchProps') || {};
+          
+          // Merge dynamic-fields from structuredSearchProps into data.params
+          // This ensures page-specific config takes precedence over defaults
+          const mergedParams = this.mergeDynamicFieldsIntoParams(data.params, structuredSearchProps);
+          
+          FormMain.setBinds( data.binds );
+          FormMain.setInputsParams( mergedParams );
         
         this.setState({ 
-          inputs: data.params
+          inputs: mergedParams
         }, ()=>{       
-          FormMain.setDefaults( data.params );
+          FormMain.setDefaults( mergedParams );
          
-          historySearch.setSearchFromHistory( data.params );
+          historySearch.setSearchFromHistory( mergedParams );
         });
         
       }
@@ -140,20 +133,50 @@ class App extends Component {
     const structuredSearchProps = window.mw?.config.get("structuredSearchProps");
 
     if (structuredSearchProps && Object.keys(structuredSearchProps).length > 0) {
-      console.log("structuredSearchProps received in App:", structuredSearchProps);
-
       this.setState({
         structuredSearchProps
       });
 
       // Apply all structured search properties
       this.applyStructuredSearchProps(structuredSearchProps);
-    } else {
-      console.warn("No structuredSearchProps found in mw.config.");
     }
     if (this.retryInterval) {
       clearInterval(this.retryInterval);
     }
+  }
+
+  // Helper function to deep merge dynamic-fields from structuredSearchProps into params
+  mergeDynamicFieldsIntoParams = (params, structuredSearchProps) => {
+    if (!structuredSearchProps || !structuredSearchProps['dynamic-fields']) {
+      return params;
+    }
+
+    const dynamicFields = structuredSearchProps['dynamic-fields'];
+    const mergedParams = { ...params };
+
+    // Merge each dynamic field into params
+    for (const fieldName of Object.keys(dynamicFields)) {
+      const dynamicFieldConfig = dynamicFields[fieldName];
+      
+      if (mergedParams[fieldName]) {
+        // Field exists in params - merge the configs
+        // Page-specific config from dynamic-fields takes precedence
+        mergedParams[fieldName] = {
+          ...mergedParams[fieldName],
+          ...dynamicFieldConfig,
+          // Deep merge widget properties
+          widget: {
+            ...mergedParams[fieldName].widget,
+            ...(dynamicFieldConfig.widget || {})
+          }
+        };
+      } else {
+        // Field doesn't exist in params - add it
+        mergedParams[fieldName] = dynamicFieldConfig;
+      }
+    }
+
+    return mergedParams;
   }
 
   // Consolidated method to apply structured search properties
@@ -162,55 +185,35 @@ class App extends Component {
     const applyFilter = (fieldName, filterValue) => {
       const value = { value: filterValue, label: filterValue };
       if (FormMain && typeof FormMain.addValue === "function") {
-        console.log(`Applying filter - Field: ${fieldName}, Value:`, value);
         FormMain.addValue(fieldName, value);
-      } else {
-        console.warn(`FormMain or FormMain.addValue is not defined for field: ${fieldName}`);
       }
     };
 
     // Apply namespaces filter
     if (structuredSearchProps.namespaces) {
-      console.log("namespaces filter found:", structuredSearchProps.namespaces);
       applyFilter("namespaces", structuredSearchProps.namespaces);
     }
 
     // Apply category filter
     if (structuredSearchProps.category) {
-      console.log("Category filter found:", structuredSearchProps.category);
       applyFilter("category", structuredSearchProps.category);
     }
 
     // Apply pageType filter
     if (structuredSearchProps.pageType) {
-      console.log("Page type filter found:", structuredSearchProps.pageType);
       applyFilter("in_kit", structuredSearchProps.pageType);
     }
 
     // Apply title
     if (structuredSearchProps.title) {
-      console.log("title found:", structuredSearchProps.title);
       const titleElement = document.getElementById("parser-search-title");
       if (titleElement) {
         titleElement.textContent = structuredSearchProps.title;
       }
     }
 
-    // Apply limit
-    if (structuredSearchProps.limit) {
-      let limit = structuredSearchProps.limit;
-      console.log("Setting limit:", limit);
-      
-      if (typeof limit === "string") {
-        limit = parseInt(limit, 10); // Ensure limit is a number
-      }
-
-      if (FormMain && typeof FormMain.addValue === "function") {
-        FormMain.addValue("limit", limit);
-      } else {
-        console.warn("FormMain or FormMain.addValue is not defined to set the limit.");
-      }
-    }
+    // Apply limit - limit is used in submitData, not added to FormMain.allData
+    // It's read directly from structuredSearchProps in FormMain.submitData()
   }
 
   render() {

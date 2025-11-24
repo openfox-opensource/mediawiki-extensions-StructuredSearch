@@ -78,6 +78,15 @@ class Hooks {
 				} else {
 					// This is a potential dynamic field parameter
 					// Store it - filtering against StructuredSearchParams will happen later
+					if($param['value'] == 'false'){
+						continue;
+					}
+					if($param['value'] == 'true'){
+						$param['value'] = '';
+					}
+					if($param['key'] == 'namespaces_field'){
+						$param['key'] = 'namespaces';
+					}
 					if ( empty( $param['value'] ) ) {
 						$dynamicFields[$param['key']] = [];
 					} else {
@@ -91,10 +100,10 @@ class Hooks {
 							$dynamicFields[$param['key']] = [];
 						}
 					}
+					
 				}
 			}		
 		}
-		
 		// Store dynamic fields as JSON in page properties
 		if ( !empty( $dynamicFields ) ) {
 			$pageProps['structured-search-dynamic-fields'] = json_encode( $dynamicFields );
@@ -147,6 +156,9 @@ class Hooks {
 		$htmlRows = [];
 		$searchParams = array_map(function( $param ){
 			$label = isset( $param['label'] ) && !empty( $param['label'] ) ? $param['label'] : null;
+			if($param['field'] == 'namespaces'){
+				$param['field'] = 'namespaces_field';
+			}
 			if( !$label && isset( $param['widget']['label'] ) && !empty( $param['widget']['label'] ) ){
 				$label = $param['widget']['label'];
 			}
@@ -291,10 +303,22 @@ class Hooks {
 						if(!empty( $values )){
 							$value['widget']['options'] = $values;
 						}
+						//if widget type is checkbox modify type to select
+						if(isset($value['widget']['type']) && $value['widget']['type'] == 'checkboxes'){
+							$value['widget']['type'] = 'select';
+							//add empty option
+							$value['widget']['options'] = array_merge([['label' => wfMessage( 'structuredsearch-choose' )->text(), 'value' => '']], $value['widget']['options']);
+							//also remove html from each option's label
+							if(isset($value['widget']['options']) && is_array($value['widget']['options'])){
+								foreach($value['widget']['options'] as &$option){
+									$option['label'] = strip_tags($option['label']);
+								}
+							}
+						}
 					}
 				}
 			}
-			
+	//			die("<pre>" . print_r($props, true) . "</pre>");
 			
 			// Pass the properties to JavaScript
 			$out->addJsConfigVars( 'structuredSearchProps', $props );

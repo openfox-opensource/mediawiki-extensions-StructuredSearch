@@ -67,28 +67,17 @@ class TopBar extends Component {
 
       settingsGetter.get().then(data => {
         if( data ){
-          console.log('[TopBar] Received data from settingsGetter:', data);
-          console.log('[TopBar] Params keys:', Object.keys(data.params || {}));
-          
-          // Debug: Check for topbar fields
-          const topbarFields = Object.keys(data.params || {}).filter(key => 
-            data.params[key]?.widget?.position === 'topbar'
-          );
-          console.log('[TopBar] Fields with position=topbar:', topbarFields);
-          topbarFields.forEach(key => {
-            console.log(`[TopBar] Topbar field "${key}":`, data.params[key]);
-          });
-          
-          // Debug: Check structuredSearchProps
+          // Get structuredSearchProps and merge dynamic-fields into params
           const structuredSearchProps = window.mw?.config.get('structuredSearchProps') || {};
-          console.log('[TopBar] structuredSearchProps:', structuredSearchProps);
-          console.log('[TopBar] dynamic-fields:', structuredSearchProps['dynamic-fields']);
+          
+          // Merge dynamic-fields from structuredSearchProps into data.params
+          // This ensures page-specific config takes precedence over defaults
+          const mergedParams = this.mergeDynamicFieldsIntoParams(data.params, structuredSearchProps);
           
           this.setState({
-            inputs: data.params,
+            inputs: mergedParams,
             labels : []
           });
-          console.log('[TopBar] State inputs after setState:', this.state.inputs);
           this.refreshAllInputsByData( FormMain.getAllValuesRaw() );
         }
        }
@@ -105,12 +94,45 @@ class TopBar extends Component {
     clearInterval(this.retryInterval);
     EventEmitter.off("toggleDisplayView");
   }
+  
+  // Helper function to deep merge dynamic-fields from structuredSearchProps into params
+  mergeDynamicFieldsIntoParams = (params, structuredSearchProps) => {
+    if (!structuredSearchProps || !structuredSearchProps['dynamic-fields']) {
+      return params;
+    }
+
+    const dynamicFields = structuredSearchProps['dynamic-fields'];
+    const mergedParams = { ...params };
+
+    // Merge each dynamic field into params
+    for (const fieldName of Object.keys(dynamicFields)) {
+      const dynamicFieldConfig = dynamicFields[fieldName];
+      
+      if (mergedParams[fieldName]) {
+        // Field exists in params - merge the configs
+        // Page-specific config from dynamic-fields takes precedence
+        mergedParams[fieldName] = {
+          ...mergedParams[fieldName],
+          ...dynamicFieldConfig,
+          // Deep merge widget properties
+          widget: {
+            ...mergedParams[fieldName].widget,
+            ...(dynamicFieldConfig.widget || {})
+          }
+        };
+      } else {
+        // Field doesn't exist in params - add it
+        mergedParams[fieldName] = dynamicFieldConfig;
+      }
+    }
+
+    return mergedParams;
+  }
+  
   checkStructuredSearchProps = () => {
     const structuredSearchProps = window.mw?.config.get("structuredSearchProps");
   
     if (structuredSearchProps && Object.keys(structuredSearchProps).length > 0) {
-      console.log("structuredSearchProps received in TopBar:", structuredSearchProps);
-  
       this.setState({
         enableDisplayToggle: Object.keys(structuredSearchProps).length > 0
       });
@@ -145,7 +167,7 @@ class TopBar extends Component {
     return item;
   }
   removeLabel( fieldName, valueObj) {
-    if('undefined' !== typeof this.state.inputs && 'range' === this.state.inputs[fieldName].widget.type){
+    if('undefined' !== typeof this.state.inputs && 'range' === this.state.inputs[fieldName]?.widget.type){
       FormMain.clearField(fieldName);
     }
     else{
@@ -245,7 +267,6 @@ class TopBar extends Component {
         // Exclude 'topbar' position - those are rendered inside the form
         // Only include fields that are NOT in sidebar, hide, empty, or topbar
         if (!['sidebar', 'hide', '', 'topbar'].includes(inputData.widget.position)) {
-          console.log("inputData included in renderSimpleFilters",inputData.widget.position, inputData);
           let inputCopy = { ...inputData };
 
           // Change checkboxes to dropdowns
@@ -301,16 +322,9 @@ class TopBar extends Component {
         toggleSidebar = <button type="button" className="hide-on-desktop" onClick={this.toggleSidebar.bind(this)}>{this.state['structuredsearch-toggle-sidebar']}<i className={'fas fa-chevron-' + this.state.chevronDir}></i></button>;
     if('undefined' !== typeof this.state.inputs){
       let inputsSorted = Object.values(this.state.inputs).sort(utils.sortByWeight);
-      console.log('[TopBar render] Total inputs:', inputsSorted.length);
-      console.log('[TopBar render] All input positions:', 
-        inputsSorted.map(i => ({ field: i.field, position: i.widget?.position }))
-      );
       
       for(let inputData of inputsSorted){
-      //for(let inputDataKey of Object.keys(this.state.inputs)){
-        //console.log(this.state.inputs[inputDataKey],inputDataKey,'this.state.inputs[inputDataKey],inputDataKey');
         if('topbar' === inputData.widget.position){
-          console.log('[TopBar render] Adding topbar field:', inputData.field, inputData);
           allInputsRaw.push(inputData);
           
           // Separate search field from other topbar fields
@@ -322,9 +336,6 @@ class TopBar extends Component {
         }
       }
     }
-    console.log("[TopBar render] allInputsRaw", allInputsRaw);
-    console.log("[TopBar render] searchInput:", searchInput);
-    console.log("[TopBar render] otherTopbarInputs count:", otherTopbarInputs.length);
     if(this.state.labels){
 
       for(let labelKey of Object.keys(this.state.labels)){

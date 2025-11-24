@@ -21,7 +21,6 @@ class FormInput extends Component {
 	constructor(props) {
 		super(props);
 		  const structuredSearchProps = window.mw?.config.get('structuredSearchProps') || {};
-		  console.log("input", structuredSearchProps);
 		  
 		let initOptions = props.inputData.widget.options|| [],
 			initValue = FormMain.getValue(props.inputData.field);
@@ -123,12 +122,6 @@ class FormInput extends Component {
 		let optionsStructured = [];
 		for(let option of options){
 			if( 'string' === typeof option){
-				try {
-			
-					throw new Error(option)
-				} catch (error) {
-					console.log(error)
-				}
 				optionsStructured.push({
 					value: option, 
 					label: option
@@ -141,7 +134,6 @@ class FormInput extends Component {
 		return optionsStructured;
 	}
 	valueChanged( key, value ){
-		console.log("key, value",key, value);
 		if(!value){
 			FormMain.removeValueByKey( key );
 		}
@@ -151,8 +143,6 @@ class FormInput extends Component {
 	}
 	
 	checkboxChanges( fieldName, value, event){
-		console.log("filed", fieldName);
-		console.log("value", value);
 		if(event.target.checked){
 			FormMain.addValue( fieldName, value );
 		}
@@ -227,7 +217,6 @@ class FormInput extends Component {
 		}
 		else{
 			FormMain.addValue( fieldName, autocompleteItem );
-			console.log("FormMain.addValue",fieldName,  autocompleteItem);
 			this.setState({
 				typed:''
 			});
@@ -283,8 +272,6 @@ class FormInput extends Component {
 		this.valueChanged( fieldName, event.target.value);
 	}
 	radioChanges( fieldName, value, event){
-		console.log(fieldName);
-		
 		this.valueChanged( fieldName, value);
 	}
 	getInputHtml(){
@@ -514,7 +501,6 @@ class FormInput extends Component {
 			
 			// Find current value for react-select
 			let currentValue = this.state.typed ? selectOptions.find(option => option.label === this.state.typed) : null;
-			console.log("currentValue",currentValue, this.state.typed);
 			return   <div className="autocomplete-wrp">
 				<Select
 					aria-label={placeholder||inputData.field}
@@ -555,7 +541,6 @@ class FormInput extends Component {
 			</div>;
 	}
 	autocompleteChanged(inputValue) {
-		console.error("autocompleteChanged",inputValue);
 		// Update the typed state and trigger search
 		if(inputValue || this.state.typed.length < 2){
 			this.setState({ typed: inputValue });

@@ -27,8 +27,6 @@ class Results extends Component {
   }
   componentDidMount() {
     this.retryInterval = setInterval(() => {
-      console.log("in");
-      
       this.checkStructuredSearchProps();
     }, 500);
   
@@ -120,7 +118,6 @@ class Results extends Component {
     //  Trigger search immediately if URL has advanced_search
     const params = queryString.parse(window.location.search);
     if (params.advanced_search) {
-      console.log("Auto-starting search from componentDidMount");
       EventEmitter.emit('searchStarted', { reset: true });
       FormMain.setNext(0); // or whatever starts the first search
     }
@@ -163,9 +160,7 @@ isElementInViewport = (el) => {
 
 
   next = () => {
-    console.log("next");
     if (!this.state.offset) return;
-    console.log("nextresults");
     FormMain.setNext(this.state.offset);
   };
   
@@ -174,7 +169,6 @@ isElementInViewport = (el) => {
     const structuredSearchProps = window.mw?.config.get('structuredSearchProps') || {};
   
     if (structuredSearchProps && Object.keys(structuredSearchProps).length > 0) {
-      console.log("structuredSearchProps received in Results:", structuredSearchProps);
       this.setState({
         hasResultsSumHidden: structuredSearchProps.resultsSumMessage === "hidden",
         resultClass: structuredSearchProps.class || "",
@@ -265,7 +259,6 @@ getTemplateByResult(result) {
   getResultJsx(result) {
     let template = this.getTemplateByResult(result);
     this.linkToTheSearchTerms(result);
-    console.log(result);
 
     //if (window.mw && window.mw.config.get('structuredSearchProps')) {
       if (!template) {
@@ -276,7 +269,6 @@ getTemplateByResult(result) {
       let renderedHtml = Mustache.render(template, result);
 
       let reactElement = htmlToReactParser.parse(renderedHtml);;
-      console.log("reactElement", reactElement);
       return reactElement;
     //}
     //return <ReactMustache template={template} data={result} onClick={this.resultClicked.bind(result.full_title, this)} />;

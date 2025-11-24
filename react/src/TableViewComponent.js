@@ -44,7 +44,6 @@ const TableViewComponent = ({ results }) => {
     const checkStructuredSearchProps = () => {
       const updatedProps = window.mw?.config.get("structuredSearchProps") || {};
       if (Object.keys(updatedProps).length > 0) {
-        console.log("structuredSearchProps received in Table:", structuredSearchProps);
         setStructuredSearchProps(updatedProps);
         clearInterval(interval);
       }
@@ -91,7 +90,6 @@ const TableViewComponent = ({ results }) => {
 
     let aVal = a[sortConfig.key] ?? '';
     let bVal = b[sortConfig.key] ?? '';
-    console.log('sortConfig.key', sortConfig.key, aVal, bVal);
     if (sortConfig.key === 'date' && a.timestamp && b.timestamp) {
       aVal = new Date(a.timestamp);
       bVal = new Date(b.timestamp);
