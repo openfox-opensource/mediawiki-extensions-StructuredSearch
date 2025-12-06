@@ -32,6 +32,9 @@ class FormInput extends Component {
 			typed: initValue && initValue.length ? initValue[0].value : '' ,
 			 placeholder: structuredSearchProps.placeholder || ""
 		};
+		// Track keyboard navigation for autocomplete
+		this._keyboardNavigated = false;
+		this._enterShouldSubmitForm = false;
 		if( "select" === props.inputData.widget.type ){
 			let selected = props.inputData.widget.default || initOptions[0];
 			if('string' === typeof selected){
@@ -211,6 +214,12 @@ class FormInput extends Component {
 		}
 	}
 	autocompleteSelected( fieldName, itemLabel, autocompleteItem){
+		// If Enter was pressed without keyboard navigation, don't navigate - let form submit
+		if (this._enterShouldSubmitForm) {
+			this._enterShouldSubmitForm = false;
+			return;
+		}
+		
 		if( this.isSearchAutocomplete() ){
 			FormMain.fireGlobalEvent( {title:autocompleteItem.value}, "StructuredSearchPageClicked" );
 			window.location.href = autocompleteItem.value;
@@ -224,6 +233,36 @@ class FormInput extends Component {
 	}
 	onAutocompleteMenuVisibilityChange( isOpen ){
 		EventEmitter.emit('autocompleteMenuOpen',isOpen);
+		// Reset keyboard navigation tracking when menu closes
+		if (!isOpen) {
+			this._keyboardNavigated = false;
+		}
+	}
+	
+	autocompleteKeyDown( event ){
+		// Track arrow key navigation - if user navigates with keyboard, allow Enter to select
+		if (event.key === 'ArrowDown' || event.key === 'ArrowUp' || 
+		    event.keyCode === 40 || event.keyCode === 38) {
+			this._keyboardNavigated = true;
+			// Let react-select handle arrow keys normally
+			return;
+		}
+		
+		// Handle Enter key
+		if (event.key === 'Enter' || event.keyCode === 13) {
+			// If menu is open and user hasn't navigated with keyboard, prevent react-select's selection
+			// but don't prevent default so form can still submit
+			if (this.state.filteredOptions.length > 0 && !this._keyboardNavigated) {
+				// Mark that this Enter should not trigger navigation
+				this._enterShouldSubmitForm = true;
+				// Close the menu to prevent react-select from selecting
+				this.setState({ filteredOptions: [] });
+				// Don't prevent default - let form's onSubmit handle it
+				return;
+			}
+			// If user navigated with keyboard, allow react-select to handle Enter normally
+			this._enterShouldSubmitForm = false;
+		}
 	}
 	isSearchAutocomplete( ){
 		return fieldsDetector.isSearch(this.state.inputData);
@@ -513,6 +552,7 @@ class FormInput extends Component {
 					onInputChange={(inputValue) => this.autocompleteChanged(inputValue)}
 					onMenuOpen={() => this.onAutocompleteMenuVisibilityChange(true)}
 					onMenuClose={() => this.onAutocompleteMenuVisibilityChange(false)}
+					onKeyDown={this.autocompleteKeyDown.bind(this)}
 					placeholder={placeholder}
 					isSearchable={true}
 					isClearable={true}
