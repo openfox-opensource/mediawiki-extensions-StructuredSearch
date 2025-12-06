@@ -750,6 +750,14 @@ span.label-wrp {
   display: none;
 }
 
+/* Hover-lock: disable hover effects and pointer events until user moves mouse */
+body.no-hover .autocomplete__menu {
+  pointer-events: none !important;
+}
+body.no-hover .autocomplete__option:hover {
+  background-color: transparent !important;
+}
+
 /* mobile hide*/
 @media (max-width: 992px) {
  .main-and-advanced-wrp button {display: none;}

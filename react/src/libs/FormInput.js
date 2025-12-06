@@ -233,8 +233,29 @@ class FormInput extends Component {
 	}
 	onAutocompleteMenuVisibilityChange( isOpen ){
 		EventEmitter.emit('autocompleteMenuOpen',isOpen);
-		// Reset keyboard navigation tracking when menu closes
-		if (!isOpen) {
+		
+		// Hover-lock mechanism: prevent hover effects until user moves mouse
+		if (isOpen) {
+			// Menu is opening - add no-hover class and set up mousemove listener
+			document.body.classList.add('no-hover');
+			
+			// Create re-enable hover function
+			const reEnableHover = () => {
+				document.body.classList.remove('no-hover');
+			};
+			
+			// Store reference for potential cleanup
+			this._hoverLockCleanup = reEnableHover;
+			
+			// Listen for first mousemove to re-enable hover
+			// { once: true } automatically removes listener after first call
+			window.addEventListener('mousemove', reEnableHover, { once: true });
+		} else {
+			// Menu is closing - cleanup hover-lock
+			document.body.classList.remove('no-hover');
+			// Clear reference (listener auto-removes with { once: true }, but clear ref anyway)
+			this._hoverLockCleanup = null;
+			// Reset keyboard navigation tracking when menu closes
 			this._keyboardNavigated = false;
 		}
 	}
@@ -559,22 +580,33 @@ class FormInput extends Component {
 					noOptionsMessage={() => "No options found"}
 					menuIsOpen={this.state.filteredOptions.length > 0}
 					styles={{
-						menu: (provided) => ({
-							...provided,
-							position: 'absolute',
-							top: '45px',
-							right: 0,
-							left: 'auto',
-							zIndex: 5,
-							background: '#FFF'
-						}),
-						option: (provided, state) => ({
-							...provided,
-							backgroundColor: state.isFocused
-							  ? "#deebff"          
-							  : "transparent",     
-							color: "inherit",
-						  }),
+						menu: (provided) => {
+							// Check if hover-lock is active
+							const isHoverLocked = document.body.classList.contains('no-hover');
+							
+							return {
+								...provided,
+								position: 'absolute',
+								top: '45px',
+								right: 0,
+								left: 'auto',
+								zIndex: 5,
+								background: '#FFF',
+								pointerEvents: isHoverLocked ? 'none' : 'auto'
+							};
+						},
+						option: (provided, state) => {
+							// Check if hover-lock is active
+							const isHoverLocked = document.body.classList.contains('no-hover');
+							
+							return {
+								...provided,
+								backgroundColor: (state.isFocused && !isHoverLocked)
+								  ? "#deebff"          
+								  : "transparent",     
+								color: "inherit",
+							};
+						},
 					}}
 				/>
 				{submitButton}
