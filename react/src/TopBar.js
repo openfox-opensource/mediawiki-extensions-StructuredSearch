@@ -269,17 +269,7 @@ class TopBar extends Component {
         if (!['sidebar', 'hide', '', 'topbar'].includes(inputData.widget.position)) {
           let inputCopy = { ...inputData };
 
-          // Change checkboxes to dropdowns
-          if (inputCopy.widget.type === 'checkboxes') {
-            inputCopy = {
-              ...inputCopy,
-              widget: {
-                ...inputCopy.widget,
-                type: 'select',
-                is_not_multiple: false // allow multiple selections
-              }
-            };
-          }
+         
 
           allInputs.push(
             <FormInput key={inputCopy.field} inputData={inputCopy} />
