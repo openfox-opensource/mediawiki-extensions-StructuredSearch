@@ -598,26 +598,39 @@ class Hooks {
 	}
 	public static function addPageImageInSearch( $page ) {
 		if ( class_exists( 'PageImages' ) || class_exists( 'PageImages\PageImages' ) ) {
-		
-			$title = $page->getTitle();
 			$dbr = wfGetDB( DB_REPLICA );
-			$res = $dbr->select(
-				[ 'imagelinks','page' ],
-				[ 'il_from','il_to','CONCAT(page_namespace,":",page_title) as concatKey', ],
+			$image = $dbr->selectField( 'page_props',
+				'pp_value',
 				[
-					'CONCAT(page_namespace,":",page_title) = ' . $dbr->addQuotes( $title->getNamespace() . ':' . $title->getText() )
+					'pp_page' => $page->getId(),
+					'pp_propname' => [ \PageImages\PageImages::PROP_NAME, \PageImages\PageImages::PROP_NAME_FREE ]
 				],
 				__METHOD__,
-				[],
-				[ 'page' => [ 'INNER JOIN', [ 'page_id=il_from' ] ],
-				]
+				[ 'ORDER BY' => 'pp_propname' ]
 			);
-			$image = null;
-			while ( $row = $res->fetchObject( ) ) {
-				$image = $row->il_to;
-				//echo $title->getText() . __LINE__.  "  _________  $image --------\n";
-				break;
+			
+			if(!$image){
+				$title = $page->getTitle();
+				$dbr = wfGetDB( DB_REPLICA );
+				$res = $dbr->select(
+					[ 'imagelinks','page' ],
+					[ 'il_from','il_to','CONCAT(page_namespace,":",page_title) as concatKey', ],
+					[
+						'CONCAT(page_namespace,":",page_title) = ' . $dbr->addQuotes( $title->getNamespace() . ':' . $title->getText() )
+					],
+					__METHOD__,
+					[],
+					[ 'page' => [ 'INNER JOIN', [ 'page_id=il_from' ] ],
+					]
+				);
+				$image = null;
+				while ( $row = $res->fetchObject( ) ) {
+					$image = $row->il_to;
+					//echo $title->getText() . __LINE__.  "  _________  $image --------\n";
+					break;
+				}
 			}
+			
 			//for some reason, il_to can have more than one value, separate by comma, but comma also could be part of the image name,
 			//so we should split by comma and check if each part is a valid image name
 			if( $image ){
@@ -630,20 +643,7 @@ class Hooks {
 					}
 				}
 			}
-			if( !$image && class_exists( 'PageImages\PageImages' ) ){
-				$dbr = wfGetDB( DB_REPLICA );
-				$image = $dbr->selectField( 'page_props',
-					'pp_value',
-					[
-						'pp_page' => $page->getId(),
-						'pp_propname' => [ \PageImages\PageImages::PROP_NAME, \PageImages\PageImages::PROP_NAME_FREE ]
-					],
-					__METHOD__,
-					[ 'ORDER BY' => 'pp_propname' ]
-				);
-				
-				//echo $title->getText() .   __LINE__.  "  _________  $image --------\n";
-			}
+			
 			$imageAsUrl = $image ? self::fixImageToThumbs( $image ): null;
 			//$imageAsUrlIsUrl = filter_var($imageAsUrl, FILTER_VALIDATE_URL);
 			// if( $image && !$imageAsUrlIsUrl && (!$imageAsUrl || $imageAsUrl == $image)){
@@ -940,7 +940,7 @@ class Hooks {
 		$stubFields = [];
 		foreach( $pageNames as $pageName ){
 
-			$wikiPage = \WikiPage::factory( \Title::newFromText( $pageName ) );
+			$wikiPage = MediaWikiServices::getInstance()->getWikiPageFactory()->newFromTitle( \Title::newFromText( $pageName ) );
 			echo "test image " . $pageName . "\n";
 			echo print_r(self::addPageImageInSearch(  $wikiPage, $stubFields  ),1) . "\n";
 			echo "finn test image " . $pageName . "\n";
