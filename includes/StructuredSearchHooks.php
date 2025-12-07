@@ -306,6 +306,7 @@ class Hooks {
 						//if widget type is checkbox modify type to select
 						if(isset($value['widget']['type']) && $value['widget']['type'] == 'checkboxes'){
 							$value['widget']['type'] = 'select';
+							
 							//add empty option
 							$value['widget']['options'] = array_merge([['label' => wfMessage( 'structuredsearch-choose' )->text(), 'value' => '']], $value['widget']['options']);
 							//also remove html from each option's label
@@ -315,6 +316,10 @@ class Hooks {
 								}
 							}
 						}
+						if(isset($value['widget']['type']) && $value['widget']['type'] == 'select'){
+							$value['widget']['is_not_multiple'] = true;
+						}
+
 					}
 				}
 			}

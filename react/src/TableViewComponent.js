@@ -160,7 +160,7 @@ const TableViewComponent = ({ results }) => {
 
       {/* Dynamic Fields (hidden on mobile) */}
       {dynamicFields.map((field, i) => {
-        let value = result[field];
+        let value = field === 'namespaces' ? result['namespace'] : result[field];
 
         if (field === 'date' && typeof result.timestamp === 'string') {
           const [year, month, day] = result.timestamp.slice(0, 10).split("-");
@@ -188,7 +188,7 @@ const TableViewComponent = ({ results }) => {
 
         return (
           <td key={i} className="border p-2 align-top text-sm text-gray-700 dark:text-gray-300 dynamicfields sm:table-cell">
-            {value || <span className="text-gray-400 italic"></span>}
+            {Array.isArray(value) ? value.join(', ') : (value || <span className="text-gray-400 italic"></span>)}
           </td>
         );
       })}

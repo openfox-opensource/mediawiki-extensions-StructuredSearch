@@ -729,21 +729,38 @@ span.label-wrp {
 }
 
 /* autocomplete */
-.search-suggestions-open .form-input.form-input-wrp-search .autocomplete-wrp > div > div {
-    border-radius: 0 0 23px 23px;
-    overflow: hidden;
-    box-shadow: var(--search-input-shadow);
-    border: solid var(--search-light-border) 2px;
-    border-top: none;
-    .autocomplete-item {
-    padding: 9px 19px;
-    min-width: 260px;
-    }
+.search-suggestions-open .form-input.form-input-wrp-search .autocomplete-wrp{
+  &> div > div:not(.autocomplete__control) {
+      border-radius: 0 0 23px 23px;
+      overflow: hidden;
+      box-shadow: var(--search-input-shadow);
+      border: solid var(--search-light-border) 2px;
+      border-top: none;
+      .autocomplete-item {
+      padding: 9px 19px;
+      min-width: 260px;
+      }
+  }
+  .autocomplete__control{
+    border-radius: 23px 23px 0 0 ;
+  }
+  
 }
 .form-input-wrp-search .autocomplete__indicators{
   display: none;
 }
 
+/* Hover-lock: disable hover effects and pointer events until user moves mouse */
+body.no-hover .autocomplete__menu {
+  pointer-events: none !important;
+}
+body.no-hover .autocomplete__option {
+  pointer-events: none !important;
+}
+body.no-hover .autocomplete__option:hover,
+body.no-hover .autocomplete__option[aria-selected="true"] {
+  background-color: transparent !important;
+}
 
 /* mobile hide*/
 @media (max-width: 992px) {

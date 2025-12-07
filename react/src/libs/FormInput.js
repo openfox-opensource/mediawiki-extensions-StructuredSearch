@@ -30,8 +30,18 @@ class FormInput extends Component {
 			filteredOptions : initOptions,
 			options : initOptions,
 			typed: initValue && initValue.length ? initValue[0].value : '' ,
-			 placeholder: structuredSearchProps.placeholder || ""
+			 placeholder: structuredSearchProps.placeholder || "",
+			hoverLocked: false
 		};
+		// Track keyboard navigation for autocomplete
+		this._keyboardNavigated = false;
+		this._enterShouldSubmitForm = false;
+		// Synchronous flags for hover-lock (for immediate effect before state updates)
+		this._hoverLocked = false;
+		// Ref for menu state (synchronous tracking)
+		this._menuOpenRef = { current: false };
+		// Preserve typed value when closing menu
+		this._preserveTypedValue = null;
 		if( "select" === props.inputData.widget.type ){
 			let selected = props.inputData.widget.default || initOptions[0];
 			if('string' === typeof selected){
@@ -67,6 +77,21 @@ class FormInput extends Component {
 				//console.log('in', this.state.inputData.field)
 				FormMain.addValue( this.state.inputData.field, option );
 			}
+		}
+	}
+	
+	componentDidUpdate(prevProps, prevState) {
+		// Track when filteredOptions changes (menu opens/closes)
+		// This is more reliable than relying on react-select's onMenuOpen/onMenuClose callbacks
+		const menuWasOpen = prevState.filteredOptions.length > 0;
+		const menuIsOpen = this.state.filteredOptions.length > 0;
+		
+		if (!menuWasOpen && menuIsOpen) {
+			// Menu just opened - apply hover-lock
+			this.onAutocompleteMenuVisibilityChange(true);
+		} else if (menuWasOpen && !menuIsOpen) {
+			// Menu just closed - remove hover-lock
+			this.onAutocompleteMenuVisibilityChange(false);
 		}
 	}
 	// componentDidMount() {
@@ -211,6 +236,17 @@ class FormInput extends Component {
 		}
 	}
 	autocompleteSelected( fieldName, itemLabel, autocompleteItem){
+		// Handle null selection (when user clears the field)
+		if (!autocompleteItem) {
+			return;
+		}
+		
+		// If Enter was pressed without keyboard navigation, don't navigate - let form submit
+		if (this._enterShouldSubmitForm) {
+			this._enterShouldSubmitForm = false;
+			return;
+		}
+		
 		if( this.isSearchAutocomplete() ){
 			FormMain.fireGlobalEvent( {title:autocompleteItem.value}, "StructuredSearchPageClicked" );
 			window.location.href = autocompleteItem.value;
@@ -223,7 +259,87 @@ class FormInput extends Component {
 		}
 	}
 	onAutocompleteMenuVisibilityChange( isOpen ){
+		// Prevent duplicate calls (idempotent)
+		if (this._menuOpenRef.current === isOpen && this._hoverLocked === isOpen) {
+			return;
+		}
+		
 		EventEmitter.emit('autocompleteMenuOpen',isOpen);
+		
+		// Update synchronous ref for menu state
+		this._menuOpenRef.current = isOpen;
+		
+		// Hover-lock mechanism: prevent hover effects until user moves mouse
+		if (isOpen) {
+			// Menu is opening - add no-hover class and set up mousemove listener
+			document.body.classList.add('no-hover');
+			// Set synchronous flag immediately (before state update)
+			this._hoverLocked = true;
+			this.setState({ hoverLocked: true });
+			
+			// Create re-enable hover function
+			const reEnableHover = () => {
+				document.body.classList.remove('no-hover');
+				// Update both synchronous flag and state
+				this._hoverLocked = false;
+				this.setState({ hoverLocked: false });
+			};
+			
+			// Clean up any existing listener first
+			if (this._hoverLockCleanup) {
+				window.removeEventListener('mousemove', this._hoverLockCleanup);
+			}
+			
+			// Store reference for potential cleanup
+			this._hoverLockCleanup = reEnableHover;
+			
+			// Listen for first mousemove to re-enable hover
+			// { once: true } automatically removes listener after first call
+			window.addEventListener('mousemove', reEnableHover, { once: true });
+		} else {
+			// Menu is closing - cleanup hover-lock
+			document.body.classList.remove('no-hover');
+			this._hoverLocked = false;
+			this.setState({ hoverLocked: false });
+			
+			// Clean up mousemove listener if it exists
+			if (this._hoverLockCleanup) {
+				window.removeEventListener('mousemove', this._hoverLockCleanup);
+				this._hoverLockCleanup = null;
+			}
+			
+			// Reset keyboard navigation tracking when menu closes
+			this._keyboardNavigated = false;
+		}
+	}
+	
+	autocompleteKeyDown( event ){
+		// Track arrow key navigation - if user navigates with keyboard, allow Enter to select
+		if (event.key === 'ArrowDown' || event.key === 'ArrowUp' || 
+		    event.keyCode === 40 || event.keyCode === 38) {
+			this._keyboardNavigated = true;
+			this._enterShouldSubmitForm = false;
+			// Let react-select handle arrow keys normally
+			return;
+		}
+		
+		// Handle Enter key
+		if (event.key === 'Enter' || event.keyCode === 13) {
+			// Use synchronous ref to check menu state (not async state)
+			if (this._menuOpenRef.current && !this._keyboardNavigated) {
+				// Mark that this Enter should not trigger navigation (set BEFORE react-select processes)
+				this._enterShouldSubmitForm = true;
+				// Preserve the current typed value before closing menu
+				this._preserveTypedValue = this.state.typed;
+				// Close the menu to prevent react-select from selecting
+				this.setState({ filteredOptions: [] });
+				// Don't prevent default - let event bubble to form for submission
+				// The onChange handler will check _enterShouldSubmitForm and ignore the selection
+				return;
+			}
+			// If user navigated with keyboard, allow react-select to handle Enter normally
+			this._enterShouldSubmitForm = false;
+		}
 	}
 	isSearchAutocomplete( ){
 		return fieldsDetector.isSearch(this.state.inputData);
@@ -513,34 +629,61 @@ class FormInput extends Component {
 					onInputChange={(inputValue) => this.autocompleteChanged(inputValue)}
 					onMenuOpen={() => this.onAutocompleteMenuVisibilityChange(true)}
 					onMenuClose={() => this.onAutocompleteMenuVisibilityChange(false)}
+					onKeyDown={this.autocompleteKeyDown.bind(this)}
 					placeholder={placeholder}
 					isSearchable={true}
 					isClearable={true}
 					noOptionsMessage={() => "No options found"}
 					menuIsOpen={this.state.filteredOptions.length > 0}
 					styles={{
-						menu: (provided) => ({
-							...provided,
-							position: 'absolute',
-							top: '45px',
-							right: 0,
-							left: 'auto',
-							zIndex: 5,
-							background: '#FFF'
-						}),
-						option: (provided, state) => ({
-							...provided,
-							backgroundColor: state.isFocused
-							  ? "#deebff"          
-							  : "transparent",     
-							color: "inherit",
-						  }),
+						menu: (provided) => {
+							// Check both synchronous flag (for immediate effect) and state (for re-renders)
+							const isHoverLocked = this._hoverLocked || this.state.hoverLocked;
+							
+							return {
+								...provided,
+								position: 'absolute',
+								top: '45px',
+								right: 0,
+								left: 'auto',
+								zIndex: 5,
+								background: '#FFF',
+								pointerEvents: isHoverLocked ? 'none' : 'auto'
+							};
+						},
+						option: (provided, state) => {
+							// Check both synchronous flag (for immediate effect) and state (for re-renders)
+							const isHoverLocked = this._hoverLocked || this.state.hoverLocked;
+							
+							return {
+								...provided,
+								backgroundColor: (state.isFocused && !isHoverLocked)
+								  ? "#deebff"          
+								  : "transparent",     
+								color: "inherit",
+							};
+						},
 					}}
 				/>
 				{submitButton}
 			</div>;
 	}
 	autocompleteChanged(inputValue) {
+		// If we're preserving a value (Enter was pressed to submit form), restore it
+		if (this._preserveTypedValue !== null && inputValue === '') {
+			// Restore the preserved value
+			const preserved = this._preserveTypedValue;
+			this._preserveTypedValue = null;
+			// Use setTimeout to restore after react-select processes the change
+			setTimeout(() => {
+				this.setState({ typed: preserved });
+			}, 0);
+			return;
+		}
+		
+		// Clear preserve flag if input changed normally
+		this._preserveTypedValue = null;
+		
 		// Update the typed state and trigger search
 		if(inputValue || this.state.typed.length < 2){
 			this.setState({ typed: inputValue });
