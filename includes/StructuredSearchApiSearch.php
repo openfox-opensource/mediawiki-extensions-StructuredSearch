@@ -259,7 +259,7 @@ class ApiSearch extends \ApiBase {
 				
 				
 			}
-			$resultsTitlesForCheck[$titleKey]['namespace_text'] = $titleClass->getNsText(); 
+			$resultsTitlesForCheck[$titleKey]['namespace_text'] = preg_replace( '/_/', ' ', $titleClass->getNsText() ); 
 			$resultsTitlesForCheck[$titleKey] = array_merge( $resultsTitlesForCheck[$titleKey], $fullResults[$key] );
 			$resultsTitlesAliases[$val] = &$resultsTitlesForCheck[$titleKey];
 			if ( isset( $resultsTitlesAliases[$val]['timestamp'] ) ) {
