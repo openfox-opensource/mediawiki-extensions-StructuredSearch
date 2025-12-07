@@ -160,7 +160,7 @@ const TableViewComponent = ({ results }) => {
 
       {/* Dynamic Fields (hidden on mobile) */}
       {dynamicFields.map((field, i) => {
-        let value = field === 'namespaces' ? result['namespace'] : result[field];
+        let value = field === 'namespaces' ? result['namespace_text'] : result[field];
 
         if (field === 'date' && typeof result.timestamp === 'string') {
           const [year, month, day] = result.timestamp.slice(0, 10).split("-");
