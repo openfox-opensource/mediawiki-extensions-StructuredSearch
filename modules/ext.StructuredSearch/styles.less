@@ -41,6 +41,36 @@
   }
   .topbar-filters > div {
   max-width: 120px;}
+  
+  // Search input with toggle button wrapper
+  .search-input-with-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    width: 100%;
+    
+    .field-wrp-name-search {
+      flex: 1;
+      min-width: 0; // Allow flex item to shrink
+    }
+    
+    .display-buttons {
+      flex-shrink: 0;
+      width: auto;
+      min-width: 90px;
+      button {
+        height: 50px;
+        width: 50px;
+        border-radius: 50%;
+        background-color: white;
+        border: 1px solid rgb(204, 204, 204);
+        svg {
+          color: rgb(204, 204, 204);
+        }
+      }
+    }
+  }
+  
   .display-buttons{
     width: 30%;
     min-width: 90px;
@@ -816,6 +846,86 @@ body.no-hover .autocomplete__option[aria-selected="true"] {
           background: transparent !important;
           border: transparent !important;
       }
+    }
+    
+    // Parser-search specific mobile fixes
+    .parser-search {
+      form {
+        width: 100%;
+      }
+      
+      .search-input-with-toggle {
+        width: 100%;
+        flex-direction: row; // Keep side-by-side on mobile
+        gap: 0.5em;
+        
+        .field-wrp-name-search {
+          flex: 1;
+          min-width: 0; // Allow to shrink
+          width: auto; // Let flex handle it
+          
+          input {
+            width: 100% !important;
+          }
+        }
+        
+        .display-buttons {
+          flex-shrink: 0;
+          width: auto;
+          min-width: 50px; // Button width
+          
+          // On mobile parser-search, combine into single toggle - hide second button
+          button:last-child {
+            display: none !important;
+          }
+        }
+      }
+      
+      .topbar-filters {
+        width: 100% !important;
+        display: block !important;
+        > div {
+          display: block !important;
+          width: 100% !important;
+          max-width: 100% !important;
+          margin-bottom: 0.5em;
+        }
+      }
+      
+      .TopBar {
+        position: static !important;
+        top: auto !important;
+        right: auto !important;
+        left: auto !important;
+        
+        &.sticky-on {
+          position: static !important;
+        }
+        
+        header.App-header {
+          display: block !important;
+        }
+        
+        header form {
+          display: block !important;
+          
+          .topbar-other-fields {
+            display: block !important;
+            width: 100% !important;
+            
+            .form-input {
+              width: 100% !important;
+              max-width: 100% !important;
+              margin-bottom: 0.5em;
+            }
+          }
+        }
+      }
+    }
+    
+    // Also fix parser-search-container header
+    .parser-search-container header.App-header {
+      display: block !important;
     }
 
     .TopBar {
