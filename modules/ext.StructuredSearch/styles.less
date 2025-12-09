@@ -85,6 +85,16 @@
       }
     }
   }
+  
+  // Desktop: show separate buttons, hide combined (only outside mobile media query)
+  // This applies to desktop parser-search
+  .display-buttons-combined {
+    display: none !important;
+  }
+  
+  .display-buttons-separate {
+    display: inline-flex !important;
+  }
   .TopBar.with-labels {
     padding: 1em 4em 1em;
 }
@@ -869,14 +879,34 @@ body.no-hover .autocomplete__option[aria-selected="true"] {
           }
         }
         
-        .display-buttons {
+        // On mobile parser-search: show combined, hide separate
+        .display-buttons-separate {
+          display: none !important;
+        }
+        
+        .display-buttons-combined {
+          display: inline-flex !important;
           flex-shrink: 0;
           width: auto;
           min-width: 50px; // Button width
           
-          // On mobile parser-search, combine into single toggle - hide second button
-          button:last-child {
-            display: none !important;
+          button {
+            height: 50px;
+            width: 50px;
+            border-radius: 50%;
+            background-color: white;
+            border: 1px solid rgb(204, 204, 204);
+            svg {
+              color: rgb(204, 204, 204);
+            }
+            
+            &.active {
+              background-color: var(--search-bar-active, #007bff) !important;
+              border-color: var(--search-bar-active, #007bff) !important;
+              svg {
+                fill: white !important;
+              }
+            }
           }
         }
       }
