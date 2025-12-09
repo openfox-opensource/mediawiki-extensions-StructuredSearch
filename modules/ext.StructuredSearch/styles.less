@@ -86,14 +86,14 @@
     }
   }
   
-  // Desktop: show separate buttons, hide combined (only outside mobile media query)
-  // This applies to desktop parser-search
-  .display-buttons-combined {
-    display: none !important;
+  // Desktop: show separate buttons, hide combined
+  // Using higher specificity with .parser-search to override without !important
+  .parser-search .display-buttons-combined {
+    display: none;
   }
   
-  .display-buttons-separate {
-    display: inline-flex !important;
+  .parser-search .display-buttons-separate {
+    display: inline-flex;
   }
   .TopBar.with-labels {
     padding: 1em 4em 1em;
@@ -879,16 +879,17 @@ body.no-hover .autocomplete__option[aria-selected="true"] {
           }
         }
         
-        // On mobile parser-search: show combined, hide separate
+        // Combined toggle button for mobile parser-search
+        // Hide separate buttons, show combined toggle
         .display-buttons-separate {
-          display: none !important;
+          display: none;
         }
         
         .display-buttons-combined {
-          display: inline-flex !important;
+          display: inline-flex;
           flex-shrink: 0;
           width: auto;
-          min-width: 50px; // Button width
+          min-width: 50px;
           
           button {
             height: 50px;
@@ -896,16 +897,28 @@ body.no-hover .autocomplete__option[aria-selected="true"] {
             border-radius: 50%;
             background-color: white;
             border: 1px solid rgb(204, 204, 204);
+            transition: background-color 0.2s, border-color 0.2s;
+            
             svg {
               color: rgb(204, 204, 204);
+              transition: fill 0.2s;
             }
             
+            // Active state: when in list/table view, show active color
+            // Using !important because we need to override any global active state rules
             &.active {
-              background-color: var(--search-bar-active, #007bff) !important;
-              border-color: var(--search-bar-active, #007bff) !important;
+              background-color: var(--search-bar-active, #007bff);
+              border-color: var(--search-bar-active, #007bff);
               svg {
-                fill: white !important;
+                fill: white;
+                color: white;
               }
+            }
+            
+            // Hover state
+            &:hover {
+              background-color: rgba(0, 123, 255, 0.1);
+              border-color: var(--search-bar-active, #007bff);
             }
           }
         }
@@ -1214,4 +1227,13 @@ td[class*="mw-search-ns"], #mw-searchoptions h4,
 .field-wrp-type-autocomplete input:focus {
   outline: none;
   box-shadow: none;
+}
+
+// Override sidebar.less rule that sets width: 100% on :has(input:focus) or :has(.active)
+// This prevents #top-bar and #main > .row from expanding to 100% width when inputs are focused
+#top-bar:has(input:focus),
+#top-bar:has(.active),
+#main > .row:has(input:focus),
+#main > .row:has(.active) {
+  width: auto;
 }
