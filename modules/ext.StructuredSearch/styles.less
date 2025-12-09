@@ -87,13 +87,24 @@
   }
   
   // Desktop: show separate buttons, hide combined
-  // Using higher specificity with .parser-search to override without !important
-  .parser-search .display-buttons-combined {
-    display: none;
-  }
-  
-  .parser-search .display-buttons-separate {
-    display: inline-flex;
+  // This is inside .parser-search block, so selector becomes .parser-search .display-buttons-combined
+  // Explicitly set for desktop (min-width: 993px) to ensure it overrides mobile rules
+  // Need higher specificity to override .parser-search-container .display-buttons and inline-flex class
+  @media (min-width: 993px) {
+    // Target with higher specificity to override .parser-search-container .display-buttons
+    .parser-search-container .parser-search .display-buttons-combined,
+    .parser-search .parser-search-container .display-buttons-combined,
+    .parser-search-container .display-buttons-combined.display-buttons-combined,
+    .display-buttons-combined.display-buttons-combined {
+      display: none;
+    }
+    
+    .parser-search-container .parser-search .display-buttons-separate,
+    .parser-search .parser-search-container .display-buttons-separate,
+    .parser-search-container .display-buttons-separate.display-buttons-separate,
+    .display-buttons-separate.display-buttons-separate {
+      display: inline-flex;
+    }
   }
   .TopBar.with-labels {
     padding: 1em 4em 1em;
