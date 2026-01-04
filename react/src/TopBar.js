@@ -83,6 +83,7 @@ class TopBar extends Component {
        }
       );
       this.setStickyCheck();
+      this.setFiltersScrollHide();
       EventEmitter.on("hideSidebar", allData => {
         this.setState( {chevronDir : 'down'});
       });    
@@ -93,6 +94,10 @@ class TopBar extends Component {
   componentWillUnmount(){
     clearInterval(this.retryInterval);
     EventEmitter.off("toggleDisplayView");
+    // Clean up scroll listener
+    if (this.filtersScrollHandler) {
+      window.removeEventListener('scroll', this.filtersScrollHandler);
+    }
   }
   
   // Helper function to deep merge dynamic-fields from structuredSearchProps into params
@@ -167,6 +172,41 @@ class TopBar extends Component {
     if (checkingElement) {
       observer.observe(checkingElement);
     }
+  }
+
+  setFiltersScrollHide() {
+    // Only apply to parser-search-container, not special page
+    const parserSearchContainer = document.querySelector('.parser-search-container');
+    if (!parserSearchContainer) {
+      return; // Not a parser-search page, skip
+    }
+
+    let lastScrollY = window.scrollY;
+    let ticking = false;
+
+    this.filtersScrollHandler = () => {
+      const currentScrollY = window.scrollY;
+
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          // Hide filters when scrolling down, show when scrolling up or at top
+          if (currentScrollY > lastScrollY && currentScrollY > 100) {
+            // Scrolling down and past 100px - hide filters
+            parserSearchContainer.classList.add('filters-hidden');
+          } else if (currentScrollY < lastScrollY || currentScrollY <= 100) {
+            // Scrolling up or near top - show filters
+            parserSearchContainer.classList.remove('filters-hidden');
+          }
+
+          lastScrollY = currentScrollY;
+          ticking = false;
+        });
+
+        ticking = true;
+      }
+    };
+
+    window.addEventListener('scroll', this.filtersScrollHandler, { passive: true });
   }
   standardizeItem( item) {
     if( 'string' === typeof item ){

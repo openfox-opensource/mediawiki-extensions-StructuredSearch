@@ -1,4 +1,9 @@
 // Parser function page specific styles
+.parser-search-container {
+  // Align input/selectors line with results line
+  --sts-input-padd: 1em 0px .5em;
+}
+
 .parser-search {
   // Make topbar other fields (dynamic fields) match the width of search input's autocomplete-wrp
   .TopBar header form {
@@ -48,6 +53,76 @@
           }
         }
       }
+    }
+  }
+
+  // Fix left padding when selecting activity - remove padding from topbar-filters
+  .topbar-filters {
+    padding-left: 0;
+    
+    .form-input {
+      padding-left: 0;
+      margin-left: 0;
+    }
+  }
+
+  // Hide topbar-filters and topbar-other-fields on scroll (will be toggled by JavaScript)
+  // Keep search input and view toggle buttons visible
+  .topbar-filters,
+  .topbar-other-fields {
+    transition: opacity 0.3s ease, max-height 0.3s ease;
+  }
+
+  // Result card styles
+  .results {
+    // Remove margins from h5 title
+    h5,
+    .card-title {
+      margin: 0;
+    }
+
+    // Namespace tag styling - fully rounded, --fox-purple background
+    .namespace-tag {
+      position: absolute;
+      top: 0.5rem;
+      left: 0.5rem;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      background: var(--fox-purple);
+      color: white;
+      font-size: 0.875rem;
+      z-index: 10;
+      font-weight: 500;
+    }
+
+    // Category links styling - green color
+    .category-links {
+      margin-top: 0.5rem;
+      margin-bottom: 0.5rem;
+      
+      .category-link {
+        color: var(--search-bar-active, #78c043);
+        text-decoration: none;
+        margin-left: 0.5rem;
+        
+        &:first-child {
+          margin-left: 0;
+        }
+        
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+}
+
+// Hide topbar-filters and topbar-other-fields on scroll when filters-hidden class is on container
+.parser-search-container.filters-hidden {
+  .parser-search {
+    .topbar-filters,
+    .topbar-other-fields {
+      display: none;
     }
   }
 }

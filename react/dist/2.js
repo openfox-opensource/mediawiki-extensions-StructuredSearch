@@ -1,3 +1,10 @@
+/*
+* React Tooltip
+* {@link https://github.com/ReactTooltip/react-tooltip}
+* @copyright ReactTooltip Team
+* @license MIT
+*/
+
 /*!
 	Copyright (c) 2018 Jed Watson.
 	Licensed under the MIT License (MIT), see
@@ -5,12 +12,15 @@
 */
 
 /*!
-  react-datepicker v8.3.0
+  react-datepicker v8.4.0
   https://github.com/Hacker0x01/react-datepicker
   Released under the MIT License.
 */
 
-/*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */
+/*!
+ * mustache.js - Logic-less {{mustache}} templates with JavaScript
+ * http://github.com/janl/mustache.js
+ */
 
 /**
  * @license React
