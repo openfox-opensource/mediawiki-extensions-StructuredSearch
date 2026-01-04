@@ -94,6 +94,7 @@ class Hooks {
 						$values = array_map( 'trim', explode( ',', $param['value'] ) );
 						$values = array_filter( $values ); // Remove empty values
 						if ( !empty( $values ) ) {
+
 							$dynamicFields[$param['key']] = $values;
 						} else {
 							// Empty after filtering, store as empty array
@@ -308,7 +309,6 @@ class Hooks {
 							$value['widget']['type'] = 'select';
 							
 							//add empty option
-							$value['widget']['options'] = array_merge([['label' => wfMessage( 'structuredsearch-choose' )->text(), 'value' => '']], $value['widget']['options']);
 							//also remove html from each option's label
 							if(isset($value['widget']['options']) && is_array($value['widget']['options'])){
 								foreach($value['widget']['options'] as &$option){
@@ -317,6 +317,8 @@ class Hooks {
 							}
 						}
 						if(isset($value['widget']['type']) && $value['widget']['type'] == 'select'){
+							$value['widget']['options'] = array_merge([['label' => wfMessage( 'structuredsearch-choose' )->text(), 'value' => '']], $value['widget']['options']);
+
 							$value['widget']['is_not_multiple'] = true;
 						}
 
