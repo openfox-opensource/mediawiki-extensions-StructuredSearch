@@ -181,30 +181,24 @@ class TopBar extends Component {
       return; // Not a parser-search page, skip
     }
 
-    let lastScrollY = window.scrollY;
-    let ticking = false;
+    // let lastScrollY = window.scrollY;
+    // let ticking = false;
 
     this.filtersScrollHandler = () => {
-      const currentScrollY = window.scrollY;
-
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          // Hide filters when scrolling down, show when scrolling up or at top
-          if (currentScrollY > lastScrollY && currentScrollY > 100) {
-            // Scrolling down and past 100px - hide filters
-            parserSearchContainer.classList.add('filters-hidden');
-          } else if (currentScrollY < lastScrollY || currentScrollY <= 100) {
-            // Scrolling up or near top - show filters
-            parserSearchContainer.classList.remove('filters-hidden');
-          }
-
-          lastScrollY = currentScrollY;
-          ticking = false;
-        });
-
-        ticking = true;
+      //we need to hide if search results were pass the top widgets of search
+      //so calculate the height of .App-header and if the results' top are higher then the appHeaderHeight, hide the filters
+      const appHeaderHeight = document.querySelector('.App-header').offsetHeight;
+      const resultsTop = document.querySelector('#results').getBoundingClientRect().top;
+      if(resultsTop < appHeaderHeight){
+        console.log('hide filters');
+        parserSearchContainer.classList.add('filters-hidden');
+      }
+      else{
+        console.log('show filters');
+        parserSearchContainer.classList.remove('filters-hidden');
       }
     };
+    
 
     window.addEventListener('scroll', this.filtersScrollHandler, { passive: true });
   }
