@@ -1,5 +1,5 @@
 .mw-special-StructuredSearch {
-	.item-action-menu {display: none !important;}
+	.item-action-menu {display: none ;}
 	#contentwrapper {
   	width: 100%;
     	max-width: 1440px;
@@ -137,10 +137,10 @@
   }
   
   .hide-on-desktop {
-    display: none !important;
+    display: none!important ;
   }
   #side-bar .checkbox-wrp input {
-    display: none !important;
+    display: none ;
   }
   //background: var(--search-bar-bg);
   //padding: 20px;
@@ -176,7 +176,7 @@
 	  & * {
 	    box-sizing: border-box;
 	  }
-	    display: block !important;
+	    display: block ;
 		#side-bar {
 			float: left;
 		}
@@ -803,14 +803,14 @@ span.label-wrp {
 
 /* Hover-lock: disable hover effects and pointer events until user moves mouse */
 body.no-hover .autocomplete__menu {
-  pointer-events: none !important;
+  pointer-events: none ;
 }
 body.no-hover .autocomplete__option {
-  pointer-events: none !important;
+  pointer-events: none ;
 }
 body.no-hover .autocomplete__option:hover,
 body.no-hover .autocomplete__option[aria-selected="true"] {
-  background-color: transparent !important;
+  background-color: transparent ;
 }
 
 /* mobile hide*/
@@ -864,8 +864,8 @@ body.no-hover .autocomplete__option[aria-selected="true"] {
       border-radius: 23px ;
       }
       button {
-          background: transparent !important;
-          border: transparent !important;
+          background: transparent ;
+          border: transparent ;
       }
     }
     
@@ -886,7 +886,7 @@ body.no-hover .autocomplete__option[aria-selected="true"] {
           width: auto; // Let flex handle it
           
           input {
-            width: 100% !important;
+            width: 100% ;
           }
         }
         
@@ -916,7 +916,7 @@ body.no-hover .autocomplete__option[aria-selected="true"] {
             }
             
             // Active state: when in list/table view, show active color
-            // Using !important because we need to override any global active state rules
+            // Using  because we need to override any global active state rules
             &.active {
               background-color: var(--search-bar-active, #007bff);
               border-color: var(--search-bar-active, #007bff);
@@ -936,40 +936,40 @@ body.no-hover .autocomplete__option[aria-selected="true"] {
       }
       
       .topbar-filters {
-        width: 100% !important;
-        display: block !important;
+        width: 100% ;
+        display: block ;
         > div {
-          display: block !important;
-          width: 100% !important;
-          max-width: 100% !important;
+          display: block ;
+          width: 100% ;
+          max-width: 100% ;
           margin-bottom: 0.5em;
         }
       }
       
       .TopBar {
-        position: static !important;
-        top: auto !important;
-        right: auto !important;
-        left: auto !important;
+        position: static ;
+        top: auto ;
+        right: auto ;
+        left: auto ;
         
         &.sticky-on {
-          position: static !important;
+          position: static ;
         }
         
         header.App-header {
-          display: block !important;
+          display: block ;
         }
         
         header form {
-          display: block !important;
+          display: block ;
           
           .topbar-other-fields {
-            display: block !important;
-            width: 100% !important;
+            display: block;
+            width: 100% ;
             
             .form-input {
-              width: 100% !important;
-              max-width: 100% !important;
+              width: 100% ;
+              max-width: 100% ;
               margin-bottom: 0.5em;
             }
           }
@@ -979,7 +979,7 @@ body.no-hover .autocomplete__option[aria-selected="true"] {
     
     // Also fix parser-search-container header
     .parser-search-container header.App-header {
-      display: block !important;
+      display: block ;
     }
 
     .TopBar {
@@ -1164,7 +1164,7 @@ td[class*="mw-search-ns"], #mw-searchoptions h4,
 
 /* @noflip */
 .mw-search-ns6, .mw-search-ns100, .mw-search-ns110, .mw-search-ns120, .mw-search-ns130, .mw-search-ns140, .mw-search-ns150, .mw-search-ns160, .mw-search-ns170, .mw-search-ns180, .mw-search-ns190 {
-    display: block !important;
+    display: block ;
     float: right;
     font-size: 1.6em;
 }
@@ -1172,7 +1172,7 @@ td[class*="mw-search-ns"], #mw-searchoptions h4,
 #mw-searchoptions {
   table, tbody, tr {
   display: block;
-  margin: 0 !important;
+  margin: 0 ;
   float: right;
   }
   .divider {
@@ -1181,7 +1181,7 @@ td[class*="mw-search-ns"], #mw-searchoptions h4,
     padding-top: 0.5em;
     margin-bottom: 0.5em;
     width: 100%;
-    display: block !important;
+    display: block ;
     &+input{
       float:right;
       &+label {

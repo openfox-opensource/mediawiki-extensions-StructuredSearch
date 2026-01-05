@@ -190,7 +190,7 @@ class Hooks {
 			);
 		}
 		
-		$htmlContent = Html::rawElement( 'table', [ 'class' => 'wikitable' ],
+		$htmlContent = Html::rawElement( 'table', [ 'class' => 'wikitable', 'style' => 'max-width: 100%;' ],
 			Html::rawElement( 'thead', [],
 				Html::rawElement( 'tr', [],
 					Html::element( 'th', [], 'Readable name' ) .
