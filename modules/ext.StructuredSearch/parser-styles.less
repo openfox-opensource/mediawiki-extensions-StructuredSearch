@@ -82,6 +82,7 @@
     }
 
     // Namespace tag styling - fully rounded, --fox-purple background
+    // z-index: 1 ensures it appears above card content but below TopBar (z-index: 2)
     .namespace-tag {
       position: absolute;
       top: 0.5rem;
@@ -91,7 +92,7 @@
       background: var(--fox-purple);
       color: white;
       font-size: 0.875rem;
-      z-index: 10;
+      z-index: 1;
       font-weight: 500;
     }
 
