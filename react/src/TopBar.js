@@ -185,16 +185,24 @@ class TopBar extends Component {
     // let ticking = false;
 
     this.filtersScrollHandler = () => {
-      //we need to hide if search results were pass the top widgets of search
-      //so calculate the height of .App-header and if the results' top are higher then the appHeaderHeight, hide the filters
-      const appHeaderHeight = document.querySelector('.App-header').offsetHeight;
-      const resultsTop = document.querySelector('#results').getBoundingClientRect().top;
-      if(resultsTop < appHeaderHeight){
-        console.log('hide filters');
-        parserSearchContainer.classList.add('filters-hidden');
+      // Locate #results scroll top compared to screen top
+      // If screen top + .search-input-with-toggle height is more low (lower) than #results top - hide filters
+      const resultsElement = document.querySelector('#results');
+      const searchInputWithToggle = document.querySelector('.search-input-with-toggle');
+      
+      if (!resultsElement || !searchInputWithToggle) {
+        return; // Elements not found, skip
       }
-      else{
-        console.log('show filters');
+      
+      const resultsTop = resultsElement.getBoundingClientRect().top; // Position relative to viewport top
+      const searchInputHeight = searchInputWithToggle.offsetHeight;
+      const screenTop = 0; // Viewport top is always 0 in getBoundingClientRect coordinates
+      const searchInputBottom = screenTop + searchInputHeight;
+      
+      // If search input bottom is lower than results top, hide filters
+      if (searchInputBottom > resultsTop) {
+        parserSearchContainer.classList.add('filters-hidden');
+      } else {
         parserSearchContainer.classList.remove('filters-hidden');
       }
     };
