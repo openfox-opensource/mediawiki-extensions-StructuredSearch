@@ -15,6 +15,9 @@
 .parser-search:not(.side-bar){
   .top-and-results-wrp { width: 100%; }
 }
+.parser-search-container #results {
+  padding: 1em 4em 1em;;
+}
 #parser-search-title {
   text-align: center;
     font-size: 30px;
@@ -823,7 +826,11 @@ body.no-hover .autocomplete__option[aria-selected="true"] {
   display:none ;
 }
  .parser-search .TopBar.with-labels {
-  padding: 0px;}
+    padding: 0px;
+  }
+  .parser-search-container #results {
+    padding: 0 4px;
+  }
 }
 /* mobile */
 @media (max-width: 992px) {
