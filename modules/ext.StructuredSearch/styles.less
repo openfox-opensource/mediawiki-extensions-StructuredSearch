@@ -205,6 +205,12 @@
 	    width: var(--sts-main-width, 74.5%);
 	    max-width: var(--sts-main-maxw, ~"calc(100% - 250px)");
 	}
+	.TopBar.with-labels {
+		padding: 1em 4em 0;
+	}
+	#results {
+		padding: 1em 4em 1em;
+	}
 }
 .all-app-wrp input {
     height: 34px;
@@ -273,7 +279,7 @@
    }
 .field-wrp-type-autocomplete > div {
     position: relative;
-    max-width: 750px;
+   /*max-width: 750px;*/
     margin: auto;
 }
 .TopBar .main-and-advanced-wrp {
@@ -831,6 +837,12 @@ body.no-hover .autocomplete__option[aria-selected="true"] {
         padding: var(--sts-input-padd);
   }
   .parser-search-container #results {
+        padding: var(--sts-input-padd);
+  }
+  #mw-content-text .all-app-wrp .TopBar.with-labels {
+        padding: var(--sts-input-padd);
+  }
+  #mw-content-text .all-app-wrp #results {
         padding: var(--sts-input-padd);
   }
 }
