@@ -2,6 +2,7 @@ import queryString from 'query-string';
 import FormMain from './FormMain';
 import utils from './utils';
 import fieldsDetector from './fieldsDetector';
+import EventEmitter from './EventEmitter';
 
 
 window.FormMain=FormMain;
@@ -100,6 +101,10 @@ class historySearch{
 
 		}
 		FormMain.freezed = false;
+		// Emit FormDataChanged event to ensure labels are updated after URL parameters are parsed
+		// But don't trigger delayedSubmitData since we'll call submitData explicitly below
+		// Emit the event directly instead of using fireChangeEvent() to avoid triggering delayedSubmitData
+		EventEmitter.emit("FormDataChanged", FormMain.getAllValuesRaw());
 		if( !historySearch.isSearchEquleToDefault(paramsSettings, searchParams) ){
 			FormMain.submitData();
 		}

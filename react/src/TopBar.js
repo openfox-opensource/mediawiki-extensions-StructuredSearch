@@ -77,8 +77,14 @@ class TopBar extends Component {
           this.setState({
             inputs: mergedParams,
             labels : []
+          }, () => {
+            // Call refreshAllInputsByData in setState callback to ensure inputs state is updated
+            // Use setTimeout to ensure FormMain data is set from URL parameters and defaults
+            // Use a longer delay to ensure setDefaults and setSearchFromHistory have completed
+            setTimeout(() => {
+              this.refreshAllInputsByData( FormMain.getAllValuesRaw() );
+            }, 100);
           });
-          this.refreshAllInputsByData( FormMain.getAllValuesRaw() );
         }
        }
       );
@@ -235,11 +241,18 @@ class TopBar extends Component {
   }
   refreshAllInputsByData( allData ) {
       let newLabels = {}, alreadyIncluded = [],binds = [].concat( FormMain.binds );
+      // Ensure inputs state is set before processing
+      if (!this.state.inputs) {
+        console.log('TopBar: refreshAllInputsByData called but inputs state not set yet');
+        return;
+      }
+      console.log('TopBar: refreshAllInputsByData called with allData:', allData, 'inputs:', this.state.inputs);
       for(let fieldKey of Object.keys(allData)){
         if( alreadyIncluded.includes(fieldKey)){
           continue;
         }
-        if(allData[fieldKey] && utils.safeGet(this, 'state.inputs') && !this.state.inputs[fieldKey]?.withoutLabels ){
+        if(allData[fieldKey] && this.state.inputs[fieldKey] && !this.state.inputs[fieldKey]?.withoutLabels ){
+          console.log('TopBar: Processing field for labels:', fieldKey, 'data:', allData[fieldKey], 'input config:', this.state.inputs[fieldKey]);
           //console.log(allData[fieldKey],"allData[fieldKey]");
           newLabels[fieldKey] = [];
           //console.log(allData[fieldKey],"allData[fieldKey]");
