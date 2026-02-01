@@ -10,7 +10,6 @@ class FormMain{
 	static addValue(name, value){
 		FormMain.allData[ name ] = FormMain.allData[ name ] || [];
 		let standardizeValue = FormMain.standardizeValue(value);
-		//console.log(FormMain.allData[ name ], standardizeValue,"standardizeValue");
 		if( !FormMain.allData[ name ].map( item => ('' + item.value)).includes( '' + standardizeValue.value ) ){
 			FormMain.allData[ name ].push( standardizeValue );
 			FormMain.fireChangeEvent();
@@ -68,7 +67,6 @@ class FormMain{
 	}
 	static getAllValuesProcessed(){
 		let copyOfData = Object.assign({}, FormMain.allData);
-		//console.log(copyOfData,"copyOfData");
 		for( let dataKey of Object.keys(copyOfData)){
 			if(!copyOfData[dataKey]){
 				continue;
@@ -84,7 +82,6 @@ class FormMain{
 	}
 
 	static setNext( next ){
-		//console.log(next,"next")
 		if( next ){
 			FormMain.offset = next;
 			FormMain.submitData( false );
@@ -119,7 +116,6 @@ class FormMain{
 	}
 	static submitData( reset = true, filter = true){
 		let params = this.getAllValuesProcessed();
-	    //console.log(params,'params');
 	    //saerch not working without search param
 	    // if(!params.search){
 	    // 	return;
@@ -137,7 +133,6 @@ class FormMain{
 	    	params = FormMain.filterParams(params);
 		}
 	    let urlSuffix = utils.toQueryStr( params);
-	    //console.log("urlSuffix",urlSuffix);
 	    EventEmitter.emit('searchStarted', {
 	    	reset:reset,
 	    	params:params
@@ -145,7 +140,6 @@ class FormMain{
 	    FormMain.fireGlobalEvent( params );
 
 	    ajaxCall.get(urlSuffix).then(data=>{
-	      //console.log(data, "data");
 	      let eventData = data.error ? { results: {error:true}} : data.StructuredSearchSearch;
 	      eventData.reset = reset;
 	      EventEmitter.emit('dataRecieved', eventData);
@@ -166,7 +160,6 @@ class FormMain{
 		let currentVal =  FormMain.allData[paramKey],
 			newVal = null;
 			//if('category' == paramKey)
-		//console.log(paramKey,currentVal,"currentVal,pa")
 		if(!currentVal){
 			return false;
 		}
@@ -218,7 +211,6 @@ class FormMain{
 	}
 	static getFullResultFromParams(val, fieldName, paramsSettings){
 		let foundOption, options = utils.safeGet(paramsSettings, fieldName + '.widget.options');
-		//console.log("paramsSettings, fieldName + '.widget.options'",paramsSettings, fieldName + '.widget.options', fieldsDetector.isMultiple(paramsSettings[fieldName]));
 		if(fieldsDetector.isMultiple(paramsSettings[fieldName]) ){
 			if(options){
 				for(let option of options){

@@ -67,7 +67,7 @@ class Results extends Component {
       let results = data.results;
     
       if (!data || !data.results) {
-        console.error("Error: No results received", data);
+        // Error: No results received
     }
       if (results && results.error) {
         this.setState({
@@ -180,30 +180,8 @@ isElementInViewport = (el) => {
   }
   
   resultClicked(title, event) {
-    // console.log("resultClicked StructuredSearchResultclicked", title, event);
     FormMain.fireGlobalEvent({ title: title }, 'StructuredSearchResultclicked');
   }
-//   getTemplateByResult(result) {
-//     let ns = result.namespaceId;
-// console.log("result", result);
-// if( FormMain.display ){
-//   console.log("display");
-  
-// console.log(FormMain.display);
-
-
-//     // Retrieve the custom display template if provided
-//     let customTemplate =  FormMain.display ; // Assume FormMain stores the display parameter
-//     console.log("customTemplate",customTemplate);
-    
-  
-//         console.log(`Using custom display template: ${customTemplate}`);
-//         return this.templates[customTemplate] || this.templates['default'];
-//     }
-
-//     // Fallback to namespace-specific or default template
-//     return this.templates['template_' + ns] || this.templates['default'];
-// }
 getTemplateByResult(result) {
   let ns = result.namespaceId;
   const displayTemplate = this.state.displayTemplate?.trim() || FormMain.getValue('display');
@@ -248,10 +226,6 @@ getTemplateByResult(result) {
     //   let a = document.createElement('a');
     //   a.text = allSpansInResultSnippet[index].textContent;
     //   let wordNumSuffix = this.state.wordNum ? `,${this.state.wordNum}` : "";
-    //   console.log(' word', this.state.wordNum );
-      
-    //   a.href = title + `#:~:text=${allSpansInResultSnippet[index].textContent}${wordNumSuffix}`;
-    //   allSpansInResultSnippet[index].replaceWith(a);
     // }
     result.snippet= result.snippet = tempContainer.innerHTML; 
     result.snippetReplaced = true;
@@ -262,7 +236,6 @@ getTemplateByResult(result) {
 
     //if (window.mw && window.mw.config.get('structuredSearchProps')) {
       if (!template) {
-          console.error("No template found for result:", result);
           return null; // Skip rendering if no template is found
       }
 
@@ -316,7 +289,6 @@ getTemplateByResult(result) {
         }
 
       }
-      // console.log("this.state.offset && results.length",this.state.offset , results.length)÷÷
       // if (this.state.offset && results.length) {
       //   const button = (
       //     <button type="button" onClick={this.next.bind(this)} dangerouslySetInnerHTML={{ __html: this.nextText }}></button>

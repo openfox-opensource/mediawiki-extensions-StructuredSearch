@@ -1,9 +1,15 @@
 // Parser function page specific styles
 .parser-search-container {
   // Align input/selectors line with results line
-  --sts-input-padd: 1em 0px .5em;
+  // --sts-input-padd: 1em 0px .5em;
+  --sts-input-padd: 1em 4em 1em;
 }
-
+//for mobile devices
+@media (max-width: 768px) {
+  .parser-search-container {
+    --sts-input-padd: 0 10px 10px;
+  }
+}
 .parser-search {
   // Make topbar other fields (dynamic fields) match the width of search input's autocomplete-wrp
   .TopBar header form {

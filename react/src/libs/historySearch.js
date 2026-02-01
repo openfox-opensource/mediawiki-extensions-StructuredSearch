@@ -84,7 +84,6 @@ class historySearch{
 			}
 			if( fieldsDetector.isMultiple( paramsSettings[paramKey] ) ){
 				let paramValueSplitted = paramValue ? paramValue.split('|').filter( part => (part || 0 === part)) : [];
-				//console.log(paramValueSplitted)
 				if( fieldsDetector.isRange( paramsSettings[paramKey] ) ){
 					FormMain.setValue(paramKey, paramValueSplitted);
 				}
@@ -108,7 +107,6 @@ class historySearch{
 		if( !historySearch.isSearchEquleToDefault(paramsSettings, searchParams) ){
 			FormMain.submitData();
 		}
-		//console.log();
 	}
 	static getState(){
 		let state = FormMain.getAllValuesProcessed();

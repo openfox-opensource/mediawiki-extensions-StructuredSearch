@@ -72,12 +72,21 @@ class FormInput extends Component {
 			});
 		}
 		for(let option of this.state.options){
-			//console.log("oprion", option);
 			if(option.defaultChecked){
-				//console.log('in', this.state.inputData.field)
 				FormMain.addValue( this.state.inputData.field, option );
 			}
 		}
+		
+		// Listen for FormMain value changes to sync typed state
+		// This handles the case when advanced_search param sets the value after component mount
+		EventEmitter.on("FormDataChanged", () => {
+			this.syncTypedFromFormMain();
+		});
+		
+		// Also sync immediately in case value was set before listener was added
+		setTimeout(() => {
+			this.syncTypedFromFormMain();
+		}, 100);
 	}
 	
 	componentDidUpdate(prevProps, prevState) {
@@ -92,6 +101,25 @@ class FormInput extends Component {
 		} else if (menuWasOpen && !menuIsOpen) {
 			// Menu just closed - remove hover-lock
 			this.onAutocompleteMenuVisibilityChange(false);
+		}
+		
+		// Sync typed state from FormMain if it changed externally (e.g., from URL params)
+		if (this.isSearchAutocomplete()) {
+			const currentFormMainValue = FormMain.getValue(this.state.inputData.field);
+			let currentTyped = '';
+			if (currentFormMainValue) {
+				if (typeof currentFormMainValue === 'string') {
+					currentTyped = currentFormMainValue;
+				} else if (Array.isArray(currentFormMainValue) && currentFormMainValue.length > 0) {
+					currentTyped = currentFormMainValue[0].value || currentFormMainValue[0] || '';
+				} else if (currentFormMainValue && currentFormMainValue.value) {
+					currentTyped = currentFormMainValue.value;
+				}
+			}
+			// Only update if different to avoid infinite loops
+			if (this.state.typed !== currentTyped) {
+				this.setState({ typed: currentTyped });
+			}
 		}
 	}
 	// componentDidMount() {
@@ -120,17 +148,14 @@ class FormInput extends Component {
 	// 	};
 	
 	// 	if (structuredSearchProps.namespaces) {
-	// 		console.log("Namespaces filter found:", structuredSearchProps.namespaces);
 	// 		applyFilter("namespaces", structuredSearchProps.namespaces);
 	// 	}
 	
 	// 	if (structuredSearchProps.category) {
-	// 		console.log("Category filter found:", structuredSearchProps.category);
 	// 		applyFilter("category", structuredSearchProps.category);
 	// 	}
 	
 	// 	if (structuredSearchProps.pageType) {
-	// 		console.log("Page type filter found:", structuredSearchProps.pageType);
 	// 		applyFilter("in_kit", structuredSearchProps.pageType);
 	// 	}
 	
@@ -174,7 +199,6 @@ class FormInput extends Component {
 		else{
 			FormMain.removeValue( fieldName, value )
 		}
-		//console.log(fieldName, value, event.target.checked,"fieldName, value, event");
 	}
 	filterAlreadyChosenOptions( options ){
 		let alreadyChosenOptions = FormMain.getValue(this.state.inputData.field);
@@ -219,7 +243,6 @@ class FormInput extends Component {
 				filteredOptions : filteredOptions
 			});
 			EventEmitter.emit('autocompleteMenuResults', filteredOptions);
-			//console.log(data, "namespaces");
 		});
 	}
 	submitClicked(){
@@ -344,6 +367,26 @@ class FormInput extends Component {
 	isSearchAutocomplete( ){
 		return fieldsDetector.isSearch(this.state.inputData);
 	}
+	syncTypedFromFormMain() {
+		if (this.isSearchAutocomplete()) {
+			const formMainValue = FormMain.getValue(this.state.inputData.field);
+			let newTyped = '';
+			if (formMainValue) {
+				// Handle both string and array formats
+				if (typeof formMainValue === 'string') {
+					newTyped = formMainValue;
+				} else if (Array.isArray(formMainValue) && formMainValue.length > 0) {
+					newTyped = formMainValue[0].value || formMainValue[0] || '';
+				} else if (formMainValue && formMainValue.value) {
+					newTyped = formMainValue.value;
+				}
+			}
+			// Only update if different to avoid infinite loops
+			if (this.state.typed !== newTyped) {
+				this.setState({ typed: newTyped });
+			}
+		}
+	}
 	selectChanged( fieldName, value){
 		this.setState({selected : value});
 		
@@ -378,7 +421,6 @@ class FormInput extends Component {
 		let formatStr = baseDateFormat,
 			dateFormatted = format(dateSelected, formatStr);
 			//dateFormatted = Moment(dateSelected).format(format);
-		//console.log(dateSelected,dateFormatted,"dateFormatted");
 		FormMain.ChangeValueByKey( fieldName, key, dateFormatted );
 	}
 	rangeChanges(  fieldName, key, event){
@@ -594,7 +636,6 @@ class FormInput extends Component {
 	textBuild (inputData){
 			let value = FormMain.getValue(inputData.field),
 				placeholder = this.getPlaceholder( inputData );
-			//console.log("value",value);
 			return   <input 
 					type="text" 
 					aria-label={placeholder||inputData.field}
@@ -684,16 +725,72 @@ class FormInput extends Component {
 		// Clear preserve flag if input changed normally
 		this._preserveTypedValue = null;
 		
-		// Update the typed state and trigger search
-		if(inputValue || this.state.typed.length < 2){
-			this.setState({ typed: inputValue });
+		// Always update typed state so the input reflects what the user types/deletes
+		// This ensures the input can be cleared properly
+		this.setState({ typed: inputValue || '' });
+		
+		// Always update FormMain when input changes to keep it in sync
+		// This ensures FormMain reflects the current input value, even when clearing
+		if (this.isSearchAutocomplete()) {
+			if (inputValue && inputValue.trim()) {
+				FormMain.setValue(this.state.inputData.field, inputValue);
+			} else {
+				// Clear the value in FormMain when input is empty
+				FormMain.setValue(this.state.inputData.field, '');
+			}
 		}
 		
-		if (inputValue && inputValue.length > 2) {
-			this.searchAutocomplete(inputValue);
+		// Logic order:
+		// 1. If it's search field - run searchAutocomplete with min 3 chars (includes auto fire update, scrolling, etc.)
+		// 2. If it has local options - use them (filter from local options)
+		// 3. If not (no local options) - use structuredsearchautocomplete API (assume it has autocomplete_callback)
+		
+		if (this.isSearchAutocomplete() ) {
+			// For search field - use opensearch API with all its logic
+			if(inputValue && inputValue.length > 2){
+				this.searchAutocomplete(inputValue);
+			}
+			else{
+				this.setState({ filteredOptions: [] });
+			}
+		}
+		else if (this.state.options && this.state.options.length > 0) {
+			// Filter from local options
+			let filteredOptions = this.state.options.filter( item => !inputValue || item.label.indexOf(inputValue) > -1);
+			this.setState({
+				filteredOptions : this.filterAlreadyChosenOptions( filteredOptions )
+			});
+		}
+		else if (inputValue ) {
+			// For category and other autocomplete fields - use structuredsearchautocomplete API
+			// Assume it has autocomplete_callback
+			this.callStructuredSearchAutocomplete(inputValue);
 		} else {
 			this.setState({ filteredOptions: [] });
 		}
+	}
+	callStructuredSearchAutocomplete(typed) {
+		ajaxCall.get(`action=structuredsearchautocomplete&field=${this.state.inputData.field}&search=${typed}`).then(data => {
+			let filteredOptions = [];
+			
+			// The API returns { values: { "key": "label", ... } }
+			if (data && data.values) {
+				for (let valKey of Object.keys(data.values)) {
+					filteredOptions.push({
+						label: data.values[valKey],
+						value: valKey
+					});
+				}
+			}
+			
+			// Filter out already chosen options
+			filteredOptions = this.filterAlreadyChosenOptions(filteredOptions);
+			
+			this.setState({
+				filteredOptions : filteredOptions
+			});
+			EventEmitter.emit('autocompleteMenuResults', filteredOptions);
+		});
 	}
 	getLabel (inputData){
 		return inputData.label ? <label htmlFor={inputData.field} dangerouslySetInnerHTML={{__html: inputData.label }} ></label> : '';
