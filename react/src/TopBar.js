@@ -243,23 +243,17 @@ class TopBar extends Component {
       let newLabels = {}, alreadyIncluded = [],binds = [].concat( FormMain.binds );
       // Ensure inputs state is set before processing
       if (!this.state.inputs) {
-        console.log('TopBar: refreshAllInputsByData called but inputs state not set yet');
         return;
       }
-      console.log('TopBar: refreshAllInputsByData called with allData:', allData, 'inputs:', this.state.inputs);
       for(let fieldKey of Object.keys(allData)){
         if( alreadyIncluded.includes(fieldKey)){
           continue;
         }
         if(allData[fieldKey] && this.state.inputs[fieldKey] && !this.state.inputs[fieldKey]?.withoutLabels ){
-          console.log('TopBar: Processing field for labels:', fieldKey, 'data:', allData[fieldKey], 'input config:', this.state.inputs[fieldKey]);
-          //console.log(allData[fieldKey],"allData[fieldKey]");
           newLabels[fieldKey] = [];
-          //console.log(allData[fieldKey],"allData[fieldKey]");
           allData[fieldKey] = this.standardizeItem( allData[fieldKey] );
           if( fieldsDetector.isRange( this.state.inputs[fieldKey] ) ){
             let data = allData[fieldKey];
-            //console.log('dataRange', data);
             if(data && (data[0] || data[1]) ){
               newLabels[fieldKey] = [{
                 label : data.join('-'),
@@ -282,7 +276,6 @@ class TopBar extends Component {
               if(bind.includes(fieldKey)){
                 for(let boundFieldKey of bind){
                   if(boundFieldKey !== fieldKey){
-                    //console.log(boundFieldKey,allData[boundFieldKey], "boundFieldKey,allData[boundFieldKey]" );
                     if( !allData[boundFieldKey] || !allData[boundFieldKey].length ){
                       delete(newLabels[fieldKey]);
                       break;

@@ -8,7 +8,6 @@ class settingsGetter{
 			}
 		}
 		return data;
-		//console.log("data",data);
 	}
 	static get(){
 		return new Promise( (resolve) => {

@@ -12,7 +12,6 @@ class EventEmitter{
   }
   emit(name, ...payload) { // trigger events
     if( "undefined" === typeof this.events[name] ){  
-      console.warn( "No event" + name );
       return;
     }
     for (const listener of this.events[name].listeners) {

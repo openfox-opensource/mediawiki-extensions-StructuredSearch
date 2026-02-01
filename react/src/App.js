@@ -233,7 +233,6 @@ class App extends Component {
         }
       }
     }
-    //console.log("allInputs", allInputs);
     return allInputs.length ?
           <div className={'side-bar' + (this.state.hide ? ' hide' : ' show')}>
             <span className="close-button-wrp">

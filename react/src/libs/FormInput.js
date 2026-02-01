@@ -72,9 +72,7 @@ class FormInput extends Component {
 			});
 		}
 		for(let option of this.state.options){
-			//console.log("oprion", option);
 			if(option.defaultChecked){
-				//console.log('in', this.state.inputData.field)
 				FormMain.addValue( this.state.inputData.field, option );
 			}
 		}
@@ -150,17 +148,14 @@ class FormInput extends Component {
 	// 	};
 	
 	// 	if (structuredSearchProps.namespaces) {
-	// 		console.log("Namespaces filter found:", structuredSearchProps.namespaces);
 	// 		applyFilter("namespaces", structuredSearchProps.namespaces);
 	// 	}
 	
 	// 	if (structuredSearchProps.category) {
-	// 		console.log("Category filter found:", structuredSearchProps.category);
 	// 		applyFilter("category", structuredSearchProps.category);
 	// 	}
 	
 	// 	if (structuredSearchProps.pageType) {
-	// 		console.log("Page type filter found:", structuredSearchProps.pageType);
 	// 		applyFilter("in_kit", structuredSearchProps.pageType);
 	// 	}
 	
@@ -204,7 +199,6 @@ class FormInput extends Component {
 		else{
 			FormMain.removeValue( fieldName, value )
 		}
-		//console.log(fieldName, value, event.target.checked,"fieldName, value, event");
 	}
 	filterAlreadyChosenOptions( options ){
 		let alreadyChosenOptions = FormMain.getValue(this.state.inputData.field);
@@ -249,7 +243,6 @@ class FormInput extends Component {
 				filteredOptions : filteredOptions
 			});
 			EventEmitter.emit('autocompleteMenuResults', filteredOptions);
-			//console.log(data, "namespaces");
 		});
 	}
 	submitClicked(){
@@ -428,7 +421,6 @@ class FormInput extends Component {
 		let formatStr = baseDateFormat,
 			dateFormatted = format(dateSelected, formatStr);
 			//dateFormatted = Moment(dateSelected).format(format);
-		//console.log(dateSelected,dateFormatted,"dateFormatted");
 		FormMain.ChangeValueByKey( fieldName, key, dateFormatted );
 	}
 	rangeChanges(  fieldName, key, event){
@@ -644,7 +636,6 @@ class FormInput extends Component {
 	textBuild (inputData){
 			let value = FormMain.getValue(inputData.field),
 				placeholder = this.getPlaceholder( inputData );
-			//console.log("value",value);
 			return   <input 
 					type="text" 
 					aria-label={placeholder||inputData.field}
@@ -757,18 +748,15 @@ class FormInput extends Component {
 		if (this.isSearchAutocomplete() ) {
 			// For search field - use opensearch API with all its logic
 			if(inputValue && inputValue.length > 2){
-				console.log("inputValue is search autocomplete", inputValue);
 				this.searchAutocomplete(inputValue);
 			}
 			else{
-				console.log("inputValue is not search autocomplete", inputValue);
 				this.setState({ filteredOptions: [] });
 			}
 		}
 		else if (this.state.options && this.state.options.length > 0) {
 			// Filter from local options
 			let filteredOptions = this.state.options.filter( item => !inputValue || item.label.indexOf(inputValue) > -1);
-			console.log("filteredOptions from local options", filteredOptions);
 			this.setState({
 				filteredOptions : this.filterAlreadyChosenOptions( filteredOptions )
 			});
@@ -776,7 +764,6 @@ class FormInput extends Component {
 		else if (inputValue ) {
 			// For category and other autocomplete fields - use structuredsearchautocomplete API
 			// Assume it has autocomplete_callback
-			console.log("inputValue is api autocomplete call", inputValue);
 			this.callStructuredSearchAutocomplete(inputValue);
 		} else {
 			this.setState({ filteredOptions: [] });
