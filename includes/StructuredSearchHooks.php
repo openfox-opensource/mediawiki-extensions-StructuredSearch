@@ -72,7 +72,10 @@ class Hooks {
 						case 'limit':
 						case 'display':
 						case 'table':
-							$pageProps['structured-search-' . $param['key']] = htmlspecialchars( $param['value'] );
+							//escape html chars BUT allow " and ' not escaped
+							$pageProps['structured-search-' . $param['key']] = htmlspecialchars( $param['value'], ENT_NOQUOTES | ENT_SUBSTITUTE, 'UTF-8' , false);
+							//replace back &#34; to " and &#39; to '
+							$pageProps['structured-search-' . $param['key']] = str_replace( [ '&#34;', '&#39;' ], [ '"', "'" ], $pageProps['structured-search-' . $param['key']] );
 							break;
 					}
 				} else {
@@ -105,6 +108,9 @@ class Hooks {
 				}
 			}		
 		}
+		// if(isset($_COOKIE['zikit_2025_kw_UserID']) && '910' == $_COOKIE['zikit_2025_kw_UserID']){
+		// 	die("<pre>" . print_r([$params,$pageProps], true) . "</pre>");
+		// }
 		// Store dynamic fields as JSON in page properties
 		if ( !empty( $dynamicFields ) ) {
 			$pageProps['structured-search-dynamic-fields'] = json_encode( $dynamicFields );
@@ -259,6 +265,11 @@ class Hooks {
 		
 			//get the structured search props, filter by keys
 			$scriptPath = MediaWikiServices::getInstance()->getMainConfig()->get('ScriptPath');
+			//if action is edit, skip
+			$action = $skin->getRequest()->getText('action');
+			if($action === 'edit'){
+				return;
+			}
 			$structuredSearchProps = self::getStructuredSearchProps( $skin->getTitle(), $skin->getUser() );
 			if($structuredSearchProps && count($structuredSearchProps)){
 				//get all files in __DIR__ . '/../react/dist'
@@ -289,7 +300,11 @@ class Hooks {
 			wfDebugLog( 'StructuredSearch', 'Skipping invalid or special page: ' . $title->getPrefixedText() );
 			return; // Exit early for invalid or special pages
 		}
-	
+		$action = $skin->getRequest()->getText('action');
+		if($action === 'edit'){
+				return;
+			}
+		
 		$props = self::getStructuredSearchProps( $title, $out->getUser() );
 		
 		if ( !empty( $props ) ) {
