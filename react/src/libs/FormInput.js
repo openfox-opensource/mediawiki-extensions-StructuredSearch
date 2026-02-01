@@ -78,6 +78,17 @@ class FormInput extends Component {
 				FormMain.addValue( this.state.inputData.field, option );
 			}
 		}
+		
+		// Listen for FormMain value changes to sync typed state
+		// This handles the case when advanced_search param sets the value after component mount
+		EventEmitter.on("FormDataChanged", () => {
+			this.syncTypedFromFormMain();
+		});
+		
+		// Also sync immediately in case value was set before listener was added
+		setTimeout(() => {
+			this.syncTypedFromFormMain();
+		}, 100);
 	}
 	
 	componentDidUpdate(prevProps, prevState) {
@@ -92,6 +103,25 @@ class FormInput extends Component {
 		} else if (menuWasOpen && !menuIsOpen) {
 			// Menu just closed - remove hover-lock
 			this.onAutocompleteMenuVisibilityChange(false);
+		}
+		
+		// Sync typed state from FormMain if it changed externally (e.g., from URL params)
+		if (this.isSearchAutocomplete()) {
+			const currentFormMainValue = FormMain.getValue(this.state.inputData.field);
+			let currentTyped = '';
+			if (currentFormMainValue) {
+				if (typeof currentFormMainValue === 'string') {
+					currentTyped = currentFormMainValue;
+				} else if (Array.isArray(currentFormMainValue) && currentFormMainValue.length > 0) {
+					currentTyped = currentFormMainValue[0].value || currentFormMainValue[0] || '';
+				} else if (currentFormMainValue && currentFormMainValue.value) {
+					currentTyped = currentFormMainValue.value;
+				}
+			}
+			// Only update if different to avoid infinite loops
+			if (this.state.typed !== currentTyped) {
+				this.setState({ typed: currentTyped });
+			}
 		}
 	}
 	// componentDidMount() {
@@ -343,6 +373,26 @@ class FormInput extends Component {
 	}
 	isSearchAutocomplete( ){
 		return fieldsDetector.isSearch(this.state.inputData);
+	}
+	syncTypedFromFormMain() {
+		if (this.isSearchAutocomplete()) {
+			const formMainValue = FormMain.getValue(this.state.inputData.field);
+			let newTyped = '';
+			if (formMainValue) {
+				// Handle both string and array formats
+				if (typeof formMainValue === 'string') {
+					newTyped = formMainValue;
+				} else if (Array.isArray(formMainValue) && formMainValue.length > 0) {
+					newTyped = formMainValue[0].value || formMainValue[0] || '';
+				} else if (formMainValue && formMainValue.value) {
+					newTyped = formMainValue.value;
+				}
+			}
+			// Only update if different to avoid infinite loops
+			if (this.state.typed !== newTyped) {
+				this.setState({ typed: newTyped });
+			}
+		}
 	}
 	selectChanged( fieldName, value){
 		this.setState({selected : value});
@@ -684,11 +734,23 @@ class FormInput extends Component {
 		// Clear preserve flag if input changed normally
 		this._preserveTypedValue = null;
 		
-		// Update the typed state and trigger search
-		if(inputValue || this.state.typed.length < 2){
-			this.setState({ typed: inputValue });
+		// Always update typed state so the input reflects what the user types/deletes
+		// This ensures the input can be cleared properly
+		this.setState({ typed: inputValue || '' });
+		
+		// Always update FormMain when input changes to keep it in sync
+		// This ensures FormMain reflects the current input value, even when clearing
+		if (this.isSearchAutocomplete()) {
+			if (inputValue && inputValue.trim()) {
+				FormMain.setValue(this.state.inputData.field, inputValue);
+			} else {
+				// Clear the value in FormMain when input is empty
+				FormMain.setValue(this.state.inputData.field, '');
+			}
 		}
 		
+		// Only trigger autocomplete search for longer strings (to avoid firing for too short strings)
+		// This is separate from state/FormMain updates which always happen
 		if (inputValue && inputValue.length > 2) {
 			this.searchAutocomplete(inputValue);
 		} else {
