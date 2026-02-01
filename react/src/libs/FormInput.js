@@ -42,6 +42,9 @@ class FormInput extends Component {
 		this._menuOpenRef = { current: false };
 		// Preserve typed value when closing menu
 		this._preserveTypedValue = null;
+		// Track blur events to differentiate from user clearing input
+		this._isBlurring = false;
+		this._blurTimeout = null;
 		if( "select" === props.inputData.widget.type ){
 			let selected = props.inputData.widget.default || initOptions[0];
 			if('string' === typeof selected){
@@ -333,6 +336,33 @@ class FormInput extends Component {
 			
 			// Reset keyboard navigation tracking when menu closes
 			this._keyboardNavigated = false;
+		}
+	}
+	
+	onAutocompleteBlur() {
+		// Set blur flag - react-select will call onInputChange('') after blur
+		// We use this flag to differentiate blur from user clearing input
+		this._isBlurring = true;
+		
+		// Clear any existing timeout
+		if (this._blurTimeout) {
+			clearTimeout(this._blurTimeout);
+		}
+		
+		// Clear blur flag after a short delay (react-select calls onInputChange after blur)
+		// This gives us time to catch the onInputChange('') call from blur
+		this._blurTimeout = setTimeout(() => {
+			this._isBlurring = false;
+			this._blurTimeout = null;
+		}, 100); // 100ms should be enough for react-select to call onInputChange
+	}
+	
+	onAutocompleteFocus() {
+		// Clear blur flag when input is focused again
+		this._isBlurring = false;
+		if (this._blurTimeout) {
+			clearTimeout(this._blurTimeout);
+			this._blurTimeout = null;
 		}
 	}
 	
@@ -668,6 +698,8 @@ class FormInput extends Component {
 					inputValue={this.state.typed}
 					onChange={(selectedOption) => this.autocompleteSelected(inputData.field, selectedOption?.label, selectedOption)}
 					onInputChange={(inputValue) => this.autocompleteChanged(inputValue)}
+					onBlur={() => this.onAutocompleteBlur()}
+					onFocus={() => this.onAutocompleteFocus()}
 					onMenuOpen={() => this.onAutocompleteMenuVisibilityChange(true)}
 					onMenuClose={() => this.onAutocompleteMenuVisibilityChange(false)}
 					onKeyDown={this.autocompleteKeyDown.bind(this)}
@@ -725,17 +757,23 @@ class FormInput extends Component {
 		// Clear preserve flag if input changed normally
 		this._preserveTypedValue = null;
 		
-		// Always update typed state so the input reflects what the user types/deletes
-		// This ensures the input can be cleared properly
+		// Check if this is a blur event (react-select calls onInputChange('') on blur)
+		// We track blur state using onBlur callback to differentiate from user clearing input
+		const isBlurEvent = this._isBlurring && !inputValue;
+		
+		if (isBlurEvent) {
+			// This is a blur event - react-select is calling onInputChange('') on blur
+			// Ignore it, keep the typed value (user didn't actually clear the input)
+			return; // Don't update state or FormMain on blur
+		}
 		this.setState({ typed: inputValue || '' });
 		
 		// Always update FormMain when input changes to keep it in sync
-		// This ensures FormMain reflects the current input value, even when clearing
 		if (this.isSearchAutocomplete()) {
 			if (inputValue && inputValue.trim()) {
 				FormMain.setValue(this.state.inputData.field, inputValue);
 			} else {
-				// Clear the value in FormMain when input is empty
+				// Clear the value in FormMain when input is empty (user actually cleared it)
 				FormMain.setValue(this.state.inputData.field, '');
 			}
 		}
