@@ -749,13 +749,61 @@ class FormInput extends Component {
 			}
 		}
 		
-		// Only trigger autocomplete search for longer strings (to avoid firing for too short strings)
-		// This is separate from state/FormMain updates which always happen
-		if (inputValue && inputValue.length > 2) {
-			this.searchAutocomplete(inputValue);
+		// Logic order:
+		// 1. If it's search field - run searchAutocomplete with min 3 chars (includes auto fire update, scrolling, etc.)
+		// 2. If it has local options - use them (filter from local options)
+		// 3. If not (no local options) - use structuredsearchautocomplete API (assume it has autocomplete_callback)
+		
+		if (this.isSearchAutocomplete() ) {
+			// For search field - use opensearch API with all its logic
+			if(inputValue && inputValue.length > 2){
+				console.log("inputValue is search autocomplete", inputValue);
+				this.searchAutocomplete(inputValue);
+			}
+			else{
+				console.log("inputValue is not search autocomplete", inputValue);
+				this.setState({ filteredOptions: [] });
+			}
+		}
+		else if (this.state.options && this.state.options.length > 0) {
+			// Filter from local options
+			let filteredOptions = this.state.options.filter( item => !inputValue || item.label.indexOf(inputValue) > -1);
+			console.log("filteredOptions from local options", filteredOptions);
+			this.setState({
+				filteredOptions : this.filterAlreadyChosenOptions( filteredOptions )
+			});
+		}
+		else if (inputValue ) {
+			// For category and other autocomplete fields - use structuredsearchautocomplete API
+			// Assume it has autocomplete_callback
+			console.log("inputValue is api autocomplete call", inputValue);
+			this.callStructuredSearchAutocomplete(inputValue);
 		} else {
 			this.setState({ filteredOptions: [] });
 		}
+	}
+	callStructuredSearchAutocomplete(typed) {
+		ajaxCall.get(`action=structuredsearchautocomplete&field=${this.state.inputData.field}&search=${typed}`).then(data => {
+			let filteredOptions = [];
+			
+			// The API returns { values: { "key": "label", ... } }
+			if (data && data.values) {
+				for (let valKey of Object.keys(data.values)) {
+					filteredOptions.push({
+						label: data.values[valKey],
+						value: valKey
+					});
+				}
+			}
+			
+			// Filter out already chosen options
+			filteredOptions = this.filterAlreadyChosenOptions(filteredOptions);
+			
+			this.setState({
+				filteredOptions : filteredOptions
+			});
+			EventEmitter.emit('autocompleteMenuResults', filteredOptions);
+		});
 	}
 	getLabel (inputData){
 		return inputData.label ? <label htmlFor={inputData.field} dangerouslySetInnerHTML={{__html: inputData.label }} ></label> : '';
