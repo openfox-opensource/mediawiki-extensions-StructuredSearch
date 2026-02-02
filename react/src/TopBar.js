@@ -187,34 +187,128 @@ class TopBar extends Component {
       return; // Not a parser-search page, skip
     }
 
-    // let lastScrollY = window.scrollY;
-    // let ticking = false;
+    const topBar = document.getElementById('top-bar');
+    const checkingSticky = document.querySelector('.checking-sticky');
+    
+    if (!topBar || !checkingSticky) {
+      return; // Elements not found, skip
+    }
+
+    // Retry mechanism to wait for .topbar-other-fields to be rendered
+    let retryCount = 0;
+    const maxRetries = 20; // Try for up to 4 seconds (20 * 200ms)
+    const retryInterval = 200; // Check every 200ms
+
+    const trySetupScrollHandler = () => {
+      const topbarOtherFields = document.querySelector('.topbar-other-fields');
+      
+      if (!topbarOtherFields) {
+        retryCount++;
+        if (retryCount < maxRetries) {
+          setTimeout(trySetupScrollHandler, retryInterval);
+          return;
+        } else {
+          return;
+        }
+      }
+      
+      // Now set up the scroll handler with the found element
+      const setupScrollHandler = () => {
+    let ticking = false;
+    let stickyStartScrollY = null; // Track scroll position when sticky starts
+    let stickyTopOffset = null; // Cache the sticky top offset value
+
+    // Get the sticky top offset from computed styles
+    const getStickyTopOffset = () => {
+      if (stickyTopOffset === null) {
+        const computedStyle = window.getComputedStyle(topBar);
+        const position = computedStyle.position;
+        if (position === 'sticky' || position === 'fixed') {
+          // Get the 'top' value - this will be the computed pixel value
+          // even if originally set as a CSS variable
+          const topValue = computedStyle.top;
+          stickyTopOffset = parseFloat(topValue) || 0;
+        } else {
+          // If not sticky, check if it has a sticky-top class that might apply later
+          // For now, try to get the top value anyway
+          const topValue = computedStyle.top;
+          stickyTopOffset = parseFloat(topValue) || 0;
+        }
+      }
+      return stickyTopOffset;
+    };
 
     this.filtersScrollHandler = () => {
-      // Locate #results scroll top compared to screen top
-      // If screen top + .search-input-with-toggle height is more low (lower) than #results top - hide filters
-      const resultsElement = document.querySelector('#results');
-      const searchInputWithToggle = document.querySelector('.search-input-with-toggle');
-      
-      if (!resultsElement || !searchInputWithToggle) {
-        return; // Elements not found, skip
+      if (ticking) {
+        return;
       }
-      
-      const resultsTop = resultsElement.getBoundingClientRect().top; // Position relative to viewport top
-      const searchInputHeight = searchInputWithToggle.offsetHeight;
-      const screenTop = 0; // Viewport top is always 0 in getBoundingClientRect coordinates
-      const searchInputBottom = screenTop + searchInputHeight;
-      
-      // If search input bottom is lower than results top, hide filters
-      if (searchInputBottom > resultsTop) {
-        parserSearchContainer.classList.add('filters-hidden');
-      } else {
-        parserSearchContainer.classList.remove('filters-hidden');
-      }
-    };
-    
 
-    window.addEventListener('scroll', this.filtersScrollHandler, { passive: true });
+      ticking = true;
+      requestAnimationFrame(() => {
+        // Get the sticky top offset (e.g., var(--sidebar-height) value)
+        const stickyOffset = getStickyTopOffset();
+        
+        // Check if #top-bar is sticky by comparing checking-sticky position with sticky offset
+        // When sticky, checking-sticky will have scrolled past the sticky offset
+        const checkingStickyRect = checkingSticky.getBoundingClientRect();
+        
+        // Element is sticky when checking-sticky has scrolled past the sticky offset
+        const isSticky = checkingStickyRect.top <= stickyOffset;
+        
+        const elementHeight = topbarOtherFields.offsetHeight;
+        let hideProgress = 0;
+        
+        if (isSticky) {
+          // Top-bar is sticky - start tracking scroll
+          if (stickyStartScrollY === null) {
+            // First time becoming sticky - record the scroll position
+            stickyStartScrollY = window.scrollY;
+          }
+          
+          // Calculate how much we've scrolled since becoming sticky
+          const scrollSinceSticky = window.scrollY - stickyStartScrollY;
+          
+          // Calculate hide progress: 0 = fully visible, 1 = fully hidden
+          // Hide completely when we've scrolled by the element's full height
+          hideProgress = Math.min(1, scrollSinceSticky / elementHeight);
+        } else {
+          // Not sticky - reset tracking and show element
+          stickyStartScrollY = null;
+          hideProgress = 0;
+        }
+        
+        // Apply transform: translateY proportionally to hide progress
+        // Negative translateY moves element up (hides it)
+        const translateY = -hideProgress * elementHeight;
+        
+        // Reduce height so form actually shrinks (not just visual transform)
+        if (hideProgress > 0) {
+          const remainingHeight = elementHeight * (1 - hideProgress);
+          topbarOtherFields.style.maxHeight = `${remainingHeight}px`;
+          topbarOtherFields.style.overflow = 'hidden';
+        } else {
+          // Reset to natural height when fully visible
+          topbarOtherFields.style.maxHeight = '';
+          topbarOtherFields.style.overflow = '';
+        }
+        
+        topbarOtherFields.style.transform = `translateY(${translateY}px)`;
+        
+        ticking = false;
+      });
+    };
+
+        window.addEventListener('scroll', this.filtersScrollHandler, { passive: true });
+        // Initial call to set correct state on page load
+        this.filtersScrollHandler();
+      };
+      
+      // Call the setup function
+      setupScrollHandler();
+    };
+
+    // Start the retry mechanism
+    trySetupScrollHandler();
   }
   standardizeItem( item) {
     if( 'string' === typeof item ){

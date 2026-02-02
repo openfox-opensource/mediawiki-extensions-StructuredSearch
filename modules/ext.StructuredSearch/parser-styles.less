@@ -72,11 +72,13 @@
     }
   }
 
-  // Hide topbar-filters and topbar-other-fields on scroll (will be toggled by JavaScript)
-  // Keep search input and view toggle buttons visible
-  .topbar-filters,
+  // Scroll-linked progressive hiding for topbar-other-fields
+  // Transform updates instantly with scroll (no transition for perfect sync)
+  // Max-height transitions smoothly for form shrinking effect
   .topbar-other-fields {
-    transition: opacity 0.3s ease, max-height 0.3s ease;
+    transition: max-height 0.1s ease-out;
+    will-change: transform, max-height;
+    overflow: hidden;
   }
 
   // Result card styles
@@ -124,13 +126,5 @@
   }
 }
 
-// Hide topbar-filters and topbar-other-fields on scroll when filters-hidden class is on container
-.parser-search-container.filters-hidden {
-  .parser-search {
-    .topbar-filters,
-    .topbar-other-fields {
-      display: none;
-    }
-  }
-}
+// Old filters-hidden mechanism removed - now using scroll-linked progressive hiding
 
