@@ -638,16 +638,24 @@ class Hooks {
 				}
 			}
 			
-			//for some reason, il_to can have more than one value, separate by comma, but comma also could be part of the image name,
-			//so we should split by comma and check if each part is a valid image name
+			// Validate and normalize the image filename
 			if( $image ){
 				$images = explode( ',', $image );
+				$all_legit_files = TRUE;
 				foreach( $images as $image ){
-					$checkImage = \Title::newFromText( $image, NS_FILE );
-					if( $checkImage->exists() ){
-						$image = $checkImage->getDBkey();
-						break;
+						//check if there is file extension (.jpeg/png/jpg/webp, any other legit extension - for ALL parts of the image name)
+					$extension = pathinfo($image, PATHINFO_EXTENSION);
+					if( !$extension || !in_array( $extension, [ 'jpeg', 'png', 'jpg', 'webp', 'gif', 'svg', 'ico', 'bmp', 'tiff', 'tif', 'webp'])){
+						$all_legit_files = FALSE;
 					}
+
+					$checkImage = \Title::newFromText( $image, NS_FILE );
+					if( !$checkImage || !$checkImage->exists() ){
+						$all_legit_files = FALSE;
+					}
+				}
+				if( $all_legit_files ){
+					$image = $images[0];
 				}
 			}
 			
@@ -918,10 +926,41 @@ class Hooks {
 			]);
 		}
 		
-		$fileClass = MediaWikiServices::getInstance()->getRepoGroup()->findFile( \Title::newFromText( $file ) );
-		$thumb = $fileClass ? $fileClass->transform( [ 'width' => $dimensions[0], 'height' => $dimensions[1] ] ) : null;
+		$title = \Title::newFromText( $file );
+		if ( !$title ) {
+			return $file;
+		}
+		
+		$fileClass = MediaWikiServices::getInstance()->getRepoGroup()->findFile( $title );
+		if ( !$fileClass ) {
+			return $file;
+		}
+		
+		// Check if this is a ForeignAPI file and handle it specially
+		if ( $fileClass instanceof \ForeignAPIFile ) {
+			$repo = $fileClass->getRepo();
+			if ( $repo instanceof \ForeignAPIRepo ) {
+				$width = isset( $dimensions[0] ) ? (int)$dimensions[0] : -1;
+				$height = isset( $dimensions[1] ) ? (int)$dimensions[1] : -1;
+				
+				// Get thumbnail URL directly from the ForeignAPI repo
+				$thumbUrl = $repo->getThumbUrlFromCache(
+					$fileClass->getName(),
+					$width,
+					$height,
+					''
+				);
+				
+				if ( $thumbUrl ) {
+					return $thumbUrl;
+				}
+			}
+		}
+		
+		// For regular files, use the transform method
+		$thumb = $fileClass->transform( [ 'width' => $dimensions[0], 'height' => $dimensions[1] ] );
 		$thumbUrl = null;
-		if ( $thumb ) {
+		if ( $thumb && !$thumb->isError() ) {
 			$thumbUrl = $thumb->getUrl();
 		}
 		if('cli' == php_sapi_name() && !$thumbUrl){
