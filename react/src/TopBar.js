@@ -217,6 +217,7 @@ class TopBar extends Component {
     let ticking = false;
     let stickyStartScrollY = null; // Track scroll position when sticky starts
     let stickyTopOffset = null; // Cache the sticky top offset value
+    let originalElementHeight = null; // Cache the original element height before any transforms
 
     // Get the sticky top offset from computed styles
     const getStickyTopOffset = () => {
@@ -255,15 +256,28 @@ class TopBar extends Component {
         // Element is sticky when checking-sticky has scrolled past the sticky offset
         const isSticky = checkingStickyRect.top <= stickyOffset;
         
-        const elementHeight = topbarOtherFields.offsetHeight;
         let hideProgress = 0;
         
         if (isSticky) {
           // Top-bar is sticky - start tracking scroll
           if (stickyStartScrollY === null) {
-            // First time becoming sticky - record the scroll position
+            // First time becoming sticky - record the scroll position and original height
+            // Reset any existing transforms to get accurate height measurement
+            const tempTransform = topbarOtherFields.style.transform;
+            const tempMaxHeight = topbarOtherFields.style.maxHeight;
+            topbarOtherFields.style.transform = '';
+            topbarOtherFields.style.maxHeight = '';
+            
             stickyStartScrollY = window.scrollY;
+            originalElementHeight = topbarOtherFields.offsetHeight;
+            
+            // Restore transforms
+            topbarOtherFields.style.transform = tempTransform;
+            topbarOtherFields.style.maxHeight = tempMaxHeight;
           }
+          
+          // Use cached original height for calculations
+          const elementHeight = originalElementHeight || topbarOtherFields.offsetHeight;
           
           // Calculate how much we've scrolled since becoming sticky
           const scrollSinceSticky = window.scrollY - stickyStartScrollY;
@@ -274,8 +288,12 @@ class TopBar extends Component {
         } else {
           // Not sticky - reset tracking and show element
           stickyStartScrollY = null;
+          originalElementHeight = null;
           hideProgress = 0;
         }
+        
+        // Use cached original height or current height if not cached
+        const elementHeight = originalElementHeight || topbarOtherFields.offsetHeight;
         
         // Apply transform: translateY proportionally to hide progress
         // Negative translateY moves element up (hides it)
