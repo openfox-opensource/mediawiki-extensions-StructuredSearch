@@ -228,6 +228,7 @@ class ApiSearch extends \ApiBase {
 		];
 	}
 	public static function getResultsAdditionalFieldsFromTitles( $titles, $fullResults ) {
+		
 		if ( !count( $titles ) ) {
 			return $titles;
 		}
@@ -276,6 +277,7 @@ class ApiSearch extends \ApiBase {
 		if ( !count( $resultsTitlesForCheck ) ) {
 			return $titles;
 		}
+		
 		//cats in ES are including hidden cats so we need to write solution for this
 		//thats' a little bit hack but to check if visible_categories are set, we'll check if even one title has this field
 		$visibleCategoriesExists = count(array_filter(array_column( $resultsTitlesForCheck, 'visible_categories' )));
@@ -314,6 +316,9 @@ class ApiSearch extends \ApiBase {
 		if ( count( $resultsTitlesForCheck ) && $fieldsOutOfElasticSearch ) {
 
 			self::addCargoFields( $resultsTitlesForCheck, $resultsTitlesAliases );
+			if(isset($_GET['dsdsdsdsasasdsddsadsads'])){
+			die("<pre>" . print_r([__LINE__,$titles], true) . "</pre>");
+		}
 			if ( class_exists( 'PageImages' ) || class_exists( 'PageImages\PageImages' ) ) {
 				self::addPageImage( $resultsTitlesForCheck );
 			}
@@ -324,6 +329,7 @@ class ApiSearch extends \ApiBase {
 		return $resultsTitlesForCheck;
 	}
 	public static function addPageImage( &$resultsTitlesForCheck ) {
+		
 		$dbr = wfGetDB( DB_REPLICA );
 		$res = $dbr->select(
 			[ 'imagelinks','page' ],

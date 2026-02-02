@@ -482,7 +482,10 @@ class Hooks {
 			 * @var \CirrusSearch $engine
 			 */
 			//if cli
-			
+			$onCli = php_sapi_name() === 'cli' || defined( 'MW_CLI' );
+			if ( !$onCli ) {
+				echo "Adding StructuredSearch fields to CirrusSearch index...\n";
+			}
 			$conf = MediaWikiServices::getInstance()->getMainConfig();
 			$params = Utils::getSearchParams();
 			$builder = new CirrusSearchIndexFieldFactory( $engine->getConfig() );
