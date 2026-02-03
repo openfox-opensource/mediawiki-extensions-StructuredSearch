@@ -104,6 +104,10 @@ class TopBar extends Component {
     if (this.filtersScrollHandler) {
       window.removeEventListener('scroll', this.filtersScrollHandler);
     }
+    // Clean up resize listener
+    if (this.filtersResizeHandler) {
+      window.removeEventListener('resize', this.filtersResizeHandler);
+    }
   }
   
   // Helper function to deep merge dynamic-fields from structuredSearchProps into params
@@ -219,6 +223,35 @@ class TopBar extends Component {
     let stickyTopOffset = null; // Cache the sticky top offset value
     let originalElementHeight = null; // Cache the original element height before any transforms
 
+    // Function to measure and cache the original element height
+    const measureOriginalHeight = () => {
+      // Temporarily remove any styles to get accurate measurement
+      const tempHeight = topbarOtherFields.style.height;
+      const tempMaxHeight = topbarOtherFields.style.maxHeight;
+      
+      topbarOtherFields.style.height = '';
+      topbarOtherFields.style.maxHeight = '';
+      
+      // Measure the natural height
+      originalElementHeight = topbarOtherFields.offsetHeight;
+      
+      // Restore styles
+      topbarOtherFields.style.height = tempHeight;
+      topbarOtherFields.style.maxHeight = tempMaxHeight;
+    };
+
+    // Measure original height on setup
+    measureOriginalHeight();
+
+    // Listen to window resize to recalculate original height
+    this.filtersResizeHandler = () => {
+      // Only recalculate if we're not currently hiding (not sticky)
+      if (stickyStartScrollY === null) {
+        measureOriginalHeight();
+      }
+    };
+    window.addEventListener('resize', this.filtersResizeHandler, { passive: true });
+
     // Get the sticky top offset from computed styles
     const getStickyTopOffset = () => {
       if (stickyTopOffset === null) {
@@ -261,19 +294,10 @@ class TopBar extends Component {
         if (isSticky) {
           // Top-bar is sticky - start tracking scroll
           if (stickyStartScrollY === null) {
-            // First time becoming sticky - record the scroll position and original height
-            // Reset any existing transforms to get accurate height measurement
-            const tempTransform = topbarOtherFields.style.transform;
-            const tempMaxHeight = topbarOtherFields.style.maxHeight;
-            topbarOtherFields.style.transform = '';
-            topbarOtherFields.style.maxHeight = '';
-            
+            // First time becoming sticky - record the scroll position
+            // Re-measure height in case screen size changed
+            measureOriginalHeight();
             stickyStartScrollY = window.scrollY;
-            originalElementHeight = topbarOtherFields.offsetHeight;
-            
-            // Restore transforms
-            topbarOtherFields.style.transform = tempTransform;
-            topbarOtherFields.style.maxHeight = tempMaxHeight;
           }
           
           // Use cached original height for calculations
@@ -288,29 +312,24 @@ class TopBar extends Component {
         } else {
           // Not sticky - reset tracking and show element
           stickyStartScrollY = null;
-          originalElementHeight = null;
           hideProgress = 0;
+          // Re-measure height when not sticky (screen might have resized)
+          measureOriginalHeight();
         }
         
-        // Use cached original height or current height if not cached
+        // Use cached original height for calculations
         const elementHeight = originalElementHeight || topbarOtherFields.offsetHeight;
         
-        // Apply transform: translateY proportionally to hide progress
-        // Negative translateY moves element up (hides it)
-        const translateY = -hideProgress * elementHeight;
-        
-        // Reduce height so form actually shrinks (not just visual transform)
+        // Set fixed height so form actually shrinks
         if (hideProgress > 0) {
           const remainingHeight = elementHeight * (1 - hideProgress);
-          topbarOtherFields.style.maxHeight = `${remainingHeight}px`;
+          topbarOtherFields.style.height = `${remainingHeight}px`;
           topbarOtherFields.style.overflow = 'hidden';
         } else {
           // Reset to natural height when fully visible
-          topbarOtherFields.style.maxHeight = '';
+          topbarOtherFields.style.height = '';
           topbarOtherFields.style.overflow = '';
         }
-        
-        topbarOtherFields.style.transform = `translateY(${translateY}px)`;
         
         ticking = false;
       });

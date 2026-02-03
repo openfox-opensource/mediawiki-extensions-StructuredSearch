@@ -73,11 +73,10 @@
   }
 
   // Scroll-linked progressive hiding for topbar-other-fields
-  // Transform updates instantly with scroll (no transition for perfect sync)
-  // Max-height transitions smoothly for form shrinking effect
+  // Height transitions smoothly for form shrinking effect
   .topbar-other-fields {
-    transition: max-height 0.1s ease-out;
-    will-change: transform, max-height;
+    transition: height 0.1s ease-out;
+    will-change: height;
     overflow: hidden;
   }
 
