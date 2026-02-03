@@ -2,7 +2,7 @@
 .parser-search-container {
   // Align input/selectors line with results line
   // --sts-input-padd: 1em 0px .5em;
-  --sts-input-padd: 1em 4em 1em;
+  --sts-input-padd: 1em ;
 }
 //for mobile devices
 @media (max-width: 768px) {
@@ -11,6 +11,9 @@
   }
 }
 .parser-search {
+  .TopBar, .TopBar.with-labels {
+    padding: var(--sts-input-padd);
+  }
   // Make topbar other fields (dynamic fields) match the width of search input's autocomplete-wrp
   .TopBar header form {
     // Use CSS Grid to ensure both search input and topbar-other-fields share the same column width
