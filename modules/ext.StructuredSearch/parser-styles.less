@@ -73,10 +73,11 @@
   }
 
   // Scroll-linked progressive hiding for topbar-other-fields
-  // Height transitions smoothly for form shrinking effect
+  // Max-height transitions smoothly for form shrinking effect
+  // Using max-height instead of height to avoid feedback loop (offsetHeight stays accurate)
   .topbar-other-fields {
-    transition: height 0.1s ease-out;
-    will-change: height;
+    transition: max-height 0.1s ease-out;
+    will-change: max-height;
     overflow: hidden;
   }
 

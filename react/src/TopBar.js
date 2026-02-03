@@ -225,18 +225,16 @@ class TopBar extends Component {
 
     // Function to measure and cache the original element height
     const measureOriginalHeight = () => {
-      // Temporarily remove any styles to get accurate measurement
-      const tempHeight = topbarOtherFields.style.height;
+      // Temporarily remove max-height to get accurate measurement
+      // (max-height doesn't affect offsetHeight, but we remove it to be safe)
       const tempMaxHeight = topbarOtherFields.style.maxHeight;
       
-      topbarOtherFields.style.height = '';
       topbarOtherFields.style.maxHeight = '';
       
-      // Measure the natural height
+      // Measure the natural height (offsetHeight is not affected by max-height)
       originalElementHeight = topbarOtherFields.offsetHeight;
       
-      // Restore styles
-      topbarOtherFields.style.height = tempHeight;
+      // Restore max-height
       topbarOtherFields.style.maxHeight = tempMaxHeight;
     };
 
@@ -320,14 +318,14 @@ class TopBar extends Component {
         // Use cached original height for calculations
         const elementHeight = originalElementHeight || topbarOtherFields.offsetHeight;
         
-        // Set fixed height so form actually shrinks
+        // Set max-height so form actually shrinks (max-height doesn't affect offsetHeight measurement)
         if (hideProgress > 0) {
           const remainingHeight = elementHeight * (1 - hideProgress);
-          topbarOtherFields.style.height = `${remainingHeight}px`;
+          topbarOtherFields.style.maxHeight = `${remainingHeight}px`;
           topbarOtherFields.style.overflow = 'hidden';
         } else {
           // Reset to natural height when fully visible
-          topbarOtherFields.style.height = '';
+          topbarOtherFields.style.maxHeight = '';
           topbarOtherFields.style.overflow = '';
         }
         
