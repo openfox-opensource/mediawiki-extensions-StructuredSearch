@@ -561,6 +561,20 @@ class FormInput extends Component {
 			value={this.state.selected}
 	        onChange={this.selectChanged.bind(this, inputData.field)}
 	        options={options}
+	        menuPosition="auto"
+	        menuShouldScrollIntoView={false}
+	        styles={{
+	            menu: (provided) => ({
+	                ...provided,
+	                zIndex: 100,
+	                maxHeight: '300px',
+	                position: 'absolute'
+	            }),
+	            menuList: (provided) => ({
+	                ...provided,
+	                maxHeight: '300px'
+	            })
+	        }}
 	      />
 	}
 	dateBuild (inputData){

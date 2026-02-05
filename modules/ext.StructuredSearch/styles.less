@@ -525,6 +525,37 @@
       margin: 0;
       padding: 0;
   }
+  // Fix for select menus in parser-search/embed contexts
+  [class*="css-"][class*="-menu"] {
+    z-index: 100;
+    position: absolute;
+    visibility: visible;
+    opacity: 1;
+  }
+}
+
+// Ensure topbar select menus are visible
+.parser-search .topbar-filters .field-wrp-type-select,
+.parser-search .topbar-other-fields .field-wrp-type-select {
+  position: relative;
+  
+  [class*="css-"][class*="-menu"] {
+    z-index: 100;
+    position: absolute;
+    visibility: visible;
+    opacity: 1;
+  }
+}
+
+// Ensure parent containers don't clip select menus
+.parser-search .topbar-filters,
+.parser-search .topbar-other-fields {
+  overflow: visible;
+  
+  .field-wrp-type-select {
+    overflow: visible;
+    position: relative;
+  }
 }
 
 .autocomplete-wrp {
