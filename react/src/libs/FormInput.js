@@ -260,8 +260,13 @@ class FormInput extends Component {
 		}
 	}
 	autocompleteSelected( fieldName, itemLabel, autocompleteItem){
-		// Handle null selection (when user clears the field)
+		// Handle null selection (user clicked the X clear button)
 		if (!autocompleteItem) {
+			if (this.isSearchAutocomplete()) {
+				FormMain.setValue(fieldName, '');
+				this.setState({ typed: '' });
+				FormMain.fireChangeEvent();
+			}
 			return;
 		}
 		
@@ -378,11 +383,12 @@ class FormInput extends Component {
 		if (event.key === 'Enter' || event.keyCode === 13) {
 			// Use synchronous ref to check menu state (not async state)
 			if (this._menuOpenRef.current && !this._keyboardNavigated) {
-				// Mark that this Enter should not trigger navigation (set BEFORE react-select processes)
 				this._enterShouldSubmitForm = true;
-				// Close the menu to prevent react-select from selecting
 				this.setState({ filteredOptions: [] });
-				// react-select will preventDefault (menu is open), so submit explicitly
+				// Prevent react-select from calling selectOption (which sets inputIsHidden and clears the input).
+				// react-select checks event.defaultPrevented immediately after our onKeyDown returns
+				// and skips its own Enter handling when true.
+				event.preventDefault();
 				setTimeout(() => FormMain.submitData(), 0);
 				return;
 			}
@@ -696,8 +702,11 @@ class FormInput extends Component {
 				href: item.href
 			}));
 			
-			// Find current value for react-select
-			let currentValue = this.state.typed ? selectOptions.find(option => option.label === this.state.typed) : null;
+			// Find current value for react-select; fall back to synthetic option so the
+			// typed text is visible when the input loses focus (react-select shows value, not inputValue, when blurred)
+			let currentValue = this.state.typed
+				? selectOptions.find(option => option.label === this.state.typed) || { value: this.state.typed, label: this.state.typed }
+				: null;
 			return   <div className="autocomplete-wrp">
 				<Select
 					aria-label={placeholder||inputData.field}
