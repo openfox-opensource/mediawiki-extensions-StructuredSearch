@@ -40,8 +40,6 @@ class FormInput extends Component {
 		this._hoverLocked = false;
 		// Ref for menu state (synchronous tracking)
 		this._menuOpenRef = { current: false };
-		// Preserve typed value when closing menu
-		this._preserveTypedValue = null;
 		// Track blur events to differentiate from user clearing input
 		this._isBlurring = false;
 		this._blurTimeout = null;
@@ -382,12 +380,10 @@ class FormInput extends Component {
 			if (this._menuOpenRef.current && !this._keyboardNavigated) {
 				// Mark that this Enter should not trigger navigation (set BEFORE react-select processes)
 				this._enterShouldSubmitForm = true;
-				// Preserve the current typed value before closing menu
-				this._preserveTypedValue = this.state.typed;
 				// Close the menu to prevent react-select from selecting
 				this.setState({ filteredOptions: [] });
-				// Don't prevent default - let event bubble to form for submission
-				// The onChange handler will check _enterShouldSubmitForm and ignore the selection
+				// react-select will preventDefault (menu is open), so submit explicitly
+				setTimeout(() => FormMain.submitData(), 0);
 				return;
 			}
 			// If user navigated with keyboard, allow react-select to handle Enter normally
@@ -711,7 +707,7 @@ class FormInput extends Component {
 					value={currentValue}
 					inputValue={this.state.typed}
 					onChange={(selectedOption) => this.autocompleteSelected(inputData.field, selectedOption?.label, selectedOption)}
-					onInputChange={(inputValue) => this.autocompleteChanged(inputValue)}
+					onInputChange={(inputValue, actionMeta) => this.autocompleteChanged(inputValue, actionMeta)}
 					onBlur={() => this.onAutocompleteBlur()}
 					onFocus={() => this.onAutocompleteFocus()}
 					onMenuOpen={() => this.onAutocompleteMenuVisibilityChange(true)}
@@ -755,22 +751,15 @@ class FormInput extends Component {
 				{submitButton}
 			</div>;
 	}
-	autocompleteChanged(inputValue) {
-		// If we're preserving a value (Enter was pressed to submit form), restore it
-		if (this._preserveTypedValue !== null && inputValue === '') {
-			// Restore the preserved value
-			const preserved = this._preserveTypedValue;
-			this._preserveTypedValue = null;
-			// Use setTimeout to restore after react-select processes the change
-			setTimeout(() => {
-				this.setState({ typed: preserved });
-			}, 0);
+	autocompleteChanged(inputValue, actionMeta) {
+		// When Enter submits the form, react-select's setValue fires onInputChange('') twice:
+		// once with action 'set-value' and once with 'menu-close' (via onMenuClose).
+		// Both must be ignored — the user didn't clear the field.
+		if (this._enterShouldSubmitForm &&
+			(actionMeta?.action === 'set-value' || actionMeta?.action === 'menu-close')) {
 			return;
 		}
-		
-		// Clear preserve flag if input changed normally
-		this._preserveTypedValue = null;
-		
+
 		// Check if this is a blur event (react-select calls onInputChange('') on blur)
 		// We track blur state using onBlur callback to differentiate from user clearing input
 		const isBlurEvent = this._isBlurring && !inputValue;
